@@ -30,7 +30,7 @@
 		A0AF3DA817A8095F00D2E836 /* RMPurchasesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3DA617A8095F00D2E836 /* RMPurchasesViewController.xib */; };
 		A0AF3DA917A80B2F00D2E836 /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D1217A802F300D2E836 /* RMStore.m */; };
 		A0AF3DAA17A810B700D2E836 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D3317A8059900D2E836 /* StoreKit.framework */; };
-		A0AF3DAC17A810C400D2E836 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3DAB17A810C400D2E836 /* Default-568h@2x.png */; };
+		A0AF3DAE17A8303800D2E836 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3DAD17A8303800D2E836 /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,7 +83,7 @@
 		A0AF3DA417A8095F00D2E836 /* RMPurchasesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMPurchasesViewController.h; sourceTree = "<group>"; };
 		A0AF3DA517A8095F00D2E836 /* RMPurchasesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMPurchasesViewController.m; sourceTree = "<group>"; };
 		A0AF3DA617A8095F00D2E836 /* RMPurchasesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RMPurchasesViewController.xib; sourceTree = "<group>"; };
-		A0AF3DAB17A810C400D2E836 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
+		A0AF3DAD17A8303800D2E836 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,13 +196,13 @@
 			children = (
 				A0AF3D7F17A8085900D2E836 /* RMAppDelegate.h */,
 				A0AF3D8017A8085900D2E836 /* RMAppDelegate.m */,
-				A0AF3D7717A8085900D2E836 /* Supporting Files */,
-				A0AF3D9F17A8094600D2E836 /* RMStoreViewController.h */,
-				A0AF3DA017A8094600D2E836 /* RMStoreViewController.m */,
-				A0AF3DA117A8094600D2E836 /* RMStoreViewController.xib */,
 				A0AF3DA417A8095F00D2E836 /* RMPurchasesViewController.h */,
 				A0AF3DA517A8095F00D2E836 /* RMPurchasesViewController.m */,
 				A0AF3DA617A8095F00D2E836 /* RMPurchasesViewController.xib */,
+				A0AF3D9F17A8094600D2E836 /* RMStoreViewController.h */,
+				A0AF3DA017A8094600D2E836 /* RMStoreViewController.m */,
+				A0AF3DA117A8094600D2E836 /* RMStoreViewController.xib */,
+				A0AF3D7717A8085900D2E836 /* Supporting Files */,
 			);
 			path = RMStoreDemo;
 			sourceTree = "<group>";
@@ -210,10 +210,10 @@
 		A0AF3D7717A8085900D2E836 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				A0AF3DAB17A810C400D2E836 /* Default-568h@2x.png */,
-				A0AF3D7817A8085900D2E836 /* RMStoreDemo-Info.plist */,
+				A0AF3DAD17A8303800D2E836 /* Default-568h@2x.png */,
 				A0AF3D7917A8085900D2E836 /* InfoPlist.strings */,
 				A0AF3D7C17A8085900D2E836 /* main.m */,
+				A0AF3D7817A8085900D2E836 /* RMStoreDemo-Info.plist */,
 				A0AF3D7E17A8085900D2E836 /* RMStoreDemo-Prefix.pch */,
 			);
 			name = "Supporting Files";
@@ -319,7 +319,7 @@
 				A0AF3D7B17A8085900D2E836 /* InfoPlist.strings in Resources */,
 				A0AF3DA317A8094600D2E836 /* RMStoreViewController.xib in Resources */,
 				A0AF3DA817A8095F00D2E836 /* RMPurchasesViewController.xib in Resources */,
-				A0AF3DAC17A810C400D2E836 /* Default-568h@2x.png in Resources */,
+				A0AF3DAE17A8303800D2E836 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
