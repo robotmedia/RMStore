@@ -1,0 +1,585 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A0AF3D0C17A802F300D2E836 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
+		A0AF3D1117A802F300D2E836 /* RMStore.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A0AF3D1017A802F300D2E836 /* RMStore.h */; };
+		A0AF3D1317A802F300D2E836 /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D1217A802F300D2E836 /* RMStore.m */; };
+		A0AF3D1B17A802F300D2E836 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D1A17A802F300D2E836 /* SenTestingKit.framework */; };
+		A0AF3D1D17A802F300D2E836 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D1C17A802F300D2E836 /* UIKit.framework */; };
+		A0AF3D1E17A802F300D2E836 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
+		A0AF3D2117A802F300D2E836 /* libRMStore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0817A802F300D2E836 /* libRMStore.a */; };
+		A0AF3D2717A802F300D2E836 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3D2517A802F300D2E836 /* InfoPlist.strings */; };
+		A0AF3D2A17A802F300D2E836 /* RMStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D2917A802F300D2E836 /* RMStoreTests.m */; };
+		A0AF3D3417A8059900D2E836 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D3317A8059900D2E836 /* StoreKit.framework */; };
+		A0AF3D3517A805AD00D2E836 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D3317A8059900D2E836 /* StoreKit.framework */; };
+		A0AF3D7317A8085900D2E836 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D1C17A802F300D2E836 /* UIKit.framework */; };
+		A0AF3D7417A8085900D2E836 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
+		A0AF3D7517A8085900D2E836 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D3D17A807FF00D2E836 /* CoreGraphics.framework */; };
+		A0AF3D7B17A8085900D2E836 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3D7917A8085900D2E836 /* InfoPlist.strings */; };
+		A0AF3D7D17A8085900D2E836 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D7C17A8085900D2E836 /* main.m */; };
+		A0AF3D8117A8085900D2E836 /* RMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D8017A8085900D2E836 /* RMAppDelegate.m */; };
+		A0AF3DA217A8094600D2E836 /* RMStoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3DA017A8094600D2E836 /* RMStoreViewController.m */; };
+		A0AF3DA317A8094600D2E836 /* RMStoreViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3DA117A8094600D2E836 /* RMStoreViewController.xib */; };
+		A0AF3DA717A8095F00D2E836 /* RMPurchasesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3DA517A8095F00D2E836 /* RMPurchasesViewController.m */; };
+		A0AF3DA817A8095F00D2E836 /* RMPurchasesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3DA617A8095F00D2E836 /* RMPurchasesViewController.xib */; };
+		A0AF3DA917A80B2F00D2E836 /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D1217A802F300D2E836 /* RMStore.m */; };
+		A0AF3DAA17A810B700D2E836 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D3317A8059900D2E836 /* StoreKit.framework */; };
+		A0AF3DAC17A810C400D2E836 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3DAB17A810C400D2E836 /* Default-568h@2x.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A0AF3D1F17A802F300D2E836 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A0AF3D0017A802F300D2E836 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A0AF3D0717A802F300D2E836;
+			remoteInfo = RMStore;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A0AF3D0617A802F300D2E836 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/${PRODUCT_NAME}";
+			dstSubfolderSpec = 16;
+			files = (
+				A0AF3D1117A802F300D2E836 /* RMStore.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A0AF3D0817A802F300D2E836 /* libRMStore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRMStore.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0AF3D0B17A802F300D2E836 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		A0AF3D0F17A802F300D2E836 /* RMStore-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RMStore-Prefix.pch"; sourceTree = "<group>"; };
+		A0AF3D1017A802F300D2E836 /* RMStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RMStore.h; sourceTree = "<group>"; };
+		A0AF3D1217A802F300D2E836 /* RMStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RMStore.m; sourceTree = "<group>"; };
+		A0AF3D1917A802F300D2E836 /* RMStoreTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RMStoreTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0AF3D1A17A802F300D2E836 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		A0AF3D1C17A802F300D2E836 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		A0AF3D2417A802F300D2E836 /* RMStoreTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RMStoreTests-Info.plist"; sourceTree = "<group>"; };
+		A0AF3D2617A802F300D2E836 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A0AF3D2917A802F300D2E836 /* RMStoreTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RMStoreTests.m; sourceTree = "<group>"; };
+		A0AF3D3317A8059900D2E836 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		A0AF3D3D17A807FF00D2E836 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		A0AF3D7217A8085900D2E836 /* RMStoreDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RMStoreDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0AF3D7817A8085900D2E836 /* RMStoreDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RMStoreDemo-Info.plist"; sourceTree = "<group>"; };
+		A0AF3D7A17A8085900D2E836 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A0AF3D7C17A8085900D2E836 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A0AF3D7E17A8085900D2E836 /* RMStoreDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RMStoreDemo-Prefix.pch"; sourceTree = "<group>"; };
+		A0AF3D7F17A8085900D2E836 /* RMAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RMAppDelegate.h; sourceTree = "<group>"; };
+		A0AF3D8017A8085900D2E836 /* RMAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RMAppDelegate.m; sourceTree = "<group>"; };
+		A0AF3D9F17A8094600D2E836 /* RMStoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMStoreViewController.h; sourceTree = "<group>"; };
+		A0AF3DA017A8094600D2E836 /* RMStoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreViewController.m; sourceTree = "<group>"; };
+		A0AF3DA117A8094600D2E836 /* RMStoreViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RMStoreViewController.xib; sourceTree = "<group>"; };
+		A0AF3DA417A8095F00D2E836 /* RMPurchasesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMPurchasesViewController.h; sourceTree = "<group>"; };
+		A0AF3DA517A8095F00D2E836 /* RMPurchasesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMPurchasesViewController.m; sourceTree = "<group>"; };
+		A0AF3DA617A8095F00D2E836 /* RMPurchasesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RMPurchasesViewController.xib; sourceTree = "<group>"; };
+		A0AF3DAB17A810C400D2E836 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A0AF3D0517A802F300D2E836 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0AF3D3417A8059900D2E836 /* StoreKit.framework in Frameworks */,
+				A0AF3D0C17A802F300D2E836 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A0AF3D1517A802F300D2E836 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0AF3D3517A805AD00D2E836 /* StoreKit.framework in Frameworks */,
+				A0AF3D1B17A802F300D2E836 /* SenTestingKit.framework in Frameworks */,
+				A0AF3D1D17A802F300D2E836 /* UIKit.framework in Frameworks */,
+				A0AF3D1E17A802F300D2E836 /* Foundation.framework in Frameworks */,
+				A0AF3D2117A802F300D2E836 /* libRMStore.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A0AF3D6F17A8085900D2E836 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0AF3DAA17A810B700D2E836 /* StoreKit.framework in Frameworks */,
+				A0AF3D7317A8085900D2E836 /* UIKit.framework in Frameworks */,
+				A0AF3D7417A8085900D2E836 /* Foundation.framework in Frameworks */,
+				A0AF3D7517A8085900D2E836 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A0AF3CFF17A802F300D2E836 = {
+			isa = PBXGroup;
+			children = (
+				A0AF3D0D17A802F300D2E836 /* RMStore */,
+				A0AF3D2217A802F300D2E836 /* RMStoreTests */,
+				A0AF3D7617A8085900D2E836 /* RMStoreDemo */,
+				A0AF3D0A17A802F300D2E836 /* Frameworks */,
+				A0AF3D0917A802F300D2E836 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A0AF3D0917A802F300D2E836 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A0AF3D0817A802F300D2E836 /* libRMStore.a */,
+				A0AF3D1917A802F300D2E836 /* RMStoreTests.octest */,
+				A0AF3D7217A8085900D2E836 /* RMStoreDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A0AF3D0A17A802F300D2E836 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A0AF3D3317A8059900D2E836 /* StoreKit.framework */,
+				A0AF3D0B17A802F300D2E836 /* Foundation.framework */,
+				A0AF3D1A17A802F300D2E836 /* SenTestingKit.framework */,
+				A0AF3D1C17A802F300D2E836 /* UIKit.framework */,
+				A0AF3D3D17A807FF00D2E836 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A0AF3D0D17A802F300D2E836 /* RMStore */ = {
+			isa = PBXGroup;
+			children = (
+				A0AF3D1017A802F300D2E836 /* RMStore.h */,
+				A0AF3D1217A802F300D2E836 /* RMStore.m */,
+				A0AF3D0E17A802F300D2E836 /* Supporting Files */,
+			);
+			path = RMStore;
+			sourceTree = "<group>";
+		};
+		A0AF3D0E17A802F300D2E836 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A0AF3D0F17A802F300D2E836 /* RMStore-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A0AF3D2217A802F300D2E836 /* RMStoreTests */ = {
+			isa = PBXGroup;
+			children = (
+				A0AF3D2917A802F300D2E836 /* RMStoreTests.m */,
+				A0AF3D2317A802F300D2E836 /* Supporting Files */,
+			);
+			path = RMStoreTests;
+			sourceTree = "<group>";
+		};
+		A0AF3D2317A802F300D2E836 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A0AF3D2417A802F300D2E836 /* RMStoreTests-Info.plist */,
+				A0AF3D2517A802F300D2E836 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A0AF3D7617A8085900D2E836 /* RMStoreDemo */ = {
+			isa = PBXGroup;
+			children = (
+				A0AF3D7F17A8085900D2E836 /* RMAppDelegate.h */,
+				A0AF3D8017A8085900D2E836 /* RMAppDelegate.m */,
+				A0AF3D7717A8085900D2E836 /* Supporting Files */,
+				A0AF3D9F17A8094600D2E836 /* RMStoreViewController.h */,
+				A0AF3DA017A8094600D2E836 /* RMStoreViewController.m */,
+				A0AF3DA117A8094600D2E836 /* RMStoreViewController.xib */,
+				A0AF3DA417A8095F00D2E836 /* RMPurchasesViewController.h */,
+				A0AF3DA517A8095F00D2E836 /* RMPurchasesViewController.m */,
+				A0AF3DA617A8095F00D2E836 /* RMPurchasesViewController.xib */,
+			);
+			path = RMStoreDemo;
+			sourceTree = "<group>";
+		};
+		A0AF3D7717A8085900D2E836 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A0AF3DAB17A810C400D2E836 /* Default-568h@2x.png */,
+				A0AF3D7817A8085900D2E836 /* RMStoreDemo-Info.plist */,
+				A0AF3D7917A8085900D2E836 /* InfoPlist.strings */,
+				A0AF3D7C17A8085900D2E836 /* main.m */,
+				A0AF3D7E17A8085900D2E836 /* RMStoreDemo-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A0AF3D0717A802F300D2E836 /* RMStore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A0AF3D2D17A802F300D2E836 /* Build configuration list for PBXNativeTarget "RMStore" */;
+			buildPhases = (
+				A0AF3D0417A802F300D2E836 /* Sources */,
+				A0AF3D0517A802F300D2E836 /* Frameworks */,
+				A0AF3D0617A802F300D2E836 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RMStore;
+			productName = RMStore;
+			productReference = A0AF3D0817A802F300D2E836 /* libRMStore.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		A0AF3D1817A802F300D2E836 /* RMStoreTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A0AF3D3017A802F300D2E836 /* Build configuration list for PBXNativeTarget "RMStoreTests" */;
+			buildPhases = (
+				A0AF3D1417A802F300D2E836 /* Sources */,
+				A0AF3D1517A802F300D2E836 /* Frameworks */,
+				A0AF3D1617A802F300D2E836 /* Resources */,
+				A0AF3D1717A802F300D2E836 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A0AF3D2017A802F300D2E836 /* PBXTargetDependency */,
+			);
+			name = RMStoreTests;
+			productName = RMStoreTests;
+			productReference = A0AF3D1917A802F300D2E836 /* RMStoreTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+		A0AF3D7117A8085900D2E836 /* RMStoreDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A0AF3D9C17A8085900D2E836 /* Build configuration list for PBXNativeTarget "RMStoreDemo" */;
+			buildPhases = (
+				A0AF3D6E17A8085900D2E836 /* Sources */,
+				A0AF3D6F17A8085900D2E836 /* Frameworks */,
+				A0AF3D7017A8085900D2E836 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RMStoreDemo;
+			productName = RMStoreDemo;
+			productReference = A0AF3D7217A8085900D2E836 /* RMStoreDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A0AF3D0017A802F300D2E836 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "Robot Media";
+			};
+			buildConfigurationList = A0AF3D0317A802F300D2E836 /* Build configuration list for PBXProject "RMStore" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = A0AF3CFF17A802F300D2E836;
+			productRefGroup = A0AF3D0917A802F300D2E836 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A0AF3D0717A802F300D2E836 /* RMStore */,
+				A0AF3D1817A802F300D2E836 /* RMStoreTests */,
+				A0AF3D7117A8085900D2E836 /* RMStoreDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A0AF3D1617A802F300D2E836 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0AF3D2717A802F300D2E836 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A0AF3D7017A8085900D2E836 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0AF3D7B17A8085900D2E836 /* InfoPlist.strings in Resources */,
+				A0AF3DA317A8094600D2E836 /* RMStoreViewController.xib in Resources */,
+				A0AF3DA817A8095F00D2E836 /* RMPurchasesViewController.xib in Resources */,
+				A0AF3DAC17A810C400D2E836 /* Default-568h@2x.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A0AF3D1717A802F300D2E836 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A0AF3D0417A802F300D2E836 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0AF3D1317A802F300D2E836 /* RMStore.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A0AF3D1417A802F300D2E836 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0AF3D2A17A802F300D2E836 /* RMStoreTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A0AF3D6E17A8085900D2E836 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0AF3D7D17A8085900D2E836 /* main.m in Sources */,
+				A0AF3D8117A8085900D2E836 /* RMAppDelegate.m in Sources */,
+				A0AF3DA217A8094600D2E836 /* RMStoreViewController.m in Sources */,
+				A0AF3DA717A8095F00D2E836 /* RMPurchasesViewController.m in Sources */,
+				A0AF3DA917A80B2F00D2E836 /* RMStore.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A0AF3D2017A802F300D2E836 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A0AF3D0717A802F300D2E836 /* RMStore */;
+			targetProxy = A0AF3D1F17A802F300D2E836 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		A0AF3D2517A802F300D2E836 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A0AF3D2617A802F300D2E836 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		A0AF3D7917A8085900D2E836 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A0AF3D7A17A8085900D2E836 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		A0AF3D2B17A802F300D2E836 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		A0AF3D2C17A802F300D2E836 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A0AF3D2E17A802F300D2E836 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/RMStore.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RMStore/RMStore-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		A0AF3D2F17A802F300D2E836 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/RMStore.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RMStore/RMStore-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		A0AF3D3117A802F300D2E836 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RMStore/RMStore-Prefix.pch";
+				INFOPLIST_FILE = "RMStoreTests/RMStoreTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		A0AF3D3217A802F300D2E836 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RMStore/RMStore-Prefix.pch";
+				INFOPLIST_FILE = "RMStoreTests/RMStoreTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+		A0AF3D9D17A8085900D2E836 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RMStoreDemo/RMStoreDemo-Prefix.pch";
+				INFOPLIST_FILE = "RMStoreDemo/RMStoreDemo-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		A0AF3D9E17A8085900D2E836 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RMStoreDemo/RMStoreDemo-Prefix.pch";
+				INFOPLIST_FILE = "RMStoreDemo/RMStoreDemo-Info.plist";
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A0AF3D0317A802F300D2E836 /* Build configuration list for PBXProject "RMStore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0AF3D2B17A802F300D2E836 /* Debug */,
+				A0AF3D2C17A802F300D2E836 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A0AF3D2D17A802F300D2E836 /* Build configuration list for PBXNativeTarget "RMStore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0AF3D2E17A802F300D2E836 /* Debug */,
+				A0AF3D2F17A802F300D2E836 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A0AF3D3017A802F300D2E836 /* Build configuration list for PBXNativeTarget "RMStoreTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0AF3D3117A802F300D2E836 /* Debug */,
+				A0AF3D3217A802F300D2E836 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A0AF3D9C17A8085900D2E836 /* Build configuration list for PBXNativeTarget "RMStoreDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0AF3D9D17A8085900D2E836 /* Debug */,
+				A0AF3D9E17A8085900D2E836 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A0AF3D0017A802F300D2E836 /* Project object */;
+}
