@@ -5,11 +5,13 @@ An iOS framework for In-App Purchases.
 
 RMStore adds blocks and notifications to StoreKit, plus receipt verification and purchase management. Purchasing a product is as simple as:
 
-    [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
-        NSLog(@"Purchased!", @"");
-    } failure:^(SKPaymentTransaction *transaction, NSError *error) {
-        NSLog(@"Something went wrong", @"");
-    }];
+```objective-c
+[[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
+    NSLog(@"Purchased!", @"");
+} failure:^(SKPaymentTransaction *transaction, NSError *error) {
+    NSLog(@"Something went wrong", @"");
+}];
+```
 
 Add RMStore to your project
 ---------------------------
