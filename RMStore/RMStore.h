@@ -21,37 +21,56 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
-@interface NSNotification(RMStore)
-
-@property (nonatomic, readonly) NSString *productIdentifier;
-@property (nonatomic, readonly) NSError *storeError;
-@property (nonatomic, readonly) SKPaymentTransaction *transaction;
-
-@end
-
 @protocol RMStoreReceiptVerificator;
-
 @protocol RMStoreObserver;
 
+/** A StoreKit wrapper that adds blocks and notifications, plus optional receipt verification and purchase management.
+ */
 @interface RMStore : NSObject<SKPaymentTransactionObserver, SKProductsRequestDelegate>
 
 @property (nonatomic, weak) id<RMStoreReceiptVerificator> receiptVerificator;
 
+///---------------------------------------------
+/// @name Getting the Store
+///---------------------------------------------
+
+/** Returns the singleton store instance.
+ */
 + (RMStore*)defaultStore;
 
-#pragma mark - StoreKit wrapper
+#pragma mark - StoreKit Wrapper
+///---------------------------------------------
+/// @name Calling StoreKit
+///---------------------------------------------
 
+/** Returns whether the user is allowed to make payments.
+ */
 + (BOOL)canMakePayments;
 
+/** Request payment of the product with the given product identifier.
+ @param productIdentifier The identifier of the product whose payment will be requested. 
+ */
 - (void)addPayment:(NSString*)productIdentifier;
 
-// Only one pair of blocks is allowed per product identifier.
+/** Request payment of the product with the given product identifier. `successBlock` will be called if the payment is successful, `failureBlock` if it isn't.
+ @param productIdentifier The identifier of the product whose payment will be requested.
+ @param successBlock The block to be called if the payment is sucessful. Can be `nil`.
+ @param failureBlock The block to be called if the payment fails. Can be `nil`.
+ */
 - (void)addPayment:(NSString*)productIdentifier
            success:(void (^)(SKPaymentTransaction *transaction))successBlock
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock;
 
+/** Request localized information about a set of products from the Apple App Store.
+ @param identifiers The set of product identifiers for the products you wish to retrieve information of.
+ */
 - (void)requestProducts:(NSSet*)identifiers;
 
+/** Request localized information about a set of products from the Apple App Store. `successBlock` will be called if the payment is successful, `failureBlock` if it isn't.
+ @param identifiers The set of product identifiers for the products you wish to retrieve information of.
+ @param successBlock The block to be called if the products request is sucessful. Can be `nil`.
+ @param failureBlock The block to be called if the products request fails. Can be `nil`.
+ */
 - (void)requestProducts:(NSSet*)identifiers
                 success:(void (^)())successBlock
                 failure:(void (^)(NSError *error))failureBlock;
@@ -62,6 +81,9 @@
                              failure:(void (^)(NSError *error))failureBlock;
 
 #pragma mark - Purchase management
+///---------------------------------------------
+/// @name Managing Purchases
+///---------------------------------------------
 
 - (void)addPurchaseForIdentifier:(NSString*)productIdentifier;
 
@@ -78,12 +100,18 @@
 - (NSArray*)purchasedIdentifiers;
 
 #pragma mark - Notifications
+///---------------------------------------------
+/// @name Managing Observers
+///---------------------------------------------
 
 - (void)addStoreObserver:(id<RMStoreObserver>)observer;
 
 - (void)removeStoreObserver:(id<RMStoreObserver>)observer;
 
 #pragma mark - Utils
+///---------------------------------------------
+/// @name Getting the Localized Price of a Product
+///---------------------------------------------
 
 + (NSString*)localizedPriceOfProduct:(SKProduct*)product;
 
@@ -106,5 +134,16 @@
 - (void)verifyReceiptOfTransaction:(SKPaymentTransaction*)transaction
                            success:(void (^)())successBlock
                            failure:(void (^)(NSError *error))failureBlock;
+
+@end
+
+/**
+ Category on NSNotification to recover store data from userInfo without requiring to know the keys.
+ */
+@interface NSNotification(RMStore)
+
+@property (nonatomic, readonly) NSString *productIdentifier;
+@property (nonatomic, readonly) NSError *storeError;
+@property (nonatomic, readonly) SKPaymentTransaction *transaction;
 
 @end
