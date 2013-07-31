@@ -17,9 +17,13 @@
 
 @end
 
+@protocol RMStoreReceiptVerificator;
+
 @protocol RMStoreObserver;
 
 @interface RMStore : NSObject<SKPaymentTransactionObserver, SKProductsRequestDelegate>
+
+@property (nonatomic, weak) id<RMStoreReceiptVerificator> receiptVerificator;
 
 + (RMStore*)defaultStore;
 
@@ -82,5 +86,13 @@
 - (void)storePaymentTransactionFinished:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
+
+@end
+
+@protocol RMStoreReceiptVerificator <NSObject>
+
+- (void)verifyReceiptOfTransaction:(SKPaymentTransaction*)transaction
+                           success:(void (^)())successBlock
+                           failure:(void (^)(NSError *error))failureBlock;
 
 @end

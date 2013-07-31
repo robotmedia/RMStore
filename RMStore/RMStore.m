@@ -340,7 +340,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
                 [self completeTransaction:transaction];
                 break;
             case SKPaymentTransactionStateFailed:
-                [self failedTransaction:transaction];
+                [self failedTransaction:transaction error:transaction.error];
                 break;
             case SKPaymentTransactionStateRestored:
                 [self restoreTransaction:transaction];
@@ -381,6 +381,25 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 	NSString* productIdentifier = payment.productIdentifier;
     RMStoreLog(@"transaction purchased with product %@", productIdentifier);
     
+    if (self.receiptVerificator != nil)
+    {
+        [self.receiptVerificator verifyReceiptOfTransaction:transaction success:^{
+            [self verifiedTransaction:transaction];
+        } failure:^(NSError *error) {
+            [self failedTransaction:transaction error:error];
+        }];
+    }
+    else
+    {
+        RMStoreLog(@"WARNING: no receipt verification");
+        [self verifiedTransaction:transaction];
+    }
+}
+
+- (void)verifiedTransaction:(SKPaymentTransaction *)transaction
+{
+    SKPayment *payment = transaction.payment;
+	NSString* productIdentifier = payment.productIdentifier;
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     [self addPurchaseForIdentifier:productIdentifier];
     
@@ -394,11 +413,10 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionFinished object:self userInfo:userInfo];
 }
 
-- (void)failedTransaction:(SKPaymentTransaction *)transaction
+- (void)failedTransaction:(SKPaymentTransaction *)transaction error:(NSError*)error
 {
     SKPayment *payment = transaction.payment;
 	NSString* productIdentifier = payment.productIdentifier;
-    NSError *error = transaction.error;
     RMStoreLog(@"transaction failed with product %@ and error %@", productIdentifier, error.debugDescription);
     
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
