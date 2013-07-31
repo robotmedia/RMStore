@@ -37,16 +37,19 @@
 
 // Only one pair of blocks is allowed per product identifier.
 - (void)addPayment:(NSString*)productIdentifier
-           success:(void (^)(SKPaymentTransaction *transaction))sucessBlock
+           success:(void (^)(SKPaymentTransaction *transaction))successBlock
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock;
 
 - (void)requestProducts:(NSSet*)identifiers;
 
 - (void)requestProducts:(NSSet*)identifiers
-                success:(void (^)())sucessBlock
+                success:(void (^)())successBlock
                 failure:(void (^)(NSError *error))failureBlock;
 
 - (void)restoreTransactions;
+
+- (void)restoreTransactionsOnSuccess:(void (^)())successBlock
+                             failure:(void (^)(NSError *error))failureBlock;
 
 #pragma mark - Purchase management
 

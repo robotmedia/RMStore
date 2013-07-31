@@ -45,7 +45,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 @interface RMProductsRequestWrapper : NSObject
 
 @property (nonatomic, strong) SKProductsRequest *request;
-@property (nonatomic, strong) void (^sucessBlock)();
+@property (nonatomic, strong) void (^successBlock)();
 @property (nonatomic, strong) void (^failureBlock)(NSError* error);
 
 @end
@@ -56,7 +56,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 
 @interface RMAddPaymentParameters : NSObject
 
-@property (nonatomic, strong) void (^sucessBlock)(SKPaymentTransaction *transaction);
+@property (nonatomic, strong) void (^successBlock)(SKPaymentTransaction *transaction);
 @property (nonatomic, strong) void (^failureBlock)(SKPaymentTransaction *transaction, NSError *error);
 
 @end
@@ -69,6 +69,9 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     NSMutableDictionary *_addPaymentParameters; // HACK: We use a dictionary of product identifiers because the returned SKPayment is different from the one we add to the queue. Bad Apple.
     NSMutableDictionary *_products;
     NSMutableArray *_productRequests;
+    
+    void (^_restoreTransactionssuccessBlock)();
+    void (^_restoreTransactionsFailureBlock)(NSError* error);
 }
 
 - (id) init
@@ -143,14 +146,14 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 }
 
 - (void)addPayment:(NSString*)productIdentifier
-           success:(void (^)(SKPaymentTransaction *transaction))sucessBlock
+           success:(void (^)(SKPaymentTransaction *transaction))successBlock
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
 {
     SKProduct *product = [self productForIdentifier:productIdentifier];
     SKPayment *payment = [SKPayment paymentWithProduct:product];
     
     RMAddPaymentParameters *parameters = [[RMAddPaymentParameters alloc] init];
-    parameters.sucessBlock = sucessBlock;
+    parameters.successBlock = successBlock;
     parameters.failureBlock = failureBlock;
     [_addPaymentParameters setObject:parameters forKey:productIdentifier];
     
@@ -163,7 +166,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 }
 
 - (void)requestProducts:(NSSet*)identifiers
-                success:(void (^)())sucessBlock
+                success:(void (^)())successBlock
                 failure:(void (^)(NSError* error))failureBlock
 {
     SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:identifiers];
@@ -171,7 +174,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 
     RMProductsRequestWrapper *requestWrapper = [[RMProductsRequestWrapper alloc] init];
     requestWrapper.request = productsRequest;
-    requestWrapper.sucessBlock = sucessBlock;
+    requestWrapper.successBlock = successBlock;
     requestWrapper.failureBlock = failureBlock;
     [_productRequests addObject:requestWrapper];
     
@@ -180,7 +183,15 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 
 - (void)restoreTransactions
 {
-	[[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+    [self restoreTransactionsOnSuccess:nil failure:nil];
+}
+
+- (void)restoreTransactionsOnSuccess:(void (^)())successBlock
+                             failure:(void (^)(NSError *error))failureBlock
+{
+    _restoreTransactionssuccessBlock = successBlock;
+    _restoreTransactionsFailureBlock = failureBlock;
+    [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
 #pragma mark - Purchase management
@@ -279,9 +290,9 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     }
 
     RMProductsRequestWrapper *wrapper = [self popWrapperForRequest:request];
-    if (wrapper.sucessBlock)
+    if (wrapper.successBlock)
     {
-        wrapper.sucessBlock();
+        wrapper.successBlock();
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFinished object:self];
 }
@@ -342,12 +353,22 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 - (void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue
 {
     RMStoreLog(@"restore transactions finished");
+    if (_restoreTransactionssuccessBlock != nil)
+    {
+        _restoreTransactionssuccessBlock();
+        _restoreTransactionssuccessBlock = nil;
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsFinished object:self];
 }
 
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error
 {
     RMStoreLog(@"restored transactions failed with error %@", error.debugDescription);
+    if (_restoreTransactionsFailureBlock != nil)
+    {
+        _restoreTransactionsFailureBlock(error);
+        _restoreTransactionsFailureBlock = nil;
+    }
     NSDictionary *userInfo = @{RMStoreNotificationStoreError: error};
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsFailed object:self userInfo:userInfo];
 }
@@ -364,9 +385,9 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     [self addPurchaseForIdentifier:productIdentifier];
     
     RMAddPaymentParameters *wrapper = [self popAddPaymentParametersForIdentifier:productIdentifier];
-    if (wrapper.sucessBlock != nil)
+    if (wrapper.successBlock != nil)
     {
-        wrapper.sucessBlock(transaction);
+        wrapper.successBlock(transaction);
     }
     
     NSDictionary *userInfo = @{RMStoreNotificationTransaction: transaction, RMStoreNotificationProductIdentifier: productIdentifier};
