@@ -31,6 +31,9 @@
 		A0AF3DA917A80B2F00D2E836 /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D1217A802F300D2E836 /* RMStore.m */; };
 		A0AF3DAA17A810B700D2E836 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D3317A8059900D2E836 /* StoreKit.framework */; };
 		A0AF3DAE17A8303800D2E836 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3DAD17A8303800D2E836 /* Default-568h@2x.png */; };
+		A0AF3DB117A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3DB017A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m */; };
+		A0AF3DB417A91CFD00D2E836 /* RMStoreLocalReceiptVerificator.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3DB017A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m */; };
+		A0AF3DB517A91CFE00D2E836 /* RMStoreLocalReceiptVerificator.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3DB017A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +87,8 @@
 		A0AF3DA517A8095F00D2E836 /* RMPurchasesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMPurchasesViewController.m; sourceTree = "<group>"; };
 		A0AF3DA617A8095F00D2E836 /* RMPurchasesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RMPurchasesViewController.xib; sourceTree = "<group>"; };
 		A0AF3DAD17A8303800D2E836 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		A0AF3DAF17A90F5800D2E836 /* RMStoreLocalReceiptVerificator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMStoreLocalReceiptVerificator.h; sourceTree = "<group>"; };
+		A0AF3DB017A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreLocalReceiptVerificator.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +163,7 @@
 		A0AF3D0D17A802F300D2E836 /* RMStore */ = {
 			isa = PBXGroup;
 			children = (
+				A0AF3DB317A90F7F00D2E836 /* Optional */,
 				A0AF3D1017A802F300D2E836 /* RMStore.h */,
 				A0AF3D1217A802F300D2E836 /* RMStore.m */,
 				A0AF3D0E17A802F300D2E836 /* Supporting Files */,
@@ -217,6 +223,15 @@
 				A0AF3D7E17A8085900D2E836 /* RMStoreDemo-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A0AF3DB317A90F7F00D2E836 /* Optional */ = {
+			isa = PBXGroup;
+			children = (
+				A0AF3DAF17A90F5800D2E836 /* RMStoreLocalReceiptVerificator.h */,
+				A0AF3DB017A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m */,
+			);
+			name = Optional;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -347,6 +362,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A0AF3D1317A802F300D2E836 /* RMStore.m in Sources */,
+				A0AF3DB117A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,6 +371,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A0AF3D2A17A802F300D2E836 /* RMStoreTests.m in Sources */,
+				A0AF3DB517A91CFE00D2E836 /* RMStoreLocalReceiptVerificator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,6 +384,7 @@
 				A0AF3DA217A8094600D2E836 /* RMStoreViewController.m in Sources */,
 				A0AF3DA717A8095F00D2E836 /* RMPurchasesViewController.m in Sources */,
 				A0AF3DA917A80B2F00D2E836 /* RMStore.m in Sources */,
+				A0AF3DB417A91CFD00D2E836 /* RMStoreLocalReceiptVerificator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
