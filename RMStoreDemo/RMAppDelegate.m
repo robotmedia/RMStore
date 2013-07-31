@@ -9,11 +9,16 @@
 #import "RMAppDelegate.h"
 #import "RMStoreViewController.h"
 #import "RMPurchasesViewController.h"
+#import "RMStoreLocalReceiptVerificator.h"
 
-@implementation RMAppDelegate
+@implementation RMAppDelegate {
+    RMStoreLocalReceiptVerificator *_receiptVerificator;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [self configureStore];
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     UIViewController *storeVC = [[RMStoreViewController alloc] initWithNibName:@"RMStoreViewController" bundle:nil];
     UINavigationController *vc1 = [[UINavigationController alloc] initWithRootViewController:storeVC];
@@ -26,6 +31,13 @@
     self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
     return YES;
+}
+
+- (void)configureStore
+{
+    // Using local receipt verification. You might want to implement your own server-side verification instead.
+    _receiptVerificator = [[RMStoreLocalReceiptVerificator alloc] init];
+    [RMStore defaultStore].receiptVerificator = _receiptVerificator;
 }
 
 @end
