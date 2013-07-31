@@ -23,12 +23,6 @@
 
 + (RMStore*)defaultStore;
 
-#pragma mark - Notifications
-
-- (void)addStoreObserver:(id<RMStoreObserver>)observer;
-
-- (void)removeStoreObserver:(id<RMStoreObserver>)observer;
-
 #pragma mark - StoreKit wrapper
 
 + (BOOL)canMakePayments;
@@ -66,6 +60,12 @@
 - (SKProduct*)productForIdentifier:(NSString*)productIdentifier;
 
 - (NSArray*)purchasedIdentifiers;
+
+#pragma mark - Notifications
+
+- (void)addStoreObserver:(id<RMStoreObserver>)observer;
+
+- (void)removeStoreObserver:(id<RMStoreObserver>)observer;
 
 #pragma mark - Utils
 
