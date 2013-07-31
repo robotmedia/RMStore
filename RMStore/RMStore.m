@@ -69,8 +69,10 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     NSMutableDictionary *_addPaymentParameters; // HACK: We use a dictionary of product identifiers because the returned SKPayment is different from the one we add to the queue. Bad Apple.
     NSMutableDictionary *_products;
     NSMutableArray *_productRequests;
-    
-    void (^_restoreTransactionssuccessBlock)();
+
+    NSInteger _pendingRestoredTransactionsCount;
+    BOOL _restoredCompletedTransactionsFinished;
+    void (^_restoreTransactionsSuccessBlock)();
     void (^_restoreTransactionsFailureBlock)(NSError* error);
 }
 
@@ -189,7 +191,8 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 - (void)restoreTransactionsOnSuccess:(void (^)())successBlock
                              failure:(void (^)(NSError *error))failureBlock
 {
-    _restoreTransactionssuccessBlock = successBlock;
+    _pendingRestoredTransactionsCount = 0;
+    _restoreTransactionsSuccessBlock = successBlock;
     _restoreTransactionsFailureBlock = failureBlock;
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
@@ -353,12 +356,9 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 - (void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue
 {
     RMStoreLog(@"restore transactions finished");
-    if (_restoreTransactionssuccessBlock != nil)
-    {
-        _restoreTransactionssuccessBlock();
-        _restoreTransactionssuccessBlock = nil;
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsFinished object:self];
+    _restoredCompletedTransactionsFinished = YES;
+    
+    [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:nil];
 }
 
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error
@@ -372,8 +372,6 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     NSDictionary *userInfo = @{RMStoreNotificationStoreError: error};
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsFailed object:self userInfo:userInfo];
 }
-
-// Private
 
 - (void)completeTransaction:(SKPaymentTransaction *)transaction
 {
@@ -436,13 +434,41 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     SKPaymentTransaction *originalTransaction = transaction.originalTransaction;
     SKPayment *payment = originalTransaction.payment;
 	NSString *productIdentifier = payment.productIdentifier;
-    RMStoreLog(@"transaction purchased with product %@", productIdentifier);
+    RMStoreLog(@"transaction restored with product %@", productIdentifier);
     
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    [self addPurchaseForIdentifier:productIdentifier];
-    
-    NSDictionary *userInfo = @{RMStoreNotificationTransaction: transaction, RMStoreNotificationProductIdentifier : productIdentifier};
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionFinished object:self userInfo:userInfo];
+    _pendingRestoredTransactionsCount++;
+    if (self.receiptVerificator != nil)
+    {
+        [self.receiptVerificator verifyReceiptOfTransaction:transaction success:^{
+            [self verifiedTransaction:transaction];
+            [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
+        } failure:^(NSError *error) {
+            [self failedTransaction:transaction error:error];
+            [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
+        }];
+    }
+    else
+    {
+        RMStoreLog(@"WARNING: no receipt verification");
+        [self verifiedTransaction:transaction];
+    }
+}
+
+- (void)notifyRestoreTransactionFinishedIfApplicableAfterTransaction:(SKPaymentTransaction*)transaction
+{
+    if (transaction != nil && transaction.transactionState == SKPaymentTransactionStateRestored)
+    {
+        _pendingRestoredTransactionsCount--;
+    }
+    if (_restoredCompletedTransactionsFinished && _pendingRestoredTransactionsCount == 0)
+    { // Wait until all restored transations have been verified
+        if (_restoreTransactionsSuccessBlock != nil)
+        {
+            _restoreTransactionsSuccessBlock();
+            _restoreTransactionsSuccessBlock = nil;
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsFinished object:self];
+    }
 }
 
 - (RMAddPaymentParameters*)popAddPaymentParametersForIdentifier:(NSString*)identifier
