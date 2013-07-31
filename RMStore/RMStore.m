@@ -115,38 +115,6 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     return sharedInstance;
 }
 
-#pragma mark - Observers
-
-- (void)addStoreObserver:(id<RMStoreObserver>)observer
-{
-    [self addStoreObserver:observer selector:@selector(storeProductsRequestFailed:) notificationName:RMSKProductsRequestFailed];
-    [self addStoreObserver:observer selector:@selector(storeProductsRequestFinished:) notificationName:RMSKProductsRequestFinished];
-    [self addStoreObserver:observer selector:@selector(storePaymentTransactionFailed:) notificationName:RMSKPaymentTransactionFailed];
-    [self addStoreObserver:observer selector:@selector(storePaymentTransactionFinished:) notificationName:RMSKPaymentTransactionFinished];
-    [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFailed:) notificationName:RMSKRestoreTransactionsFailed];
-    [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFinished:) notificationName:RMSKRestoreTransactionsFinished];
-}
-
-- (void)removeStoreObserver:(id<RMStoreObserver>)observer
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestFailed object:self];
-    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestFinished object:self];
-    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionFailed object:self];
-    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionFinished object:self];
-    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFailed object:self];
-    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFinished object:self];
-}
-
-// Private
-
-- (void)addStoreObserver:(id<RMStoreObserver>)observer selector:(SEL)aSelector notificationName:(NSString*)notificationName
-{
-    if ([observer respondsToSelector:aSelector])
-    {
-        [[NSNotificationCenter defaultCenter] addObserver:observer selector:aSelector name:notificationName object:self];
-    }
-}
-
 #pragma mark - StoreKit wrapper
 
 + (BOOL)canMakePayments
@@ -165,7 +133,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 {
     SKProduct *product = [self productForIdentifier:productIdentifier];
     SKPayment *payment = [SKPayment paymentWithProduct:product];
-    
+      
     RMAddPaymentParameters *parameters = [[RMAddPaymentParameters alloc] init];
     parameters.successBlock = successBlock;
     parameters.failureBlock = failureBlock;
@@ -275,6 +243,38 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     [purchases setObject:count forKey:productIdentifier];
     [defaults setObject:purchases forKey:RMStoreUserDefaultsKey];
     [defaults synchronize];
+}
+
+#pragma mark - Observers
+
+- (void)addStoreObserver:(id<RMStoreObserver>)observer
+{
+    [self addStoreObserver:observer selector:@selector(storeProductsRequestFailed:) notificationName:RMSKProductsRequestFailed];
+    [self addStoreObserver:observer selector:@selector(storeProductsRequestFinished:) notificationName:RMSKProductsRequestFinished];
+    [self addStoreObserver:observer selector:@selector(storePaymentTransactionFailed:) notificationName:RMSKPaymentTransactionFailed];
+    [self addStoreObserver:observer selector:@selector(storePaymentTransactionFinished:) notificationName:RMSKPaymentTransactionFinished];
+    [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFailed:) notificationName:RMSKRestoreTransactionsFailed];
+    [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFinished:) notificationName:RMSKRestoreTransactionsFinished];
+}
+
+- (void)removeStoreObserver:(id<RMStoreObserver>)observer
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestFailed object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestFinished object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionFailed object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionFinished object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFailed object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFinished object:self];
+}
+
+// Private
+
+- (void)addStoreObserver:(id<RMStoreObserver>)observer selector:(SEL)aSelector notificationName:(NSString*)notificationName
+{
+    if ([observer respondsToSelector:aSelector])
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:observer selector:aSelector name:notificationName object:self];
+    }
 }
 
 #pragma mark - Utils
