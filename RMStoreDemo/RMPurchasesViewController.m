@@ -18,8 +18,9 @@
     [super viewDidLoad];
     self.title = NSLocalizedString(@"Purchases", @"");
     
-    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Restore", @"") style:UIBarButtonItemStyleBordered target:self action:@selector(restoreAction)];
-    self.navigationItem.rightBarButtonItem = item;
+    UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Restore", @"") style:UIBarButtonItemStyleBordered target:self action:@selector(restoreAction)];
+    UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(trashAction)];
+    self.navigationItem.rightBarButtonItems = @[item2, item1];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -45,6 +46,12 @@
                                                   otherButtonTitles:nil];
         [alertView show];
     }];
+}
+
+- (void)trashAction
+{
+    [[RMStore defaultStore] clearPurchases];
+    [self.tableView reloadData];
 }
 
 #pragma mark - Table view data source
