@@ -190,6 +190,13 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     [self increasePurchaseCount:1 product:productIdentifier];
 }
 
+- (void)clearPurchases
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults removeObjectForKey:RMStoreUserDefaultsKey];
+    [defaults synchronize];
+}
+
 - (BOOL)consumeProductForIdentifier:(NSString*)productIdentifier
 {
     if (![self isPurchasedForIdentifier:productIdentifier]) return NO;

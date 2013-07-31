@@ -52,6 +52,8 @@
 
 - (void)addPurchaseForIdentifier:(NSString*)productIdentifier;
 
+- (void)clearPurchases;
+
 - (BOOL)consumeProductForIdentifier:(NSString*)productIdentifier;
 
 - (NSInteger)countPurchasesForIdentifier:(NSString*)productIdentifier;
