@@ -28,8 +28,6 @@
  */
 @interface RMStore : NSObject<SKPaymentTransactionObserver, SKProductsRequestDelegate>
 
-@property (nonatomic, weak) id<RMStoreReceiptVerificator> receiptVerificator;
-
 ///---------------------------------------------
 /// @name Getting the Store
 ///---------------------------------------------
@@ -66,7 +64,7 @@
  */
 - (void)requestProducts:(NSSet*)identifiers;
 
-/** Request localized information about a set of products from the Apple App Store. `successBlock` will be called if the payment is successful, `failureBlock` if it isn't.
+/** Request localized information about a set of products from the Apple App Store. `successBlock` will be called if the products request is successful, `failureBlock` if it isn't.
  @param identifiers The set of product identifiers for the products you wish to retrieve information of.
  @param successBlock The block to be called if the products request is sucessful. Can be `nil`.
  @param failureBlock The block to be called if the products request fails. Can be `nil`.
@@ -75,10 +73,25 @@
                 success:(void (^)())successBlock
                 failure:(void (^)(NSError *error))failureBlock;
 
+/** Request to restore previously completed purchases.
+ */
 - (void)restoreTransactions;
 
+/** Request to restore previously completed purchases. `successBlock` will be called if the restore transactions request is successful, `failureBlock` if it isn't.
+ @param successBlock The block to be called if the restore transactions request is sucessful. Can be `nil`.
+ @param failureBlock The block to be called if the restore transactions request fails. Can be `nil`.
+ */
 - (void)restoreTransactionsOnSuccess:(void (^)())successBlock
                              failure:(void (^)(NSError *error))failureBlock;
+
+
+///---------------------------------------------
+/// @name Setting the Receipt Verificator
+///---------------------------------------------
+
+/** The receipt verificator. It is recommended to implement your own server-side verification. Alternatively, app-side verification is provided in `RMStoreLocalReceiptVerificator`.
+ */
+@property (nonatomic, weak) id<RMStoreReceiptVerificator> receiptVerificator;
 
 #pragma mark Purchase management
 ///---------------------------------------------
@@ -104,8 +117,15 @@
 /// @name Managing Observers
 ///---------------------------------------------
 
+/** Adds an observer to the store.
+ Unlike `SKPaymentQueue`, it is not necessary to set an observer.
+ @param observer The observer to add.
+ */
 - (void)addStoreObserver:(id<RMStoreObserver>)observer;
 
+/** Removes an observer from the store.
+ @param observer The observer to remove.
+ */
 - (void)removeStoreObserver:(id<RMStoreObserver>)observer;
 
 #pragma mark Utils
