@@ -171,6 +171,7 @@ static const short _base64DecodingTable[256] = {
             {
                 RMStoreLog(@"Verifying Sandbox Receipt");
                 // From: https://developer.apple.com/library/ios/#technotes/tn2259/_index.html
+                // See also: http://stackoverflow.com/questions/9677193/ios-storekit-can-i-detect-when-im-in-the-sandbox
                 // Always verify your receipt first with the production URL; proceed to verify with the sandbox URL if you receive a 21007 status code. Following this approach ensures that you do not have to switch between URLs while your application is being tested or reviewed in the sandbox or is live in the App Store.
                 
                 static NSString *sandboxURL = @"https://sandbox.itunes.apple.com/verifyReceipt";
