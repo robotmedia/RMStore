@@ -58,7 +58,7 @@
     [self _testLocalizedPriceOfProduct:product];
 }
 
-#pragma mark - Notifications
+#pragma mark Notifications
 
 - (void)testAddStoreObserver
 {
@@ -71,7 +71,7 @@
     [_store removeStoreObserver:self];
 }
 
-#pragma mark - Purchase management
+#pragma mark Purchase management
 
 - (void)testAddPurchaseForIdentifier
 {
@@ -177,14 +177,14 @@
     STAssertTrue(result.count == 2, @"");
 }
 
-#pragma mark - Private
+#pragma mark Private
 
 - (void)_testLocalizedPriceOfProduct:(SKProduct*)product
 {
     // TODO: Use OCMock
 }
 
-#pragma mark - RMStoreObserver
+#pragma mark RMStoreObserver
 
 - (void)storeProductsRequestFailed:(NSNotification*)notification {}
 - (void)storeProductsRequestFinished:(NSNotification*)notification {}

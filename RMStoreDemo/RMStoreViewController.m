@@ -58,7 +58,7 @@
     self.paymentsDisabledLabel.hidden = canMakePayments;
 }
 
-#pragma mark - Table view data source
+#pragma mark Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -80,7 +80,7 @@
     return cell;
 }
 
-#pragma mark - Table view delegate
+#pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {

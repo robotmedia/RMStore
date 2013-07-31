@@ -115,7 +115,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     return sharedInstance;
 }
 
-#pragma mark - StoreKit wrapper
+#pragma mark StoreKit wrapper
 
 + (BOOL)canMakePayments
 {
@@ -177,7 +177,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
-#pragma mark - Purchase management
+#pragma mark Purchase management
 
 - (void)addPurchaseForIdentifier:(NSString*)productIdentifier
 {
@@ -245,7 +245,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     [defaults synchronize];
 }
 
-#pragma mark - Observers
+#pragma mark Observers
 
 - (void)addStoreObserver:(id<RMStoreObserver>)observer
 {
@@ -277,7 +277,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     }
 }
 
-#pragma mark - Utils
+#pragma mark Utils
 
 + (NSString*)localizedPriceOfProduct:(SKProduct*)product
 {
@@ -288,7 +288,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 	return formattedString;
 }
 
-#pragma mark - SKProductsRequestDelegate
+#pragma mark SKProductsRequestDelegate
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response
 {
@@ -343,7 +343,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     return nil;
 }
 
-#pragma mark - SKPaymentTransactionObserver
+#pragma mark SKPaymentTransactionObserver
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions
 {

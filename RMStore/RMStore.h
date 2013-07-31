@@ -38,7 +38,7 @@
  */
 + (RMStore*)defaultStore;
 
-#pragma mark - StoreKit Wrapper
+#pragma mark StoreKit Wrapper
 ///---------------------------------------------
 /// @name Calling StoreKit
 ///---------------------------------------------
@@ -80,7 +80,7 @@
 - (void)restoreTransactionsOnSuccess:(void (^)())successBlock
                              failure:(void (^)(NSError *error))failureBlock;
 
-#pragma mark - Purchase management
+#pragma mark Purchase management
 ///---------------------------------------------
 /// @name Managing Purchases
 ///---------------------------------------------
@@ -99,7 +99,7 @@
 
 - (NSArray*)purchasedIdentifiers;
 
-#pragma mark - Notifications
+#pragma mark Notifications
 ///---------------------------------------------
 /// @name Managing Observers
 ///---------------------------------------------
@@ -108,7 +108,7 @@
 
 - (void)removeStoreObserver:(id<RMStoreObserver>)observer;
 
-#pragma mark - Utils
+#pragma mark Utils
 ///---------------------------------------------
 /// @name Getting the Localized Price of a Product
 ///---------------------------------------------
