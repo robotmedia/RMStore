@@ -17,12 +17,34 @@
 {
     [super viewDidLoad];
     self.title = NSLocalizedString(@"Purchases", @"");
+    
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Restore", @"") style:UIBarButtonItemStyleBordered target:self action:@selector(restoreAction)];
+    self.navigationItem.rightBarButtonItem = item;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     _productIdentifiers = [[RMStore defaultStore] purchasedIdentifiers];
     [self.tableView reloadData];
+}
+
+#pragma mark - Actions
+
+- (void)restoreAction
+{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [[RMStore defaultStore] restoreTransactionsOnSuccess:^{
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;        
+        [self.tableView reloadData];
+    } failure:^(NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Restore Transactions Failed", @"")
+                                                            message:error.localizedDescription
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString(@"OK", @"")
+                                                  otherButtonTitles:nil];
+        [alertView show];
+    }];
 }
 
 #pragma mark - Table view data source
