@@ -21,9 +21,11 @@
 #import "RMPurchasesViewController.h"
 #import "RMStore.h"
 
-@implementation RMPurchasesViewController {
-    NSArray *_productIdentifiers;
-}
+@interface RMPurchasesViewController()<RMStoreObserver>
+
+@end
+
+@implementation RMPurchasesViewController
 
 - (void)viewDidLoad
 {
@@ -33,12 +35,13 @@
     UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Restore", @"") style:UIBarButtonItemStyleBordered target:self action:@selector(restoreAction)];
     UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(trashAction)];
     self.navigationItem.rightBarButtonItems = @[item2, item1];
+    
+    [[RMStore defaultStore] addStoreObserver:self];
 }
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)dealloc
 {
-    _productIdentifiers = [[RMStore defaultStore] purchasedIdentifiers];
-    [self.tableView reloadData];
+    [[RMStore defaultStore] removeStoreObserver:self];
 }
 
 #pragma mark Actions
@@ -70,7 +73,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _productIdentifiers.count;
+    return [[RMStore defaultStore] purchasedIdentifiers].count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -81,7 +84,8 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
     }
     RMStore *store = [RMStore defaultStore];
-    NSString *productID = [_productIdentifiers objectAtIndex:indexPath.row];
+    NSArray *purchasedProducts = [store purchasedIdentifiers];
+    NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
     SKProduct *product = [store productForIdentifier:productID];
     cell.textLabel.text = product ? product.localizedTitle : productID;
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [store countPurchasesForIdentifier:productID]];
@@ -92,12 +96,26 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *productID = [_productIdentifiers objectAtIndex:indexPath.row];
-    const BOOL consumed = [[RMStore defaultStore] consumeProductForIdentifier:productID];
+    RMStore *store = [RMStore defaultStore];
+    NSArray *purchasedProducts = [store purchasedIdentifiers];
+    NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
+    const BOOL consumed = [store consumeProductForIdentifier:productID];
     if (consumed)
     {
         [self.tableView reloadData];
     }
+}
+
+#pragma mark RMStoreObserver
+
+- (void)storeProductsRequestFinished:(NSNotification*)notification
+{
+    [self.tableView reloadData];
+}
+
+- (void)storePaymentTransactionFinished:(NSNotification*)notification
+{
+    [self.tableView reloadData];    
 }
 
 @end
