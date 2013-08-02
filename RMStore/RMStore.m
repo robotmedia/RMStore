@@ -463,6 +463,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     {
         RMStoreLog(@"WARNING: no receipt verification");
         [self verifiedTransaction:transaction];
+        [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
     }
 }
 
