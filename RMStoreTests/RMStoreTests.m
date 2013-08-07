@@ -19,6 +19,7 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+#import <StoreKit/StoreKit.h>
 #import "RMStore.h"
 
 @interface RMStoreTests : SenTestCase<RMStoreObserver>
@@ -40,9 +41,13 @@
     [_store clearPurchases];
 }
 
+#pragma mark StoreKit Wrapper
+
 - (void)testCanMakePayments
 {
-    [RMStore canMakePayments];
+    BOOL expected = [SKPaymentQueue canMakePayments];
+    BOOL result = [RMStore canMakePayments];
+    STAssertEquals(result, expected, @"");
 }
 
 - (void)testDefaultStore
