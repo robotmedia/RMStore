@@ -41,6 +41,13 @@
     [_store clearPurchases];
 }
 
+- (void)testDefaultStore
+{
+    RMStore *store = [RMStore defaultStore];
+    STAssertNotNil(store, @"");
+    STAssertEqualObjects(_store, store, @"");
+}
+
 #pragma mark StoreKit Wrapper
 
 - (void)testCanMakePayments
@@ -50,11 +57,25 @@
     STAssertEquals(result, expected, @"");
 }
 
-- (void)testDefaultStore
+- (void)testAddPayment_UnknownProduct_Nil_Nil
 {
-    RMStore *store = [RMStore defaultStore];
-    STAssertNotNil(store, @"");
-    STAssertEqualObjects(_store, store, @"");
+    [_store addPayment:@"test" success:nil failure:nil];
+}
+
+- (void)testAddPayment_UnknownProduct_Block_Block
+{
+    __block BOOL failureBlockCalled;
+    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warc-retain-cycles"
+        STFail(@"Success block");
+#pragma GCC diagnostic pop
+    } failure:^(SKPaymentTransaction *transaction, NSError *error) {
+        failureBlockCalled = YES;
+        STAssertNil(transaction, @"");
+        STAssertEquals(error.code, RMStoreErrorCodeUnknownProductIdentifier, @"");
+    }];
+    STAssertTrue(failureBlockCalled, @"");
 }
 
 - (void)testLocalizedPriceOfProduct

@@ -24,6 +24,9 @@
 @protocol RMStoreReceiptVerificator;
 @protocol RMStoreObserver;
 
+extern NSString *const RMStoreErrorDomain;
+extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
+
 /** A StoreKit wrapper that adds blocks and notifications, plus optional receipt verification and purchase management.
  */
 @interface RMStore : NSObject<SKPaymentTransactionObserver, SKProductsRequestDelegate>
@@ -53,7 +56,7 @@
 /** Request payment of the product with the given product identifier. `successBlock` will be called if the payment is successful, `failureBlock` if it isn't.
  @param productIdentifier The identifier of the product whose payment will be requested.
  @param successBlock The block to be called if the payment is sucessful. Can be `nil`.
- @param failureBlock The block to be called if the payment fails. Can be `nil`.
+ @param failureBlock The block to be called if the payment fails or there isn't any product with the given identifier. Can be `nil`.
  */
 - (void)addPayment:(NSString*)productIdentifier
            success:(void (^)(SKPaymentTransaction *transaction))successBlock

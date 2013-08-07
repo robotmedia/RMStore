@@ -20,6 +20,9 @@
 
 #import "RMStore.h"
 
+NSString *const RMStoreErrorDomain = @"net.robotmedia.store";
+NSInteger const RMStoreErrorCodeUnknownProductIdentifier = 100;
+
 NSString* const RMSKProductsRequestFailed = @"RMSKProductsRequestFailed";
 NSString* const RMSKProductsRequestFinished = @"RMSKProductsRequestFinished";
 NSString* const RMSKPaymentTransactionFailed = @"RMSKPaymentTransactionFailed";
@@ -132,6 +135,16 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
 {
     SKProduct *product = [self productForIdentifier:productIdentifier];
+    if (product == nil)
+    {
+        RMStoreLog(@"unknown product id %@", productIdentifier)
+        if (failureBlock != nil)
+        {
+            NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnknownProductIdentifier userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Unknown product identifier", "Error description")}];
+            failureBlock(nil, error);
+        }
+        return;
+    }
     SKPayment *payment = [SKPayment paymentWithProduct:product];
       
     RMAddPaymentParameters *parameters = [[RMAddPaymentParameters alloc] init];
