@@ -35,8 +35,47 @@ NSString* const RMStoreNotificationStoreError = @"storeError";
 NSString* const RMStoreNotificationTransaction = @"transaction";
 
 NSString* const RMStoreUserDefaultsKey = @"purchases";
+NSString* const RMStoreUserDefaultsCountKey = @"count";
+NSString* const RMStoreUserDefaultsTransactionsKey = @"transactions";
+
+NSString* const RMStoreCoderTransactionDateKey = @"transactionDate";
+NSString* const RMStoreCoderTransactionIdentifierKey = @"transactionIdentifier";
+NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 
 #define RMStoreLog(...) if (DEBUG) { NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]); }
+
+@implementation RMStoreTransaction
+
+- (id)initWithPaymentTransaction:(SKPaymentTransaction*)paymentTransaction
+{
+    if (self = [super init])
+    {
+        _transactionDate = paymentTransaction.transactionDate;
+        _transactionIdentifier = paymentTransaction.transactionIdentifier;
+        _transactionReceipt = paymentTransaction.transactionReceipt;
+    }
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (self = [super init])
+    {
+        _transactionDate = [decoder decodeObjectForKey:RMStoreCoderTransactionDateKey];
+        _transactionIdentifier = [decoder decodeObjectForKey:RMStoreCoderTransactionIdentifierKey];
+        _transactionReceipt = [decoder decodeObjectForKey:RMStoreCoderTransactionReceiptKey];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeObject:self.transactionDate forKey:RMStoreCoderTransactionDateKey];
+    [coder encodeObject:self.transactionIdentifier forKey:RMStoreCoderTransactionIdentifierKey];
+    [coder encodeObject:self.transactionReceipt forKey:RMStoreCoderTransactionReceiptKey];
+}
+
+@end
 
 @implementation NSNotification(RMStore)
 
@@ -194,7 +233,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 
 - (void)addPurchaseForIdentifier:(NSString*)productIdentifier
 {
-    [self increasePurchaseCount:1 product:productIdentifier];
+    [self increasePurchaseCount:1 product:productIdentifier paymentTransaction:nil];
 }
 
 - (void)clearPurchases
@@ -207,7 +246,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 - (BOOL)consumeProductForIdentifier:(NSString*)productIdentifier
 {
     if (![self isPurchasedForIdentifier:productIdentifier]) return NO;
-    [self increasePurchaseCount:-1 product:productIdentifier];
+    [self increasePurchaseCount:-1 product:productIdentifier paymentTransaction:nil];
     return YES;
 }
 
@@ -215,8 +254,9 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey];
-    NSNumber *number = [purchases objectForKey:productIdentifier];
-    return number ? number.integerValue : 0;
+    NSDictionary *productDictionary = [purchases objectForKey:productIdentifier];
+    const NSInteger count = [[productDictionary objectForKey:RMStoreUserDefaultsCountKey] integerValue];
+    return count;
 }
 
 - (BOOL)isPurchasedForIdentifier:(NSString*)productIdentifier
@@ -236,25 +276,47 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     return [purchases allKeys];
 }
 
-// Private
-
-- (void)increasePurchaseCount:(NSInteger)delta product:(NSString*)productIdentifier
+- (NSArray*)transactionsForIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *previousPurchases = [defaults objectForKey:RMStoreUserDefaultsKey];
-    if (!previousPurchases)
+    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey];
+    NSDictionary *productDictionary = [purchases objectForKey:productIdentifier];
+    NSArray *transactions = [productDictionary objectForKey:RMStoreUserDefaultsTransactionsKey];
+    return transactions;
+}
+
+// Private
+
+- (void)increasePurchaseCount:(NSInteger)delta product:(NSString*)productIdentifier paymentTransaction:(SKPaymentTransaction*)paymentTransaction
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey];
+    if (!purchases)
     {
-        previousPurchases = [NSDictionary dictionary];
+        purchases = [NSDictionary dictionary];
     }
-    NSMutableDictionary *purchases = [NSMutableDictionary dictionaryWithDictionary:previousPurchases];
-    NSNumber *count = [purchases objectForKey:productIdentifier];
-    if (count == nil)
+    NSDictionary *productDictionary = [purchases objectForKey:productIdentifier];
+    if (productDictionary == nil)
     {
-        count = @0;
+        productDictionary = @{RMStoreUserDefaultsCountKey : @(0), RMStoreUserDefaultsTransactionsKey : @[]};
     }
-    count = @(count.integerValue + delta);
-    [purchases setObject:count forKey:productIdentifier];
-    [defaults setObject:purchases forKey:RMStoreUserDefaultsKey];
+    NSInteger count = [[productDictionary objectForKey:RMStoreUserDefaultsCountKey] integerValue];
+    count += delta;
+    
+    NSMutableDictionary *updatedProductDictionary = [NSMutableDictionary dictionaryWithDictionary:productDictionary];
+    [updatedProductDictionary setObject:@(count) forKey:RMStoreUserDefaultsCountKey];
+    if (paymentTransaction != nil)
+    {
+        NSArray *transactions = [productDictionary objectForKey:RMStoreUserDefaultsTransactionsKey];
+        NSMutableArray *updatedTransactions = [NSMutableArray arrayWithArray:transactions];
+        RMStoreTransaction *transaction = [[RMStoreTransaction alloc] initWithPaymentTransaction:paymentTransaction];
+        [updatedTransactions addObject:transaction];
+        [updatedProductDictionary setObject:updatedTransactions forKey:RMStoreUserDefaultsTransactionsKey];
+    }
+    
+    NSMutableDictionary *updatedPurchases = [NSMutableDictionary dictionaryWithDictionary:purchases];
+    [updatedPurchases setObject:updatedProductDictionary forKey:productIdentifier];
+    [defaults setObject:updatedPurchases forKey:RMStoreUserDefaultsKey];
     [defaults synchronize];
 }
 
@@ -424,7 +486,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     SKPayment *payment = transaction.payment;
 	NSString* productIdentifier = payment.productIdentifier;
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    [self addPurchaseForIdentifier:productIdentifier];
+    [self increasePurchaseCount:1 product:productIdentifier paymentTransaction:transaction];
     
     RMAddPaymentParameters *wrapper = [self popAddPaymentParametersForIdentifier:productIdentifier];
     if (wrapper.successBlock != nil)

@@ -115,6 +115,8 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 - (NSArray*)purchasedIdentifiers;
 
+- (NSArray*)transactionsForIdentifier:(NSString*)productIdentifier;
+
 #pragma mark Notifications
 ///---------------------------------------------
 /// @name Managing Observers
@@ -168,5 +170,13 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 @property (nonatomic, readonly) NSString *productIdentifier;
 @property (nonatomic, readonly) NSError *storeError;
 @property (nonatomic, readonly) SKPaymentTransaction *transaction;
+
+@end
+
+@interface RMStoreTransaction : NSObject<NSCoding>
+
+@property(nonatomic, copy) NSDate *transactionDate;
+@property(nonatomic, copy) NSString *transactionIdentifier;
+@property(nonatomic, strong) NSData *transactionReceipt;
 
 @end
