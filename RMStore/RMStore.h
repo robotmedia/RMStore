@@ -101,6 +101,15 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
  */
 @property (nonatomic, weak) id<RMStoreTransactionObfuscator> transactionObfuscator;
 
+#pragma mark Product management
+///---------------------------------------------
+/// @name Managing Products
+///---------------------------------------------
+
+- (SKProduct*)productForIdentifier:(NSString*)productIdentifier;
+
++ (NSString*)localizedPriceOfProduct:(SKProduct*)product;
+
 #pragma mark Purchase management
 ///---------------------------------------------
 /// @name Managing Purchases
@@ -115,8 +124,6 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 - (NSInteger)countPurchasesForIdentifier:(NSString*)productIdentifier;
 
 - (BOOL)isPurchasedForIdentifier:(NSString*)productIdentifier;
-
-- (SKProduct*)productForIdentifier:(NSString*)productIdentifier;
 
 - (NSArray*)purchasedIdentifiers;
 
@@ -137,25 +144,6 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
  @param observer The observer to remove.
  */
 - (void)removeStoreObserver:(id<RMStoreObserver>)observer;
-
-#pragma mark Utils
-///---------------------------------------------
-/// @name Getting the Localized Price of a Product
-///---------------------------------------------
-
-+ (NSString*)localizedPriceOfProduct:(SKProduct*)product;
-
-@end
-
-@protocol RMStoreObserver<NSObject>
-@optional
-
-- (void)storeProductsRequestFailed:(NSNotification*)notification;
-- (void)storeProductsRequestFinished:(NSNotification*)notification;
-- (void)storePaymentTransactionFailed:(NSNotification*)notification;
-- (void)storePaymentTransactionFinished:(NSNotification*)notification;
-- (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
-- (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
 
 @end
 
@@ -181,6 +169,18 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 - (void)verifyReceiptOfTransaction:(SKPaymentTransaction*)transaction
                            success:(void (^)())successBlock
                            failure:(void (^)(NSError *error))failureBlock;
+
+@end
+
+@protocol RMStoreObserver<NSObject>
+@optional
+
+- (void)storeProductsRequestFailed:(NSNotification*)notification;
+- (void)storeProductsRequestFinished:(NSNotification*)notification;
+- (void)storePaymentTransactionFailed:(NSNotification*)notification;
+- (void)storePaymentTransactionFinished:(NSNotification*)notification;
+- (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
+- (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
 
 @end
 

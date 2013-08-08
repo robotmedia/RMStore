@@ -80,6 +80,14 @@
     STAssertTrue(failureBlockCalled, @"");
 }
 
+#pragma mark Product management
+
+- (void)testProductForIdentifierNil
+{
+    SKProduct *product = [_store productForIdentifier:@"test"];
+    STAssertNil(product, @"");
+}
+
 - (void)testLocalizedPriceOfProduct
 {
     SKProduct *product = [[SKProduct alloc] init];
@@ -192,12 +200,6 @@
 {
     BOOL result = [_store isPurchasedForIdentifier:@"test"];
     STAssertFalse(result, @"");
-}
-
-- (void)testProductForIdentifierNil
-{
-    SKProduct *product = [_store productForIdentifier:@"test"];
-    STAssertNil(product, @"");
 }
 
 - (void)testPurchasedIdentifiersEmpty

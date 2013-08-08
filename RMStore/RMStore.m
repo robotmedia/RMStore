@@ -261,6 +261,22 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
+#pragma mark Product management
+
+- (SKProduct*)productForIdentifier:(NSString*)productIdentifier
+{
+    return [_products objectForKey:productIdentifier];
+}
+
++ (NSString*)localizedPriceOfProduct:(SKProduct*)product
+{
+	NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+	numberFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
+	numberFormatter.locale = product.priceLocale;
+	NSString *formattedString = [numberFormatter stringFromNumber:product.price];
+	return formattedString;
+}
+
 #pragma mark Purchase management
 
 - (void)addPurchaseForIdentifier:(NSString*)productIdentifier
@@ -314,11 +330,6 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 - (BOOL)isPurchasedForIdentifier:(NSString*)productIdentifier
 {
     return [self countPurchasesForIdentifier:productIdentifier] > 0;
-}
-
-- (SKProduct*)productForIdentifier:(NSString*)productIdentifier
-{
-    return [_products objectForKey:productIdentifier];
 }
 
 - (NSArray*)purchasedIdentifiers
@@ -405,17 +416,6 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
     {
         [[NSNotificationCenter defaultCenter] addObserver:observer selector:aSelector name:notificationName object:self];
     }
-}
-
-#pragma mark Utils
-
-+ (NSString*)localizedPriceOfProduct:(SKProduct*)product
-{
-	NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-	numberFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
-	numberFormatter.locale = product.priceLocale;
-	NSString *formattedString = [numberFormatter stringFromNumber:product.price];
-	return formattedString;
 }
 
 #pragma mark SKProductsRequestDelegate
