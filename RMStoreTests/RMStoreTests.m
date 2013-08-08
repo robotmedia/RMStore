@@ -46,6 +46,8 @@
     RMStore *store = [RMStore defaultStore];
     STAssertNotNil(store, @"");
     STAssertEqualObjects(_store, store, @"");
+    STAssertNil(_store.receiptVerificator, @"");
+    STAssertNotNil(_store.transactionObfuscator, @"");
 }
 
 #pragma mark StoreKit Wrapper
@@ -101,28 +103,53 @@
 
 - (void)testAddPurchaseForIdentifier
 {
+    STAssertTrue([_store transactionsForIdentifier:@"test"].count == 0, @"");
+
     [_store addPurchaseForIdentifier:@"test"];
+    
     STAssertTrue([_store isPurchasedForIdentifier:@"test"], @"");
     STAssertEquals([_store countPurchasesForIdentifier:@"test"], 1, @"");
+    NSArray *transactions = [_store transactionsForIdentifier:@"test"];
+    STAssertTrue(transactions.count == 1, @"");
+    RMStoreTransaction *transaction = [transactions objectAtIndex:0];
+    STAssertEqualObjects(transaction.productIdentifier, @"test", @"");
+    STAssertNotNil(transaction.transactionDate, @"");
+    STAssertNil(transaction.transactionIdentifier, @"");
+    STAssertNil(transaction.transactionReceipt, @"");
+    STAssertFalse(transaction.consumed, @"");
 }
 
 - (void)testClearPurchases
 {
     [_store addPurchaseForIdentifier:@"test"];
     STAssertTrue([_store isPurchasedForIdentifier:@"test"], @"");
+    STAssertTrue([_store transactionsForIdentifier:@"test"].count == 1, @"");
 
     [_store clearPurchases];
     STAssertFalse([_store isPurchasedForIdentifier:@"test"], @"");
+    STAssertTrue([_store transactionsForIdentifier:@"test"].count == 0, @"");
 }
 
 - (void)testConsumeProductForIdentifierYES
 {
     [_store addPurchaseForIdentifier:@"test"];
     STAssertEquals([_store countPurchasesForIdentifier:@"test"], 1, @"");
+    {
+        NSArray *transactions = [_store transactionsForIdentifier:@"test"];
+        RMStoreTransaction *transaction = [transactions objectAtIndex:0];
+        STAssertFalse(transaction.consumed, @"");
+    }
     
     BOOL result = [_store consumeProductForIdentifier:@"test"];
+
     STAssertTrue(result, @"");
     STAssertEquals([_store countPurchasesForIdentifier:@"test"], 0, @"");
+    {
+        NSArray *transactions = [_store transactionsForIdentifier:@"test"];
+        STAssertTrue(transactions.count == 1, @"");
+        RMStoreTransaction *transaction = [transactions objectAtIndex:0];
+        STAssertTrue(transaction.consumed, @"");
+    }
 }
 
 - (void)testConsumeProductForIdentifierNO
@@ -201,6 +228,29 @@
     [_store addPurchaseForIdentifier:@"test2"];
     NSArray *result = [_store purchasedIdentifiers];
     STAssertTrue(result.count == 2, @"");
+}
+
+- (void)testTransactionsForIdentifierZero
+{
+    NSArray *transactions = [_store transactionsForIdentifier:@"test"];
+    STAssertTrue(transactions.count == 0, @"");
+}
+
+- (void)testTransactionsForIdentifierOne
+{
+    [_store addPurchaseForIdentifier:@"test"];
+    NSArray *transactions = [_store transactionsForIdentifier:@"test"];
+    STAssertTrue(transactions.count == 1, @"");
+}
+
+- (void)testTransactionsForIdentifierMany
+{
+    [_store addPurchaseForIdentifier:@"test1"];
+    [_store addPurchaseForIdentifier:@"test1"];
+    [_store addPurchaseForIdentifier:@"test1"];
+    [_store addPurchaseForIdentifier:@"test2"];
+    NSArray *transactions = [_store transactionsForIdentifier:@"test1"];
+    STAssertTrue(transactions.count == 3, @"");
 }
 
 #pragma mark Private
