@@ -22,6 +22,7 @@
 #import <StoreKit/StoreKit.h>
 
 @protocol RMStoreReceiptVerificator;
+@protocol RMStoreTransactionObfuscator;
 @protocol RMStoreObserver;
 
 extern NSString *const RMStoreErrorDomain;
@@ -89,12 +90,16 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 
 ///---------------------------------------------
-/// @name Setting the Receipt Verificator
+/// @name Setting Delegates
 ///---------------------------------------------
 
-/** The receipt verificator. It is recommended to implement your own server-side verification. Alternatively, app-side verification is provided in `RMStoreLocalReceiptVerificator`.
+/** The receipt verificator. It is recommended to implement your own server-side verification if piracy is a concern. Alternatively, app-side verification is provided in `RMStoreLocalReceiptVerificator`.
  */
 @property (nonatomic, weak) id<RMStoreReceiptVerificator> receiptVerificator;
+
+/** The transaction obfuscator. It is recommended to provide your own obfuscator if piracy is a concern. The store will use weak obfuscation via `NSKeyedArchiver` by default.
+ */
+@property (nonatomic, weak) id<RMStoreTransactionObfuscator> transactionObfuscator;
 
 #pragma mark Purchase management
 ///---------------------------------------------
@@ -154,6 +159,23 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 @end
 
+@interface RMStoreTransaction : NSObject<NSCoding>
+
+@property(nonatomic, assign) BOOL consumed;
+@property(nonatomic, copy) NSString *productIdentifier;
+@property(nonatomic, copy) NSDate *transactionDate;
+@property(nonatomic, copy) NSString *transactionIdentifier;
+@property(nonatomic, strong) NSData *transactionReceipt;
+
+@end
+
+@protocol RMStoreTransactionObfuscator<NSObject>
+
+- (NSData*)dataWithTransaction:(RMStoreTransaction*)transaction;
+- (RMStoreTransaction*)transactionWithData:(NSData*)data;
+
+@end
+
 @protocol RMStoreReceiptVerificator <NSObject>
 
 - (void)verifyReceiptOfTransaction:(SKPaymentTransaction*)transaction
@@ -170,13 +192,5 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 @property (nonatomic, readonly) NSString *productIdentifier;
 @property (nonatomic, readonly) NSError *storeError;
 @property (nonatomic, readonly) SKPaymentTransaction *transaction;
-
-@end
-
-@interface RMStoreTransaction : NSObject<NSCoding>
-
-@property(nonatomic, copy) NSDate *transactionDate;
-@property(nonatomic, copy) NSString *transactionIdentifier;
-@property(nonatomic, strong) NSData *transactionReceipt;
 
 @end
