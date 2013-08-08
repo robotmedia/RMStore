@@ -42,7 +42,11 @@ NSString* const RMStoreCoderTransactionDateKey = @"transactionDate";
 NSString* const RMStoreCoderTransactionIdentifierKey = @"transactionIdentifier";
 NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 
-#define RMStoreLog(...) if (DEBUG) { NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]); }
+#ifdef DEBUG
+#define RMStoreLog(...) NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]);
+#else
+#define RMStoreLog(...)
+#endif
 
 @implementation RMStoreTransaction
 
@@ -89,7 +93,7 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 
 - (NSData*)dataWithTransaction:(RMStoreTransaction*)transaction
 {
-    RMStoreLog(@"WARNING: using default weak obfuscation. Provide your own obfuscator if piracy is a concern.")
+    RMStoreLog(@"WARNING: using default weak obfuscation. Provide your own obfuscator if piracy is a concern.");
     NSMutableData *data = [[NSMutableData alloc] init];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
     [archiver encodeObject:transaction];
