@@ -73,7 +73,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[RMStore defaultStore] purchasedIdentifiers].count;
+    return [[RMStore defaultStore] purchasedProductIdentifiers].count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -84,7 +84,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
     }
     RMStore *store = [RMStore defaultStore];
-    NSArray *purchasedProducts = [store purchasedIdentifiers];
+    NSArray *purchasedProducts = [store purchasedProductIdentifiers];
     NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
     SKProduct *product = [store productForIdentifier:productID];
     cell.textLabel.text = product ? product.localizedTitle : productID;
@@ -97,7 +97,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     RMStore *store = [RMStore defaultStore];
-    NSArray *purchasedProducts = [store purchasedIdentifiers];
+    NSArray *purchasedProducts = [store purchasedProductIdentifiers];
     NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
     const BOOL consumed = [store consumeProductForIdentifier:productID];
     if (consumed)

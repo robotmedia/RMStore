@@ -279,9 +279,9 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 
 #pragma mark Purchase management
 
-- (void)addPurchaseForIdentifier:(NSString*)productIdentifier
+- (void)addPurchaseForProductIdentifier:(NSString*)productIdentifier
 {
-    [self registerPurchase:productIdentifier paymentTransaction:nil];
+    [self addPurchaseForProductIdentifier:productIdentifier paymentTransaction:nil];
 }
 
 - (void)clearPurchases
@@ -332,14 +332,14 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
     return [self countPurchasesForIdentifier:productIdentifier] > 0;
 }
 
-- (NSArray*)purchasedIdentifiers
+- (NSArray*)purchasedProductIdentifiers
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey];
     return [purchases allKeys];
 }
 
-- (NSArray*)transactionsForIdentifier:(NSString*)productIdentifier
+- (NSArray*)transactionsForProductIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey];
@@ -355,7 +355,7 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 
 // Private
 
-- (void)registerPurchase:(NSString*)productIdentifier paymentTransaction:(SKPaymentTransaction*)paymentTransaction
+- (void)addPurchaseForProductIdentifier:(NSString*)productIdentifier paymentTransaction:(SKPaymentTransaction*)paymentTransaction
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey] ? : [NSDictionary dictionary];
@@ -541,7 +541,7 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
     SKPayment *payment = transaction.payment;
 	NSString* productIdentifier = payment.productIdentifier;
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    [self registerPurchase:productIdentifier paymentTransaction:transaction];
+    [self addPurchaseForProductIdentifier:productIdentifier paymentTransaction:transaction];
     
     RMAddPaymentParameters *wrapper = [self popAddPaymentParametersForIdentifier:productIdentifier];
     if (wrapper.successBlock != nil)

@@ -115,7 +115,7 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 /// @name Managing Purchases
 ///---------------------------------------------
 
-- (void)addPurchaseForIdentifier:(NSString*)productIdentifier;
+- (void)addPurchaseForProductIdentifier:(NSString*)productIdentifier;
 
 - (void)clearPurchases;
 
@@ -125,9 +125,9 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 - (BOOL)isPurchasedForIdentifier:(NSString*)productIdentifier;
 
-- (NSArray*)purchasedIdentifiers;
+- (NSArray*)purchasedProductIdentifiers;
 
-- (NSArray*)transactionsForIdentifier:(NSString*)productIdentifier;
+- (NSArray*)transactionsForProductIdentifier:(NSString*)productIdentifier;
 
 #pragma mark Notifications
 ///---------------------------------------------
