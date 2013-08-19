@@ -522,8 +522,7 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 - (void)completeTransaction:(SKPaymentTransaction *)transaction
 {
     SKPayment *payment = transaction.payment;
-	NSString* productIdentifier = payment.productIdentifier;
-    RMStoreLog(@"transaction purchased with product %@", productIdentifier);
+    RMStoreLog(@"transaction purchased with product %@", payment.productIdentifier);
     
     if (self.receiptVerificator != nil)
     {
@@ -579,8 +578,7 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 {
     SKPaymentTransaction *originalTransaction = transaction.originalTransaction;
     SKPayment *payment = originalTransaction.payment;
-	NSString *productIdentifier = payment.productIdentifier;
-    RMStoreLog(@"transaction restored with product %@", productIdentifier);
+    RMStoreLog(@"transaction restored with product %@", payment.productIdentifier);
     
     _pendingRestoredTransactionsCount++;
     if (self.receiptVerificator != nil)
