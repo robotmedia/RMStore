@@ -23,10 +23,10 @@
 NSString *const RMStoreErrorDomain = @"net.robotmedia.store";
 NSInteger const RMStoreErrorCodeUnknownProductIdentifier = 100;
 
-NSString* const RMSKProductsRequestFailed = @"RMSKProductsRequestFailed";
-NSString* const RMSKProductsRequestFinished = @"RMSKProductsRequestFinished";
 NSString* const RMSKPaymentTransactionFailed = @"RMSKPaymentTransactionFailed";
 NSString* const RMSKPaymentTransactionFinished = @"RMSKPaymentTransactionFinished";
+NSString* const RMSKProductsRequestFailed = @"RMSKProductsRequestFailed";
+NSString* const RMSKProductsRequestFinished = @"RMSKProductsRequestFinished";
 NSString* const RMSKRestoreTransactionsFailed = @"RMSKRestoreTransactionsFailed";
 NSString* const RMSKRestoreTransactionsFinished = @"RMSKRestoreTransactionsFinished";
 
@@ -49,6 +49,13 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 #else
 #define RMStoreLog(...)
 #endif
+
+typedef void (^RMSKPaymentTransactionFailureBlock)(SKPaymentTransaction *transaction, NSError *error);
+typedef void (^RMSKPaymentTransactionSuccessBlock)(SKPaymentTransaction *transaction);
+typedef void (^RMSKProductsRequestFailureBlock)(NSError *error);
+typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *invalidIdentifiers);
+typedef void (^RMSKRestoreTransactionsFailureBlock)(NSError *error);
+typedef void (^RMSKRestoreTransactionsSuccessBlock)();
 
 @implementation RMStoreTransaction
 
@@ -145,8 +152,8 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 @interface RMProductsRequestWrapper : NSObject
 
 @property (nonatomic, strong) SKProductsRequest *request;
-@property (nonatomic, strong) void (^successBlock)(NSArray *products, NSArray *invalidProductIdentifiers);
-@property (nonatomic, strong) void (^failureBlock)(NSError* error);
+@property (nonatomic, strong) RMSKProductsRequestSuccessBlock successBlock;
+@property (nonatomic, strong) RMSKProductsRequestFailureBlock failureBlock;
 
 @end
 
@@ -155,8 +162,8 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 
 @interface RMAddPaymentParameters : NSObject
 
-@property (nonatomic, strong) void (^successBlock)(SKPaymentTransaction *transaction);
-@property (nonatomic, strong) void (^failureBlock)(SKPaymentTransaction *transaction, NSError *error);
+@property (nonatomic, strong) RMSKPaymentTransactionSuccessBlock successBlock;
+@property (nonatomic, strong) RMSKPaymentTransactionFailureBlock failureBlock;
 
 @end
 
@@ -218,8 +225,8 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 }
 
 - (void)addPayment:(NSString*)productIdentifier
-           success:(void (^)(SKPaymentTransaction *transaction))successBlock
-           failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
+           success:(RMSKPaymentTransactionSuccessBlock)successBlock
+           failure:(RMSKPaymentTransactionFailureBlock)failureBlock
 {
     SKProduct *product = [self productForIdentifier:productIdentifier];
     if (product == nil)
@@ -248,8 +255,8 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 }
 
 - (void)requestProducts:(NSSet*)identifiers
-                success:(void (^)(NSArray *products, NSArray *invalidProductIdentifiers))successBlock
-                failure:(void (^)(NSError* error))failureBlock
+                success:(RMSKProductsRequestSuccessBlock)successBlock
+                failure:(RMSKProductsRequestFailureBlock)failureBlock
 {
     SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:identifiers];
 	productsRequest.delegate = self;
@@ -268,8 +275,8 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
     [self restoreTransactionsOnSuccess:nil failure:nil];
 }
 
-- (void)restoreTransactionsOnSuccess:(void (^)())successBlock
-                             failure:(void (^)(NSError *error))failureBlock
+- (void)restoreTransactionsOnSuccess:(RMSKRestoreTransactionsSuccessBlock)successBlock
+                             failure:(RMSKRestoreTransactionsFailureBlock)failureBlock
 {
     _pendingRestoredTransactionsCount = 0;
     _restoreTransactionsSuccessBlock = successBlock;
