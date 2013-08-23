@@ -2,7 +2,7 @@
 
 A lightweight iOS framework for In-App Purchases.
 
-RMStore adds [blocks](https://github.com/robotmedia/RMStore/edit/master/README.md#storekit-with-blocks) and notifications to StoreKit, plus [receipt verification](https://github.com/robotmedia/RMStore/edit/master/README.md#receipt-verification) and purchase management. Purchasing a product is as simple as:
+RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.md#storekit-with-blocks) and notifications to StoreKit, plus [receipt verification](https://github.com/robotmedia/RMStore/blob/master/README.md#receipt-verification) and purchase management. Purchasing a product is as simple as:
 
 ```objective-c
 [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
