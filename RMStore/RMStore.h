@@ -74,7 +74,7 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
  @param failureBlock The block to be called if the products request fails. Can be `nil`.
  */
 - (void)requestProducts:(NSSet*)identifiers
-                success:(void (^)())successBlock
+                success:(void (^)(NSArray *products, NSArray *invalidProductIdentifiers))successBlock
                 failure:(void (^)(NSError *error))failureBlock;
 
 /** Request to restore previously completed purchases.
@@ -189,7 +189,9 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
  */
 @interface NSNotification(RMStore)
 
+@property (nonatomic, readonly) NSArray *invalidProductIdentifiers;
 @property (nonatomic, readonly) NSString *productIdentifier;
+@property (nonatomic, readonly) NSArray *products;
 @property (nonatomic, readonly) NSError *storeError;
 @property (nonatomic, readonly) SKPaymentTransaction *transaction;
 

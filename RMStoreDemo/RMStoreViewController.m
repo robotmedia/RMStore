@@ -36,7 +36,7 @@
                   @"net.robotmedia.test.nonconsumable"];
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [[RMStore defaultStore] requestProducts:[NSSet setWithArray:_products] success:^{
+    [[RMStore defaultStore] requestProducts:[NSSet setWithArray:_products] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         _productsRequestFinished = YES;
         [self.tableView reloadData];

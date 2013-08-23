@@ -30,7 +30,9 @@ NSString* const RMSKPaymentTransactionFinished = @"RMSKPaymentTransactionFinishe
 NSString* const RMSKRestoreTransactionsFailed = @"RMSKRestoreTransactionsFailed";
 NSString* const RMSKRestoreTransactionsFinished = @"RMSKRestoreTransactionsFinished";
 
+NSString* const RMStoreNotificationInvalidProductIdentifiers = @"invalidProductIdentifiers";
 NSString* const RMStoreNotificationProductIdentifier = @"productIdentifier";
+NSString* const RMStoreNotificationProducts = @"products";
 NSString* const RMStoreNotificationStoreError = @"storeError";
 NSString* const RMStoreNotificationTransaction = @"transaction";
 
@@ -113,17 +115,27 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 
 @implementation NSNotification(RMStore)
 
-- (NSString*) productIdentifier
+- (NSArray*)invalidProductIdentifiers
+{
+    return [self.userInfo objectForKey:RMStoreNotificationInvalidProductIdentifiers];
+}
+
+- (NSString*)productIdentifier
 {
     return [self.userInfo objectForKey:RMStoreNotificationProductIdentifier];
 }
 
-- (NSError*) storeError
+- (NSArray*)products
+{
+    return [self.userInfo objectForKey:RMStoreNotificationProducts];
+}
+
+- (NSError*)storeError
 {
     return [self.userInfo objectForKey:RMStoreNotificationStoreError];
 }
 
-- (SKPaymentTransaction*) transaction
+- (SKPaymentTransaction*)transaction
 {
     return [self.userInfo objectForKey:RMStoreNotificationTransaction];
 }
@@ -133,7 +145,7 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 @interface RMProductsRequestWrapper : NSObject
 
 @property (nonatomic, strong) SKProductsRequest *request;
-@property (nonatomic, strong) void (^successBlock)();
+@property (nonatomic, strong) void (^successBlock)(NSArray *products, NSArray *invalidProductIdentifiers);
 @property (nonatomic, strong) void (^failureBlock)(NSError* error);
 
 @end
@@ -236,7 +248,7 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 }
 
 - (void)requestProducts:(NSSet*)identifiers
-                success:(void (^)())successBlock
+                success:(void (^)(NSArray *products, NSArray *invalidProductIdentifiers))successBlock
                 failure:(void (^)(NSError* error))failureBlock
 {
     SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:identifiers];
@@ -427,13 +439,16 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response
 {
     RMStoreLog(@"products request received response");
-    for (SKProduct *product in response.products)
+    NSArray *products = [NSArray arrayWithArray:response.products];
+    NSArray *invalidProductIdentifiers = [NSArray arrayWithArray:response.invalidProductIdentifiers];
+    
+    for (SKProduct *product in products)
     {
         RMStoreLog(@"received product with id %@", product.productIdentifier);
         [_products setObject:product forKey:product.productIdentifier];
     }
     
-    for (NSString *invalid in response.invalidProductIdentifiers)
+    for (NSString *invalid in invalidProductIdentifiers)
     {
         RMStoreLog(@"invalid product with id %@", invalid);
     }
@@ -441,9 +456,10 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
     RMProductsRequestWrapper *wrapper = [self popWrapperForRequest:request];
     if (wrapper.successBlock)
     {
-        wrapper.successBlock();
+        wrapper.successBlock(products, invalidProductIdentifiers);
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFinished object:self];
+    NSDictionary *userInfo = @{RMStoreNotificationProducts: products, RMStoreNotificationInvalidProductIdentifiers: invalidProductIdentifiers};
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFinished object:self userInfo:userInfo];
 }
 
 - (void)requestDidFinish:(SKRequest *)request
