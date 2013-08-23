@@ -162,7 +162,7 @@ if (purchaseCount > 0)
 
 ###Managing purchases manually
 
-In some cases you might want to bypass payment with StoreKit and mark a product as purchased (e.g., for promotional purposes). You can do this with:
+In some cases you might want to bypass payment with StoreKit and mark a product as purchased manually (e.g., for promotional purposes). You can do this with:
 
 ```objective-c
 [[RMStore defaultStore] addPurchaseForProductIdentifier:@"breathMints"];
