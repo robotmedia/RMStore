@@ -1,8 +1,8 @@
 #RMStore
 
-An iOS framework for In-App Purchases.
+A lightweight iOS framework for In-App Purchases.
 
-RMStore adds blocks and notifications to StoreKit, plus receipt verification and purchase management. Purchasing a product is as simple as:
+RMStore adds [blocks](https://github.com/robotmedia/RMStore/edit/master/README.md#storekit-with-blocks) and notifications to StoreKit, plus [receipt verification](https://github.com/robotmedia/RMStore/edit/master/README.md#receipt-verification) and purchase management. Purchasing a product is as simple as:
 
 ```objective-c
 [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
@@ -17,6 +17,40 @@ RMStore adds blocks and notifications to StoreKit, plus receipt verification and
 1. Add [`RMStore.h`](https://github.com/robotmedia/RMStore/blob/master/RMStore/RMStore.h) and [`RMStore.m`](https://github.com/robotmedia/RMStore/blob/master/RMStore/RMStore.m)
 2. Link `StoreKit.framework`
 3. Profit!
+
+##StoreKit with blocks
+
+RMStore adds blocks to all asynchronous StoreKit operations.
+
+###Requesting products
+
+```objective-c
+[[RMStore defaultStore] requestProducts:[NSSet setWithArray:@[@"fabulousIdol", "rootBeer", @"rubberChicken"] success:^{
+    NSLog(@"Products loaded", @"");
+} failure:^(NSError *error) {
+    NSLog(@"Something went wrong", @"");
+}];
+```
+
+###Add payment
+
+```objective-c
+[[RMStore defaultStore] addPayment:@"waxLips" success:^(SKPaymentTransaction *transaction) {
+    NSLog(@"Product purchased", @"");
+} failure:^(SKPaymentTransaction *transaction, NSError *error) {
+    NSLog(@"Something went wrong", @"");
+}];
+```
+
+###Restore transactions
+
+```objective-c
+[[RMStore defaultStore] restoreTransactionsOnSuccess:^{
+    NSLog(@"Transactions restored", @"");
+} failure:^(NSError *error) {
+    NSLog(@"Something went wrong", @"");
+}];
+```
 
 ##Receipt verification
 
@@ -58,11 +92,13 @@ If you are using RMStore in your non-ARC project, you will need to set a `-fobjc
 
 ##Roadmap
 
-RMStore currently supports consumables and non-consumables only. Future enhancements will include:
+RMStore is in early stage and currently supports consumables and non-consumables only. Future enhancements will include:
 
 * Content download support
 * Subcriptions support
 * OS X support
+
+If you are looking for something more mature, check out [CargoBay](https://github.com/mattt/CargoBay) or [MKStoreKit](https://github.com/MugunthKumar/MKStoreKit).
 
 ##License
 
