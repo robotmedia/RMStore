@@ -2,7 +2,7 @@
 
 A lightweight iOS framework for In-App Purchases.
 
-RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.md#storekit-with-blocks) and notifications to StoreKit, plus [receipt verification](https://github.com/robotmedia/RMStore/blob/master/README.md#receipt-verification) and purchase management. Purchasing a product is as simple as:
+RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.md#storekit-with-blocks) and [notifications](https://github.com/robotmedia/RMStore/README.md#notifications) to StoreKit, plus [receipt verification](https://github.com/robotmedia/RMStore/blob/master/README.md#receipt-verification) and purchase management. Purchasing a product is as simple as:
 
 ```objective-c
 [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
@@ -50,6 +50,57 @@ RMStore adds blocks to all asynchronous StoreKit operations.
 } failure:^(NSError *error) {
     NSLog(@"Something went wrong", @"");
 }];
+```
+
+##Notifications
+
+RMStore sends notifications of StoreKit related events and extends `NSNotification` to provide relevant information. To receive them, implement the desired methods of the `RMStoreObserver` protocol and add the observer to `RMStore`.
+
+###Adding and removing the observer
+
+```objective-c
+[[RMStore defaultStore] addStoreObserver:self];
+...
+[[RMStore defaultStore] removeStoreObserver:self];
+```
+
+###Products request notifications
+
+```objective-c
+- (void)storeProductsRequestFailed:(NSNotification*)notification
+{
+    NSError *error = notification.storeError;
+}
+
+- (void)storeProductsRequestFinished:(NSNotification*)notification { }
+```
+
+###Payment transaction notifications
+
+```objective-c
+- (void)storePaymentTransactionFailed:(NSNotification*)notification
+{
+    NSError *error = notification.storeError;
+    NSString *productIdentifier = notification.productIdentifier;
+    SKPaymentTransaction *transaction = notification.transaction; // Can be nil
+}
+
+- (void)storePaymentTransactionFinished:(NSNotification*)notification
+{
+    NSString *productIdentifier = notification.productIdentifier;
+    SKPaymentTransaction *transaction = notification.transaction;
+}
+```
+
+###Restore transactions notifications
+
+```objective-c
+- (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
+{
+    NSError *error = notification.storeError;
+}
+
+- (void)storeRestoreTransactionsFinished:(NSNotification*)notification { }
 ```
 
 ##Receipt verification
