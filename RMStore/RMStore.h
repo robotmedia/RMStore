@@ -70,7 +70,7 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 /** Request localized information about a set of products from the Apple App Store. `successBlock` will be called if the products request is successful, `failureBlock` if it isn't.
  @param identifiers The set of product identifiers for the products you wish to retrieve information of.
- @param successBlock The block to be called if the products request is sucessful. Can be `nil`.
+ @param successBlock The block to be called if the products request is sucessful. Can be `nil`. It takes two parameters: `products`, an array of SKProducts, one product for each valid product identifier provided in the original request, and `invalidProductIdentifiers`, an array of product identifiers that were not recognized by the App Store. 
  @param failureBlock The block to be called if the products request fails. Can be `nil`.
  */
 - (void)requestProducts:(NSSet*)identifiers
@@ -175,10 +175,10 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 @protocol RMStoreObserver<NSObject>
 @optional
 
-- (void)storeProductsRequestFailed:(NSNotification*)notification;
-- (void)storeProductsRequestFinished:(NSNotification*)notification;
 - (void)storePaymentTransactionFailed:(NSNotification*)notification;
 - (void)storePaymentTransactionFinished:(NSNotification*)notification;
+- (void)storeProductsRequestFailed:(NSNotification*)notification;
+- (void)storeProductsRequestFinished:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
 
@@ -189,10 +189,24 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
  */
 @interface NSNotification(RMStore)
 
+/** Array of product identifiers that were not recognized by the App Store. Used in `storeProductsRequestFinished:`.
+ */
 @property (nonatomic, readonly) NSArray *invalidProductIdentifiers;
+
+/** Used in `storePaymentTransactionFinished` and `storePaymentTransactionFailed`.
+ */
 @property (nonatomic, readonly) NSString *productIdentifier;
+
+/** Array of SKProducts, one product for each valid product identifier provided in the corresponding request. Used in `storeProductsRequestFinished:`.
+ */
 @property (nonatomic, readonly) NSArray *products;
+
+/** Used in `storePaymentTransactionFailed`, `storeProductsRequestFailed` and `storeRestoreTransactionsFailed`.
+ */
 @property (nonatomic, readonly) NSError *storeError;
+
+/** Used in `storePaymentTransactionFinished` and in `storePaymentTransactionFailed`.
+ */
 @property (nonatomic, readonly) SKPaymentTransaction *transaction;
 
 @end
