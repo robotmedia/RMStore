@@ -25,7 +25,8 @@ RMStore adds blocks to all asynchronous StoreKit operations.
 ###Requesting products
 
 ```objective-c
-[[RMStore defaultStore] requestProducts:[NSSet setWithArray:@[@"fabulousIdol", "rootBeer", @"rubberChicken"] success:^{
+NSSet *products = [NSSet setWithArray:@[@"fabulousIdol", @"rootBeer", @"rubberChicken"]];
+[[RMStore defaultStore] requestProducts:products success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
     NSLog(@"Products loaded", @"");
 } failure:^(NSError *error) {
     NSLog(@"Something went wrong", @"");
@@ -72,17 +73,23 @@ RMStore sends notifications of StoreKit related events and extends `NSNotificati
     NSError *error = notification.storeError;
 }
 
-- (void)storeProductsRequestFinished:(NSNotification*)notification { }
+- (void)storeProductsRequestFinished:(NSNotification*)notification 
+{
+    NSArray *products = notification.products;
+    NSArray *invalidProductIdentifiers = notification.invalidProductIdentififers;
+}
 ```
 
 ###Payment transaction notifications
+
+Payment transaction notifications are sent after a payment has been requested or for each restored transaction.
 
 ```objective-c
 - (void)storePaymentTransactionFailed:(NSNotification*)notification
 {
     NSError *error = notification.storeError;
     NSString *productIdentifier = notification.productIdentifier;
-    SKPaymentTransaction *transaction = notification.transaction; // Can be nil
+    SKPaymentTransaction *transaction = notification.transaction;
 }
 
 - (void)storePaymentTransactionFinished:(NSNotification*)notification
