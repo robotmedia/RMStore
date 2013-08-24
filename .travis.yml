@@ -1,2 +1,2 @@
 language: objective-c
-script: xctool -project RMStore.xcodeproj -scheme 'RMStore'
+script: xctool -project RMStore.xcodeproj -scheme 'RMStore' -sdk iphonesimulator -arch i386
