@@ -1,2 +1,2 @@
 language: objective-c
-script: xctool -project RMStore.xcodeproj -scheme 'RMStore' -configuration Release test -test-sdk iphonesimulator
+script: xctool -project RMStore.xcodeproj -scheme 'RMStore' -configuration Release -sdk iphonesimulator test
