@@ -187,6 +187,11 @@ RMStore requires iOS 5.0 or above and ARC.
 
 If you are using RMStore in your non-ARC project, you will need to set a `-fobjc-arc` compiler flag on all of the RMStore source files.
 
+###For iOS 5.x
+
+There is a known vulnerability in iOS 5.1 or lower related to app-side receipt verification. RMStore does not address this vulnerability. If you are using `RMStoreLocalReceiptVerificator` in iOS 5.x, please read this [technical note](https://developer.apple.com/library/ios/releasenotes/StoreKit/IAP_ReceiptValidation/index.html#//apple_ref/doc/uid/TP40012484
+). 
+
 ##Roadmap
 
 RMStore is in early stage and currently supports consumables and non-consumables only. Future enhancements will include:
