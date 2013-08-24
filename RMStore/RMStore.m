@@ -544,8 +544,7 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
 
 - (void)completeTransaction:(SKPaymentTransaction *)transaction
 {
-    SKPayment *payment = transaction.payment;
-    RMStoreLog(@"transaction purchased with product %@", payment.productIdentifier);
+    RMStoreLog(@"transaction purchased with product %@", transaction.payment.productIdentifier);
     
     if (self.receiptVerificator != nil)
     {
@@ -599,9 +598,7 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction
 {
-    SKPaymentTransaction *originalTransaction = transaction.originalTransaction;
-    SKPayment *payment = originalTransaction.payment;
-    RMStoreLog(@"transaction restored with product %@", payment.productIdentifier);
+    RMStoreLog(@"transaction restored with product %@", transaction.originalTransaction.payment.productIdentifier);
     
     _pendingRestoredTransactionsCount++;
     if (self.receiptVerificator != nil)
