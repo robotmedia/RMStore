@@ -33,7 +33,6 @@
 		A0AF3DAE17A8303800D2E836 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3DAD17A8303800D2E836 /* Default-568h@2x.png */; };
 		A0AF3DB117A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3DB017A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m */; };
 		A0AF3DB417A91CFD00D2E836 /* RMStoreLocalReceiptVerificator.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3DB017A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m */; };
-		A0AF3DB517A91CFE00D2E836 /* RMStoreLocalReceiptVerificator.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3DB017A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -371,7 +370,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A0AF3D2A17A802F300D2E836 /* RMStoreTests.m in Sources */,
-				A0AF3DB517A91CFE00D2E836 /* RMStoreLocalReceiptVerificator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
