@@ -1,4 +1,6 @@
 #RMStore
+[![Build Status](https://travis-ci.org/robotmedia/RMStore.png)](https://travis-ci.org/robotmedia/RMStore)
+
 
 A lightweight iOS framework for In-App Purchases.
 
