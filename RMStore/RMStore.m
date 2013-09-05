@@ -482,7 +482,11 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     {
         wrapper.failureBlock(error);
     }
-    NSDictionary *userInfo = @{RMStoreNotificationStoreError: error};
+    NSDictionary *userInfo = nil;
+    if (error)
+    { // error might be nil (e.g., on airplane mode)
+        userInfo = @{RMStoreNotificationStoreError: error};
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFailed object:self userInfo:userInfo];
 }
 
@@ -538,7 +542,11 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
         _restoreTransactionsFailureBlock(error);
         _restoreTransactionsFailureBlock = nil;
     }
-    NSDictionary *userInfo = @{RMStoreNotificationStoreError: error};
+    NSDictionary *userInfo = nil;
+    if (error)
+    { // error might be nil (e.g., on airplane mode)
+        userInfo = @{RMStoreNotificationStoreError: error};
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsFailed object:self userInfo:userInfo];
 }
 
