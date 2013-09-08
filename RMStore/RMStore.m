@@ -513,13 +513,13 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
         switch (transaction.transactionState)
         {
             case SKPaymentTransactionStatePurchased:
-                [self completeTransaction:transaction];
+                [self paymentQueue:queue completedTransaction:transaction];
                 break;
             case SKPaymentTransactionStateFailed:
-                [self failedTransaction:transaction error:transaction.error];
+                [self paymentQueue:queue failedTransaction:transaction error:transaction.error];
                 break;
             case SKPaymentTransactionStateRestored:
-                [self restoreTransaction:transaction];
+                [self paymentQueue:queue restoredTransaction:transaction];
             default:
                 break;
         }
@@ -550,30 +550,30 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsFailed object:self userInfo:userInfo];
 }
 
-- (void)completeTransaction:(SKPaymentTransaction *)transaction
+- (void)paymentQueue:(SKPaymentQueue*)queue completedTransaction:(SKPaymentTransaction *)transaction
 {
     RMStoreLog(@"transaction purchased with product %@", transaction.payment.productIdentifier);
     
     if (self.receiptVerificator != nil)
     {
         [self.receiptVerificator verifyReceiptOfTransaction:transaction success:^{
-            [self verifiedTransaction:transaction];
+            [self paymentQueue:queue verifiedTransaction:transaction];
         } failure:^(NSError *error) {
-            [self failedTransaction:transaction error:error];
+            [self paymentQueue:queue failedTransaction:transaction error:error];
         }];
     }
     else
     {
         RMStoreLog(@"WARNING: no receipt verification");
-        [self verifiedTransaction:transaction];
+        [self paymentQueue:queue verifiedTransaction:transaction];
     }
 }
 
-- (void)verifiedTransaction:(SKPaymentTransaction *)transaction
+- (void)paymentQueue:(SKPaymentQueue*)queue verifiedTransaction:(SKPaymentTransaction *)transaction
 {
     SKPayment *payment = transaction.payment;
 	NSString* productIdentifier = payment.productIdentifier;
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    [queue finishTransaction:transaction];
     [self addPurchaseForProductIdentifier:productIdentifier paymentTransaction:transaction];
     
     RMAddPaymentParameters *wrapper = [self popAddPaymentParametersForIdentifier:productIdentifier];
@@ -586,13 +586,13 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionFinished object:self userInfo:userInfo];
 }
 
-- (void)failedTransaction:(SKPaymentTransaction *)transaction error:(NSError*)error
+- (void)paymentQueue:(SKPaymentQueue *)queue failedTransaction:(SKPaymentTransaction *)transaction error:(NSError*)error
 {
     SKPayment *payment = transaction.payment;
 	NSString* productIdentifier = payment.productIdentifier;
     RMStoreLog(@"transaction failed with product %@ and error %@", productIdentifier, error.debugDescription);
     
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    [queue finishTransaction:transaction];
 
     RMAddPaymentParameters *parameters = [self popAddPaymentParametersForIdentifier:productIdentifier];
     if (parameters.failureBlock != nil)
@@ -604,7 +604,7 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionFailed object:self userInfo:userInfo];
 }
 
-- (void)restoreTransaction:(SKPaymentTransaction *)transaction
+- (void)paymentQueue:(SKPaymentQueue*)queue restoredTransaction:(SKPaymentTransaction *)transaction
 {
     RMStoreLog(@"transaction restored with product %@", transaction.originalTransaction.payment.productIdentifier);
     
@@ -612,17 +612,17 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     if (self.receiptVerificator != nil)
     {
         [self.receiptVerificator verifyReceiptOfTransaction:transaction success:^{
-            [self verifiedTransaction:transaction];
+            [self paymentQueue:queue verifiedTransaction:transaction];
             [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
         } failure:^(NSError *error) {
-            [self failedTransaction:transaction error:error];
+            [self paymentQueue:queue failedTransaction:transaction error:error];
             [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
         }];
     }
     else
     {
         RMStoreLog(@"WARNING: no receipt verification");
-        [self verifiedTransaction:transaction];
+        [self paymentQueue:queue verifiedTransaction:transaction];
         [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
     }
 }
