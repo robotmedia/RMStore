@@ -61,13 +61,25 @@
     [_store.products removeAllObjects];
 }
 
+- (void)testInit
+{
+    STAssertNotNil(_store, @"");
+    STAssertNil(_store.receiptVerificator, @"");
+    STAssertNotNil(_store.transactionObfuscator, @"");
+}
+
+- (void)testDealloc
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-value"
+    @autoreleasepool { [[RMStore alloc] init]; }
+#pragma GCC diagnostic pop
+}
+
 - (void)testDefaultStore
 {
     RMStore *store = [RMStore defaultStore];
-    STAssertNotNil(store, @"");
     STAssertEqualObjects(_store, store, @"");
-    STAssertNil(_store.receiptVerificator, @"");
-    STAssertNotNil(_store.transactionObfuscator, @"");
 }
 
 #pragma mark StoreKit Wrapper
