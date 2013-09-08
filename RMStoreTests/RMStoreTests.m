@@ -369,6 +369,7 @@
 {
     id request = [OCMockObject mockForClass:[SKProductsRequest class]];
     [_store request:request didFailWithError:nil];
+    // TODO: test notification
 }
 
 - (void)testRequestDidFailWithError_Error
@@ -377,6 +378,81 @@
     NSError *error = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     [_store request:request didFailWithError:error];
     // TODO: test notification
+}
+
+#pragma mark SKPaymentTransactionObserver
+
+- (void)testPaymentQueueUpdatedTransactions_Empty
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    [_store paymentQueue:queue updatedTransactions:@[]];
+}
+
+- (void)testPaymentQueueUpdatedTransactions_Purchased
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
+    [[queue stub] finishTransaction:[OCMArg any]];
+
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+}
+
+- (void)testPaymentQueueUpdatedTransactions_Restored
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
+    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
+    [[[transaction stub] andReturn:originalTransaction] originalTransaction];
+    [[queue stub] finishTransaction:[OCMArg any]];
+    
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+}
+
+- (void)testPaymentQueueUpdatedTransactions_Failed
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateFailed];
+    [[[transaction stub] andReturn:[NSError errorWithDomain:@"test" code:0 userInfo:nil]] error];
+    [[queue stub] finishTransaction:[OCMArg any]];
+    
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+}
+
+- (void)testPaymentQueueRestoreCompletedTransactionsFinished
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
+    // TODO: test notification
+}
+
+- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Nil
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:nil];
+    // TODO: test notification
+}
+
+- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Error
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    NSError *error = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+    [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:error];
+    // TODO: test notification
+}
+
+#pragma mark Private
+
+- (id)mockPaymentTransactionWithState:(SKPaymentTransactionState)state
+{
+    id transaction = [OCMockObject mockForClass:[SKPaymentTransaction class]];
+    [[[transaction stub] andReturnValue:@(state)] transactionState];
+    [[[transaction stub] andReturn:[NSDate date]] transactionDate];
+    [[[transaction stub] andReturn:@"transaction"] transactionIdentifier];
+    [[[transaction stub] andReturn:[NSData data]] transactionReceipt];
+    id payment = [OCMockObject mockForClass:[SKPayment class]];
+    [[[payment stub] andReturn:@"test"] productIdentifier];
+    [[[transaction stub] andReturn:payment] payment];
+    return transaction;
 }
 
 #pragma mark RMStoreObserver
