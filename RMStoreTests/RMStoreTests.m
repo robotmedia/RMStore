@@ -20,9 +20,27 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 #import <StoreKit/StoreKit.h>
+#import <objc/runtime.h>
+#import <OCMock/OCMock.h>
 #import "RMStore.h"
 
 @interface RMStoreTests : SenTestCase<RMStoreObserver>
+
+@end
+
+@interface RMStore(Private)
+
+@property (nonatomic, readonly) NSMutableDictionary *products;
+
+@end
+
+@implementation RMStore(Private)
+
+- (NSMutableDictionary*)products
+{
+    Ivar productsIvar = class_getInstanceVariable(self.class, "_products");
+    return object_getIvar(self, productsIvar);
+}
 
 @end
 
@@ -39,6 +57,8 @@
 {
     [_store removeStoreObserver:self];
     [_store clearPurchases];
+
+    [_store.products removeAllObjects];
 }
 
 - (void)testDefaultStore
@@ -57,6 +77,21 @@
     BOOL expected = [SKPaymentQueue canMakePayments];
     BOOL result = [RMStore canMakePayments];
     STAssertEquals(result, expected, @"");
+}
+
+- (void)testAddPayment_UnknownProduct
+{
+    [_store addPayment:@"test"];
+}
+
+- (void)testAddPayment_KnownProduct
+{
+    
+    static NSString *productIdentifier = @"test";
+    id product = [OCMockObject mockForClass:[SKProduct class]];
+    [[[product stub] andReturn:productIdentifier] productIdentifier];
+    [_store.products setObject:product forKey:productIdentifier];
+    [_store addPayment:productIdentifier];
 }
 
 - (void)testAddPayment_UnknownProduct_Nil_Nil
