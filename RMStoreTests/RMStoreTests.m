@@ -347,6 +347,38 @@
     STAssertTrue(transactions.count == 3, @"");
 }
 
+#pragma mark SKProductsRequestDelegate
+
+- (void)testProductsRequestDidReceiveResponse_Empty
+{
+    id request = [OCMockObject mockForClass:[SKProductsRequest class]];
+    id response = [OCMockObject mockForClass:[SKProductsResponse class]];
+    [[[response stub] andReturn:@[]] products];
+    [[[response stub] andReturn:@[]] invalidProductIdentifiers];
+    [_store productsRequest:request didReceiveResponse:response];
+    // TODO: test success, failure blocks, notification and productForIdentifier:
+}
+
+- (void)testRequestDidFinish
+{
+    id request = [OCMockObject mockForClass:[SKProductsRequest class]];
+    [_store requestDidFinish:request];
+}
+
+- (void)testRequestDidFailWithError_Nil
+{
+    id request = [OCMockObject mockForClass:[SKProductsRequest class]];
+    [_store request:request didFailWithError:nil];
+}
+
+- (void)testRequestDidFailWithError_Error
+{
+    id request = [OCMockObject mockForClass:[SKProductsRequest class]];
+    NSError *error = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+    [_store request:request didFailWithError:error];
+    // TODO: test notification
+}
+
 #pragma mark RMStoreObserver
 
 - (void)storeProductsRequestFailed:(NSNotification*)notification {}
