@@ -171,8 +171,19 @@
 
 - (void)testLocalizedPriceOfProduct
 {
-    SKProduct *product = [[SKProduct alloc] init];
-    [self _testLocalizedPriceOfProduct:product];
+    id product = [OCMockObject mockForClass:[SKProduct class]];
+    NSDecimalNumber *price = [NSDecimalNumber decimalNumberWithString:@"1"];
+    [[[product stub] andReturn:price] price];
+    NSLocale *locale = [NSLocale currentLocale];
+    [[[product stub] andReturn:locale] priceLocale];
+    NSString *result = [RMStore localizedPriceOfProduct:product];
+    
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+	numberFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
+	numberFormatter.locale = locale;
+	NSString *expected = [numberFormatter stringFromNumber:price];
+    
+    STAssertEqualObjects(result, expected, @"");
 }
 
 #pragma mark Notifications
@@ -334,13 +345,6 @@
     [_store addPurchaseForProductIdentifier:@"test2"];
     NSArray *transactions = [_store transactionsForProductIdentifier:@"test1"];
     STAssertTrue(transactions.count == 3, @"");
-}
-
-#pragma mark Private
-
-- (void)_testLocalizedPriceOfProduct:(SKProduct*)product
-{
-    // TODO: Use OCMock
 }
 
 #pragma mark RMStoreObserver
