@@ -127,6 +127,40 @@
     STAssertTrue(failureBlockCalled, @"");
 }
 
+- (void)testRequestProducts_One
+{
+    [_store requestProducts:[NSSet setWithObject:@"test"]];
+}
+
+- (void)testRequestProducts_One_Nil_Nil
+{
+    [_store requestProducts:[NSSet setWithObject:@"test"] success:nil failure:nil];
+}
+
+- (void)testRequestProducts_One_Block_Block
+{
+    [_store requestProducts:[NSSet setWithObject:@"test"] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
+    } failure:^(NSError *error) {
+    }];
+}
+
+- (void)testRestoreTransactions
+{
+    [_store restoreTransactions];
+}
+
+- (void)testRestoreTransactions_Nil_Nil
+{
+    [_store restoreTransactions];
+}
+
+- (void)testRestoreTransactions_Block_Block
+{
+    [_store restoreTransactionsOnSuccess:^{
+    } failure:^(NSError *error) {
+    }];
+}
+
 #pragma mark Product management
 
 - (void)testProductForIdentifierNil
