@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8700D1C117DCA548005C8F5D /* NSNotification+RMStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */; };
+		8700D1D717DCB011005C8F5D /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8700D1D617DCB011005C8F5D /* libOCMock.a */; };
 		A0AF3D0C17A802F300D2E836 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
 		A0AF3D1117A802F300D2E836 /* RMStore.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A0AF3D1017A802F300D2E836 /* RMStore.h */; };
 		A0AF3D1317A802F300D2E836 /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D1217A802F300D2E836 /* RMStore.m */; };
@@ -61,6 +62,13 @@
 
 /* Begin PBXFileReference section */
 		8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotification+RMStoreTests.m"; sourceTree = "<group>"; };
+		8700D1CF17DCB011005C8F5D /* NSNotificationCenter+OCMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+OCMAdditions.h"; sourceTree = "<group>"; };
+		8700D1D017DCB011005C8F5D /* OCMArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMArg.h; sourceTree = "<group>"; };
+		8700D1D117DCB011005C8F5D /* OCMConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMConstraint.h; sourceTree = "<group>"; };
+		8700D1D217DCB011005C8F5D /* OCMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMock.h; sourceTree = "<group>"; };
+		8700D1D317DCB011005C8F5D /* OCMockObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockObject.h; sourceTree = "<group>"; };
+		8700D1D417DCB011005C8F5D /* OCMockRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockRecorder.h; sourceTree = "<group>"; };
+		8700D1D617DCB011005C8F5D /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
 		A0AF3D0817A802F300D2E836 /* libRMStore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRMStore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0AF3D0B17A802F300D2E836 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A0AF3D0F17A802F300D2E836 /* RMStore-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RMStore-Prefix.pch"; sourceTree = "<group>"; };
@@ -111,6 +119,7 @@
 				A0AF3D1D17A802F300D2E836 /* UIKit.framework in Frameworks */,
 				A0AF3D1E17A802F300D2E836 /* Foundation.framework in Frameworks */,
 				A0AF3D2117A802F300D2E836 /* libRMStore.a in Frameworks */,
+				8700D1D717DCB011005C8F5D /* libOCMock.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +137,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8700D1CC17DCB011005C8F5D /* usr */ = {
+			isa = PBXGroup;
+			children = (
+				8700D1CD17DCB011005C8F5D /* include */,
+				8700D1D517DCB011005C8F5D /* lib */,
+			);
+			path = usr;
+			sourceTree = "<group>";
+		};
+		8700D1CD17DCB011005C8F5D /* include */ = {
+			isa = PBXGroup;
+			children = (
+				8700D1CE17DCB011005C8F5D /* OCMock */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		8700D1CE17DCB011005C8F5D /* OCMock */ = {
+			isa = PBXGroup;
+			children = (
+				8700D1CF17DCB011005C8F5D /* NSNotificationCenter+OCMAdditions.h */,
+				8700D1D017DCB011005C8F5D /* OCMArg.h */,
+				8700D1D117DCB011005C8F5D /* OCMConstraint.h */,
+				8700D1D217DCB011005C8F5D /* OCMock.h */,
+				8700D1D317DCB011005C8F5D /* OCMockObject.h */,
+				8700D1D417DCB011005C8F5D /* OCMockRecorder.h */,
+			);
+			path = OCMock;
+			sourceTree = "<group>";
+		};
+		8700D1D517DCB011005C8F5D /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				8700D1D617DCB011005C8F5D /* libOCMock.a */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
 		A0AF3CFF17A802F300D2E836 = {
 			isa = PBXGroup;
 			children = (
@@ -183,6 +230,7 @@
 		A0AF3D2217A802F300D2E836 /* RMStoreTests */ = {
 			isa = PBXGroup;
 			children = (
+				8700D1CC17DCB011005C8F5D /* usr */,
 				8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */,
 				A0AF3D2917A802F300D2E836 /* RMStoreTests.m */,
 				A0AF3D2317A802F300D2E836 /* Supporting Files */,
@@ -509,7 +557,13 @@
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RMStore/RMStore-Prefix.pch";
+				HEADER_SEARCH_PATHS = "${SRCROOT}/${TARGET_NAME}/usr/include/**";
 				INFOPLIST_FILE = "RMStoreTests/RMStoreTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/RMStoreTests/usr/lib\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -524,7 +578,13 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RMStore/RMStore-Prefix.pch";
+				HEADER_SEARCH_PATHS = "${SRCROOT}/${TARGET_NAME}/usr/include/**";
 				INFOPLIST_FILE = "RMStoreTests/RMStoreTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/RMStoreTests/usr/lib\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
