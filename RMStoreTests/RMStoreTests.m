@@ -73,7 +73,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-value"
     @autoreleasepool { [[RMStore alloc] init]; }
-#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
 }
 
 - (void)testDefaultStore
