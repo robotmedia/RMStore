@@ -149,15 +149,12 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
 
 @end
 
-@interface RMProductsRequestWrapper : NSObject
+@interface RMProductsRequestDelegate : NSObject<SKProductsRequestDelegate>
 
-@property (nonatomic, strong) SKProductsRequest *request;
 @property (nonatomic, strong) RMSKProductsRequestSuccessBlock successBlock;
 @property (nonatomic, strong) RMSKProductsRequestFailureBlock failureBlock;
+@property (nonatomic, weak) RMStore *store;
 
-@end
-
-@implementation RMProductsRequestWrapper
 @end
 
 @interface RMAddPaymentParameters : NSObject
@@ -174,7 +171,7 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
 @implementation RMStore {
     NSMutableDictionary *_addPaymentParameters; // HACK: We use a dictionary of product identifiers because the returned SKPayment is different from the one we add to the queue. Bad Apple.
     NSMutableDictionary *_products;
-    NSMutableArray *_productRequests;
+    NSMutableSet *_productsRequestDelegates;
     RMStoreDefaultTransactionObfuscator *_defaultTransactionObfuscator;
     
     NSInteger _pendingRestoredTransactionsCount;
@@ -189,7 +186,7 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     {
         _addPaymentParameters = [NSMutableDictionary dictionary];
         _products = [NSMutableDictionary dictionary];
-        _productRequests = [NSMutableArray array];
+        _productsRequestDelegates = [NSMutableSet set];
         _defaultTransactionObfuscator = [[RMStoreDefaultTransactionObfuscator alloc] init];
         _transactionObfuscator = _defaultTransactionObfuscator;
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
@@ -258,14 +255,14 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
                 success:(RMSKProductsRequestSuccessBlock)successBlock
                 failure:(RMSKProductsRequestFailureBlock)failureBlock
 {
+    RMProductsRequestDelegate *delegate = [[RMProductsRequestDelegate alloc] init];
+    delegate.store = self;
+    delegate.successBlock = successBlock;
+    delegate.failureBlock = failureBlock;
+    [_productsRequestDelegates addObject:delegate];
+ 
     SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:identifiers];
-	productsRequest.delegate = self;
-
-    RMProductsRequestWrapper *requestWrapper = [[RMProductsRequestWrapper alloc] init];
-    requestWrapper.request = productsRequest;
-    requestWrapper.successBlock = successBlock;
-    requestWrapper.failureBlock = failureBlock;
-    [_productRequests addObject:requestWrapper];
+	productsRequest.delegate = delegate;
     
     [productsRequest start];
 }
@@ -441,69 +438,6 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     }
 }
 
-#pragma mark SKProductsRequestDelegate
-
-- (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response
-{
-    RMStoreLog(@"products request received response");
-    NSArray *products = [NSArray arrayWithArray:response.products];
-    NSArray *invalidProductIdentifiers = [NSArray arrayWithArray:response.invalidProductIdentifiers];
-    
-    for (SKProduct *product in products)
-    {
-        RMStoreLog(@"received product with id %@", product.productIdentifier);
-        [_products setObject:product forKey:product.productIdentifier];
-    }
-    
-    for (NSString *invalid in invalidProductIdentifiers)
-    {
-        RMStoreLog(@"invalid product with id %@", invalid);
-    }
-
-    RMProductsRequestWrapper *wrapper = [self popWrapperForRequest:request];
-    if (wrapper.successBlock)
-    {
-        wrapper.successBlock(products, invalidProductIdentifiers);
-    }
-    NSDictionary *userInfo = @{RMStoreNotificationProducts: products, RMStoreNotificationInvalidProductIdentifiers: invalidProductIdentifiers};
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFinished object:self userInfo:userInfo];
-}
-
-- (void)requestDidFinish:(SKRequest *)request
-{
-    [self popWrapperForRequest:request]; // Can't hurt
-}
-
-- (void)request:(SKRequest *)request didFailWithError:(NSError *)error
-{
-    RMProductsRequestWrapper *wrapper = [self popWrapperForRequest:request];
-    RMStoreLog(@"products request failed with error %@", error.debugDescription);
-    if (wrapper.failureBlock)
-    {
-        wrapper.failureBlock(error);
-    }
-    NSDictionary *userInfo = nil;
-    if (error)
-    { // error might be nil (e.g., on airplane mode)
-        userInfo = @{RMStoreNotificationStoreError: error};
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFailed object:self userInfo:userInfo];
-}
-
-- (RMProductsRequestWrapper*)popWrapperForRequest:(SKRequest*)request
-{
-    NSArray *wrappers = [NSArray arrayWithArray:_productRequests];
-    for (RMProductsRequestWrapper *wrapper in wrappers)
-    {
-        if (wrapper.request == request)
-        {
-            [_productRequests removeObject:wrapper];
-            return wrapper;
-        }
-    }
-    return nil;
-}
-
 #pragma mark SKPaymentTransactionObserver
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions
@@ -649,6 +583,69 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     RMAddPaymentParameters *parameters = [_addPaymentParameters objectForKey:identifier];
     [_addPaymentParameters removeObjectForKey:identifier];
     return parameters;
+}
+
+#pragma mark - Private
+
+- (void)addProduct:(SKProduct*)product
+{
+    [_products setObject:product forKey:product.productIdentifier];    
+}
+
+- (void)removeProductsRequestDelegate:(RMProductsRequestDelegate*)delegate
+{
+    [_productsRequestDelegates removeObject:delegate];
+}
+
+@end
+
+@implementation RMProductsRequestDelegate
+
+- (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response
+{
+    RMStoreLog(@"products request received response");
+    NSArray *products = [NSArray arrayWithArray:response.products];
+    NSArray *invalidProductIdentifiers = [NSArray arrayWithArray:response.invalidProductIdentifiers];
+    
+    for (SKProduct *product in products)
+    {
+        RMStoreLog(@"received product with id %@", product.productIdentifier);
+        [self.store addProduct:product];
+    }
+    
+    for (NSString *invalid in invalidProductIdentifiers)
+    {
+        RMStoreLog(@"invalid product with id %@", invalid);
+    }
+    
+    if (self.successBlock)
+    {
+        self.successBlock(products, invalidProductIdentifiers);
+    }
+    NSDictionary *userInfo = @{RMStoreNotificationProducts: products, RMStoreNotificationInvalidProductIdentifiers: invalidProductIdentifiers};
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFinished object:self userInfo:userInfo];
+    [self.store removeProductsRequestDelegate:self];
+}
+
+- (void)requestDidFinish:(SKRequest *)request
+{
+    [self.store removeProductsRequestDelegate:self]; // Can't hurt
+}
+
+- (void)request:(SKRequest *)request didFailWithError:(NSError *)error
+{
+    RMStoreLog(@"products request failed with error %@", error.debugDescription);
+    if (self.failureBlock)
+    {
+        self.failureBlock(error);
+    }
+    NSDictionary *userInfo = nil;
+    if (error)
+    { // error might be nil (e.g., on airplane mode)
+        userInfo = @{RMStoreNotificationStoreError: error};
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFailed object:self userInfo:userInfo];
+    [self.store removeProductsRequestDelegate:self];
 }
 
 @end

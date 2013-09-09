@@ -30,7 +30,7 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 /** A StoreKit wrapper that adds blocks and notifications, plus optional receipt verification and purchase management.
  */
-@interface RMStore : NSObject<SKPaymentTransactionObserver, SKProductsRequestDelegate>
+@interface RMStore : NSObject<SKPaymentTransactionObserver>
 
 ///---------------------------------------------
 /// @name Getting the Store
