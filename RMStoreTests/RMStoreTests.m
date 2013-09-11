@@ -50,15 +50,12 @@
 
 - (void) setUp
 {
-    _store = [RMStore defaultStore];
+    _store = [[RMStore alloc] init];
 }
 
 - (void) tearDown
 {
-    [_store removeStoreObserver:self];
     [_store clearPurchases];
-
-    [_store.products removeAllObjects];
 }
 
 - (void)testInit
@@ -78,8 +75,9 @@
 
 - (void)testDefaultStore
 {
-    RMStore *store = [RMStore defaultStore];
-    STAssertEqualObjects(_store, store, @"");
+    RMStore *store1 = [RMStore defaultStore];
+    RMStore *store2 = [RMStore defaultStore];
+    STAssertEqualObjects(store1, store2, @"");
 }
 
 #pragma mark StoreKit Wrapper
