@@ -534,7 +534,14 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
         parameters.failureBlock(transaction, error);
     }
     
-    NSDictionary *userInfo = @{RMStoreNotificationTransaction: transaction, RMStoreNotificationProductIdentifier : productIdentifier, RMStoreNotificationStoreError: error};
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setObject:transaction forKey:RMStoreNotificationTransaction];
+    [userInfo setObject:productIdentifier forKey:RMStoreNotificationProductIdentifier];
+    if (error)
+    {
+        [userInfo setObject:error forKey:RMStoreNotificationStoreError];
+    }
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionFailed object:self userInfo:userInfo];
 }
 
