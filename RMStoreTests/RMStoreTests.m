@@ -24,8 +24,22 @@
 #import <OCMock/OCMock.h>
 #import "RMStore.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-retain-cycles" // To use ST macros in blocks
+
+extern NSString* const RMSKRestoreTransactionsFailed;
+extern NSString* const RMSKRestoreTransactionsFinished;
+
+extern NSString* const RMStoreNotificationStoreError;
+
 @interface RMStoreTests : SenTestCase<RMStoreObserver>
 
+@end
+
+@interface RMStoreReceiptVerificatorSuccess : NSObject<RMStoreReceiptVerificator>
+@end
+
+@interface RMStoreReceiptVerificatorFailure : NSObject<RMStoreReceiptVerificator>
 @end
 
 @interface RMStore(Private)
@@ -353,7 +367,7 @@
     [_store paymentQueue:queue updatedTransactions:@[]];
 }
 
-- (void)testPaymentQueueUpdatedTransactions_Purchased
+- (void)testPaymentQueueUpdatedTransactions_Purchased__NoVerificator
 {
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
@@ -362,8 +376,74 @@
     [_store paymentQueue:queue updatedTransactions:@[transaction]];
 }
 
-- (void)testPaymentQueueUpdatedTransactions_Restored
+- (void)testPaymentQueueUpdatedTransactions_Purchased__NoVerificator_Blocks
 {
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
+    [[queue stub] finishTransaction:[OCMArg any]];
+
+    id product = [OCMockObject mockForClass:[SKProduct class]];
+    [[[product stub] andReturn:@"test"] productIdentifier];
+    [_store.products setObject:product forKey:@"test"];
+    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction) {
+        STAssertEqualObjects(transaction, originalTransaction, @"");
+    } failure:^(SKPaymentTransaction *transaction, NSError *error) {
+        STFail(@"");
+    }];
+    
+    [_store paymentQueue:queue updatedTransactions:@[originalTransaction]];
+}
+
+- (void)testPaymentQueueUpdatedTransactions_Purchased__VerificatorSuccess
+{
+    id verificator = [[RMStoreReceiptVerificatorSuccess alloc] init];
+    _store.receiptVerificator = verificator;
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
+    [[queue stub] finishTransaction:[OCMArg any]];
+    
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+}
+
+- (void)testPaymentQueueUpdatedTransactions_Purchased__VerificatorFailure
+{
+    id verificator = [[RMStoreReceiptVerificatorFailure alloc] init];
+    _store.receiptVerificator = verificator;
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
+    [[queue stub] finishTransaction:[OCMArg any]];
+    
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+}
+
+- (void)testPaymentQueueUpdatedTransactions_Restored__NoVerificator
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
+    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
+    [[[transaction stub] andReturn:originalTransaction] originalTransaction];
+    [[queue stub] finishTransaction:[OCMArg any]];
+    
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+}
+
+- (void)testPaymentQueueUpdatedTransactions_Restored__VerificatorSuccess
+{
+    id verificator = [[RMStoreReceiptVerificatorSuccess alloc] init];
+    _store.receiptVerificator = verificator;
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
+    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
+    [[[transaction stub] andReturn:originalTransaction] originalTransaction];
+    [[queue stub] finishTransaction:[OCMArg any]];
+    
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+}
+
+- (void)testPaymentQueueUpdatedTransactions_Restored__VerificatorFailure
+{
+    id verificator = [[RMStoreReceiptVerificatorFailure alloc] init];
+    _store.receiptVerificator = verificator;
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
     id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
@@ -383,26 +463,114 @@
     [_store paymentQueue:queue updatedTransactions:@[transaction]];
 }
 
+- (void)testPaymentQueueUpdatedTransactions_Failed__Blocks
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateFailed];
+    NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+    [[[originalTransaction stub] andReturn:originalError] error];
+    [[queue stub] finishTransaction:[OCMArg any]];
+
+    id product = [OCMockObject mockForClass:[SKProduct class]];
+    [[[product stub] andReturn:@"test"] productIdentifier];
+    [_store.products setObject:product forKey:@"test"];
+    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction) {
+        STFail(@"");
+    } failure:^(SKPaymentTransaction *transaction, NSError *error) {
+        STAssertEqualObjects(transaction, originalTransaction, @"");
+        STAssertEqualObjects(error, originalError, @"");
+    }];
+    
+    [_store paymentQueue:queue updatedTransactions:@[originalTransaction]];
+}
+
 - (void)testPaymentQueueRestoreCompletedTransactionsFinished
 {
+    id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFinished];
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+
     [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
-    // TODO: test notification
+
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
-- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Nil
+- (void)testPaymentQueueRestoreCompletedTransactionsFinished__Blocks
 {
+    id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFinished];
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    [_store restoreTransactionsOnSuccess:^{
+    } failure:^(NSError *error) {
+        STFail(@"");
+    }];
+    
+    [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
+    
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Queue_Nil
+{
+    id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFailed];
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+
+    [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:nil];
+    
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Queue_Nil__Blocks
+{
+    id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFailed];
+    [_store restoreTransactionsOnSuccess:^{
+        STFail(@"");
+    } failure:^(NSError *error) {
+        STAssertNil(error, @"");
+    }];
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
     [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:nil];
-    // TODO: test notification
+
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
-- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Error
+- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Queue_Error
 {
+    NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+    id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
+        STAssertEqualObjects(error, originalError, @"");
+        return YES;
+    }];
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    NSError *error = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
-    [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:error];
-    // TODO: test notification
+
+    [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:originalError];
+
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Queue_Error__Blocks
+{
+    NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+    id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
+        STAssertEqualObjects(error, originalError, @"");
+        return YES;
+    }];
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    [_store restoreTransactionsOnSuccess:^{
+        STFail(@"");
+    } failure:^(NSError *error) {
+        STAssertEqualObjects(error, originalError, @"");
+    }];
+    
+    [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:originalError];
+
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
 #pragma mark Private
@@ -420,6 +588,22 @@
     return transaction;
 }
 
+- (id)observerMockForNotification:(NSString*)name
+{
+    id mock = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:mock name:name object:_store];
+    [[mock expect] notificationWithName:name object:_store];
+    return mock;
+}
+
+- (id)observerMockForNotification:(NSString*)name checkUserInfoWithBlock:(BOOL(^)(id obj))block
+{
+    id mock = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:mock name:name object:_store];
+    [[mock expect] notificationWithName:name object:_store userInfo:[OCMArg checkWithBlock:block]];
+    return mock;
+}
+
 #pragma mark RMStoreObserver
 
 - (void)storeProductsRequestFailed:(NSNotification*)notification {}
@@ -430,3 +614,24 @@
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification {}
 
 @end
+
+@implementation RMStoreReceiptVerificatorSuccess
+
+- (void)verifyReceiptOfTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
+{
+    if (successBlock) successBlock();
+}
+
+@end
+
+@implementation RMStoreReceiptVerificatorFailure
+
+- (void)verifyReceiptOfTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
+{
+    if (failureBlock) failureBlock(nil);
+}
+
+@end
+
+#pragma clang diagnostic pop
+
