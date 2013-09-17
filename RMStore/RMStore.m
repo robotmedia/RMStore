@@ -631,12 +631,11 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     }
     NSDictionary *userInfo = @{RMStoreNotificationProducts: products, RMStoreNotificationInvalidProductIdentifiers: invalidProductIdentifiers};
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFinished object:self userInfo:userInfo];
-    [self.store removeProductsRequestDelegate:self];
 }
 
 - (void)requestDidFinish:(SKRequest *)request
 {
-    [self.store removeProductsRequestDelegate:self]; // Can't hurt
+    [self.store removeProductsRequestDelegate:self];
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error
