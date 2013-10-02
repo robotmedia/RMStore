@@ -42,7 +42,9 @@ NSString* const RMStoreCoderConsumedKey = @"consumed";
 NSString* const RMStoreCoderProductIdentifierKey = @"productIdentifier";
 NSString* const RMStoreCoderTransactionDateKey = @"transactionDate";
 NSString* const RMStoreCoderTransactionIdentifierKey = @"transactionIdentifier";
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
 NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
+#endif
 
 #ifdef DEBUG
 #define RMStoreLog(...) NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]);
