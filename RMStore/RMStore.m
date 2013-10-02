@@ -253,7 +253,10 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
         return;
     }
     SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
-    payment.applicationUsername = userIdentifier;
+    if ([payment respondsToSelector:@selector(setApplicationUsername:)])
+    {
+        payment.applicationUsername = userIdentifier;
+    }
     
     RMAddPaymentParameters *parameters = [[RMAddPaymentParameters alloc] init];
     parameters.successBlock = successBlock;
