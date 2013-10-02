@@ -120,13 +120,13 @@ extern NSString* const RMStoreNotificationStoreError;
 
 - (void)testAddPayment_UnknownProduct_Nil_Nil
 {
-    [_store addPayment:@"test" success:nil failure:nil];
+    [_store addPayment:@"test" user:nil success:nil failure:nil];
 }
 
 - (void)testAddPayment_UnknownProduct_Block_Block
 {
     __block BOOL failureBlockCalled;
-    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction) {
+    [_store addPayment:@"test" user:nil success:^(SKPaymentTransaction *transaction) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warc-retain-cycles"
         STFail(@"Success block");
@@ -385,7 +385,7 @@ extern NSString* const RMStoreNotificationStoreError;
     id product = [OCMockObject mockForClass:[SKProduct class]];
     [[[product stub] andReturn:@"test"] productIdentifier];
     [_store.products setObject:product forKey:@"test"];
-    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction) {
+    [_store addPayment:@"test" user:nil success:^(SKPaymentTransaction *transaction) {
         STAssertEqualObjects(transaction, originalTransaction, @"");
     } failure:^(SKPaymentTransaction *transaction, NSError *error) {
         STFail(@"");
@@ -474,7 +474,7 @@ extern NSString* const RMStoreNotificationStoreError;
     id product = [OCMockObject mockForClass:[SKProduct class]];
     [[[product stub] andReturn:@"test"] productIdentifier];
     [_store.products setObject:product forKey:@"test"];
-    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction) {
+    [_store addPayment:@"test" user:nil success:^(SKPaymentTransaction *transaction) {
         STFail(@"");
     } failure:^(SKPaymentTransaction *transaction, NSError *error) {
         STAssertEqualObjects(transaction, originalTransaction, @"");

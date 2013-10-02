@@ -218,12 +218,13 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
 
 - (void)addPayment:(NSString*)productIdentifier
 {
-    [self addPayment:productIdentifier success:nil failure:nil];
+    [self addPayment:productIdentifier user:nil success:nil failure:nil];
 }
 
 - (void)addPayment:(NSString*)productIdentifier
-           success:(RMSKPaymentTransactionSuccessBlock)successBlock
-           failure:(RMSKPaymentTransactionFailureBlock)failureBlock
+              user:(NSString*)userIdentifier
+           success:(void (^)(SKPaymentTransaction *transaction))successBlock
+           failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
 {
     SKProduct *product = [self productForIdentifier:productIdentifier];
     if (product == nil)
@@ -236,14 +237,16 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
         }
         return;
     }
-    SKPayment *payment = [SKPayment paymentWithProduct:product];
-      
+    SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
+    payment.applicationUsername = userIdentifier;
+    
     RMAddPaymentParameters *parameters = [[RMAddPaymentParameters alloc] init];
     parameters.successBlock = successBlock;
     parameters.failureBlock = failureBlock;
     [_addPaymentParameters setObject:parameters forKey:productIdentifier];
     
     [[SKPaymentQueue defaultQueue] addPayment:payment];
+    [[SKPaymentQueue defaultQueue] addPayment:payment];    
 }
 
 - (void)requestProducts:(NSSet*)identifiers

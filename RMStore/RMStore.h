@@ -50,16 +50,19 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 + (BOOL)canMakePayments;
 
 /** Request payment of the product with the given product identifier.
- @param productIdentifier The identifier of the product whose payment will be requested. 
+ @param productIdentifier The identifier of the product whose payment will be requested.
  */
 - (void)addPayment:(NSString*)productIdentifier;
 
 /** Request payment of the product with the given product identifier. `successBlock` will be called if the payment is successful, `failureBlock` if it isn't.
  @param productIdentifier The identifier of the product whose payment will be requested.
+ @param userIdentifier An opaque identifier for the user’s account on your system.
  @param successBlock The block to be called if the payment is sucessful. Can be `nil`.
  @param failureBlock The block to be called if the payment fails or there isn't any product with the given identifier. Can be `nil`.
+ @see [SKPayment applicationUsername]
  */
 - (void)addPayment:(NSString*)productIdentifier
+              user:(NSString*)userIdentifier
            success:(void (^)(SKPaymentTransaction *transaction))successBlock
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock;
 
