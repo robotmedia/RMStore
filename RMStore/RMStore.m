@@ -302,6 +302,17 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
+- (void)restoreTransactionsOfUser:(NSString*)userIdentifier
+                        onSuccess:(void (^)())successBlock
+                          failure:(void (^)(NSError *error))failureBlock
+{
+    NSAssert([[SKPaymentQueue defaultQueue] respondsToSelector:@selector(restoreCompletedTransactionsWithApplicationUsername:)], @"restoreCompletedTransactionsWithApplicationUsername: not supported in this OS. Use restoreTransactionsOnSuccess:failure: instead.");
+    _pendingRestoredTransactionsCount = 0;
+    _restoreTransactionsSuccessBlock = successBlock;
+    _restoreTransactionsFailureBlock = failureBlock;
+    [[SKPaymentQueue defaultQueue] restoreCompletedTransactionsWithApplicationUsername:userIdentifier];
+}
+
 #pragma mark Product management
 
 - (SKProduct*)productForIdentifier:(NSString*)productIdentifier

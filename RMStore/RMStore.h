@@ -101,6 +101,15 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
                              failure:(void (^)(NSError *error))failureBlock;
 
 
+/** Request to restore previously completed purchases of a certain user. `successBlock` will be called if the restore transactions request is successful, `failureBlock` if it isn't.
+ @param userIdentifier An opaque identifier of the user’s account.
+ @param successBlock The block to be called if the restore transactions request is sucessful. Can be `nil`.
+ @param failureBlock The block to be called if the restore transactions request fails. Can be `nil`.
+ */
+- (void)restoreTransactionsOfUser:(NSString*)userIdentifier
+                        onSuccess:(void (^)())successBlock
+                          failure:(void (^)(NSError *error))failureBlock __attribute__((availability(ios,introduced=7.0)));
+
 ///---------------------------------------------
 /// @name Setting Delegates
 ///---------------------------------------------
