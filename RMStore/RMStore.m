@@ -66,7 +66,9 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
         _productIdentifier = paymentTransaction.payment.productIdentifier;
         _transactionDate = paymentTransaction.transactionDate;
         _transactionIdentifier = paymentTransaction.transactionIdentifier;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
         _transactionReceipt = paymentTransaction.transactionReceipt;
+#endif
     }
     return self;
 }
@@ -79,7 +81,9 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
         _productIdentifier = [decoder decodeObjectForKey:RMStoreCoderProductIdentifierKey];
         _transactionDate = [decoder decodeObjectForKey:RMStoreCoderTransactionDateKey];
         _transactionIdentifier = [decoder decodeObjectForKey:RMStoreCoderTransactionIdentifierKey];
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
         _transactionReceipt = [decoder decodeObjectForKey:RMStoreCoderTransactionReceiptKey];
+#endif
     }
     return self;
 }
@@ -90,7 +94,9 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     [coder encodeObject:self.productIdentifier forKey:RMStoreCoderProductIdentifierKey];
     [coder encodeObject:self.transactionDate forKey:RMStoreCoderTransactionDateKey];
     if (self.transactionIdentifier != nil) { [coder encodeObject:self.transactionIdentifier forKey:RMStoreCoderTransactionIdentifierKey]; }
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
     if (self.transactionReceipt != nil) { [coder encodeObject:self.transactionReceipt forKey:RMStoreCoderTransactionReceiptKey]; }
+#endif
 }
 
 @end

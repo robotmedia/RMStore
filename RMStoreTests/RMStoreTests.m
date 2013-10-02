@@ -227,7 +227,9 @@ extern NSString* const RMStoreNotificationStoreError;
     STAssertEqualObjects(transaction.productIdentifier, @"test", @"");
     STAssertNotNil(transaction.transactionDate, @"");
     STAssertNil(transaction.transactionIdentifier, @"");
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
     STAssertNil(transaction.transactionReceipt, @"");
+#endif
     STAssertFalse(transaction.consumed, @"");
 }
 
