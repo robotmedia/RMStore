@@ -226,7 +226,14 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
 
 - (void)addPayment:(NSString*)productIdentifier
 {
-    [self addPayment:productIdentifier user:nil success:nil failure:nil];
+    [self addPayment:productIdentifier success:nil failure:nil];
+}
+
+- (void)addPayment:(NSString*)productIdentifier
+           success:(void (^)(SKPaymentTransaction *transaction))successBlock
+           failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
+{
+    [self addPayment:productIdentifier user:nil success:successBlock failure:failureBlock];
 }
 
 - (void)addPayment:(NSString*)productIdentifier
