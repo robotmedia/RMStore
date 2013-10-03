@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/robotmedia/RMStore.png)](https://travis-ci.org/robotmedia/RMStore)
 
 
-A lightweight iOS framework for In-App Purchases.
+A lightweight iOS library for In-App Purchases.
 
 RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.md#storekit-with-blocks) and [notifications](https://github.com/robotmedia/RMStore/blob/master/README.md#notifications) to StoreKit, plus [receipt verification](https://github.com/robotmedia/RMStore/blob/master/README.md#receipt-verification) and [purchase management](https://github.com/robotmedia/RMStore/blob/master/README.md#purchase-management). All in one class without external dependencies. Purchasing a product is as simple as:
 
@@ -114,7 +114,7 @@ Payment transaction notifications are sent after a payment has been requested or
 
 ##Receipt verification
 
-While RMStore doesn't perform receipt verification by default, you can provide your own custom verification or use the app-side verification provided by the framework.
+While RMStore doesn't perform receipt verification by default, you can provide your own custom verification or use the app-side verification provided by the library.
 
 ###App-side verification
 
