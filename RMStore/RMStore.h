@@ -110,6 +110,21 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
                         onSuccess:(void (^)())successBlock
                           failure:(void (^)(NSError *error))failureBlock __attribute__((availability(ios,introduced=7.0)));
 
+#pragma mark Receipt
+///---------------------------------------------
+/// @name Getting the receipt
+///---------------------------------------------
+
+/** Returns the data of the bundle’s App Store receipt, or nil if the receipt is missing. 
+ If this method returns `nil` you can refresh the receipt by calling `refreshReceipt`.
+ @see refreshReceipt
+*/
++ (NSData*)receipt __attribute__((availability(ios,introduced=7.0)));
+
+/** Request to refresh the App Store receipt in case the receipt is invalid or missing.
+ */
+- (void)refreshReceipt __attribute__((availability(ios,introduced=7.0)));
+
 ///---------------------------------------------
 /// @name Setting Delegates
 ///---------------------------------------------
@@ -202,6 +217,8 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 - (void)storePaymentTransactionFinished:(NSNotification*)notification;
 - (void)storeProductsRequestFailed:(NSNotification*)notification;
 - (void)storeProductsRequestFinished:(NSNotification*)notification;
+- (void)storeRefreshReceiptFailed:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
+- (void)storeRefreshReceiptFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
 - (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
 
