@@ -59,8 +59,8 @@ typedef void (^RMSKPaymentTransactionFailureBlock)(SKPaymentTransaction *transac
 typedef void (^RMSKPaymentTransactionSuccessBlock)(SKPaymentTransaction *transaction);
 typedef void (^RMSKProductsRequestFailureBlock)(NSError *error);
 typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *invalidIdentifiers);
-typedef void (^RMSKRestoreTransactionsFailureBlock)(NSError *error);
-typedef void (^RMSKRestoreTransactionsSuccessBlock)();
+typedef void (^RMStoreFailureBlock)(NSError *error);
+typedef void (^RMStoreSuccessBlock)();
 
 @implementation RMStoreTransaction
 
@@ -191,8 +191,13 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     
     NSInteger _pendingRestoredTransactionsCount;
     BOOL _restoredCompletedTransactionsFinished;
-    void (^_restoreTransactionsSuccessBlock)();
+    
+    SKReceiptRefreshRequest *_refreshReceiptRequest;
+    void (^_refreshReceiptFailureBlock)(NSError* error);
+    void (^_refreshReceiptSuccessBlock)();
+    
     void (^_restoreTransactionsFailureBlock)(NSError* error);
+    void (^_restoreTransactionsSuccessBlock)();
 }
 
 - (id) init
@@ -299,8 +304,8 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     [self restoreTransactionsOnSuccess:nil failure:nil];
 }
 
-- (void)restoreTransactionsOnSuccess:(RMSKRestoreTransactionsSuccessBlock)successBlock
-                             failure:(RMSKRestoreTransactionsFailureBlock)failureBlock
+- (void)restoreTransactionsOnSuccess:(RMStoreSuccessBlock)successBlock
+                             failure:(RMStoreFailureBlock)failureBlock
 {
     _pendingRestoredTransactionsCount = 0;
     _restoreTransactionsSuccessBlock = successBlock;
@@ -332,9 +337,18 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
 
 - (void)refreshReceipt
 {
-    SKReceiptRefreshRequest *request = [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:@{}];
-    request.delegate = self;
-    [request start];
+    [self refreshReceiptOnSuccess:nil failure:nil];
+}
+
+- (void)refreshReceiptOnSuccess:(RMStoreSuccessBlock)successBlock
+                        failure:(RMStoreFailureBlock)failureBlock
+{
+    NSAssert(_refreshReceiptRequest, @"attempted to start a new refresh receipt request before the previous one finished or failed");
+    _refreshReceiptFailureBlock = failureBlock;
+    _refreshReceiptSuccessBlock = successBlock;
+    _refreshReceiptRequest = [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:@{}];
+    _refreshReceiptRequest.delegate = self;
+    [_refreshReceiptRequest start];
 }
 
 #pragma mark Product management
@@ -657,12 +671,24 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
 - (void)requestDidFinish:(SKRequest *)request
 {
     RMStoreLog(@"refresh receipt finished");
+    _refreshReceiptRequest = nil;
+    if (_refreshReceiptSuccessBlock)
+    {
+        _refreshReceiptSuccessBlock();
+        _refreshReceiptSuccessBlock = nil;
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRefreshReceiptFinished object:self];
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error
 {
     RMStoreLog(@"refresh receipt failed with error %@", error.debugDescription);
+    _refreshReceiptRequest = nil;
+    if (_refreshReceiptFailureBlock)
+    {
+        _refreshReceiptFailureBlock(error);
+        _refreshReceiptFailureBlock = nil;
+    }
     NSDictionary *userInfo = nil;
     if (error)
     { // error might be nil (e.g., on airplane mode)
