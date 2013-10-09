@@ -329,7 +329,7 @@ typedef void (^RMStoreSuccessBlock)();
 + (NSData*)receipt
 {
     // The general best practice of weak linking using the respondsToSelector: method cannot be used here. Prior to iOS 7, the method was implemented as private SPI, but that implementation called the doesNotRecognizeSelector: method.
-    NSAssert(floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1, @"appStoreReceiptURL not supported in this iOS version.");
+    NSAssert(floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1, @"appStoreReceiptURL not supported in this iOS version.");
     NSURL *url = [[NSBundle mainBundle] appStoreReceiptURL];
     NSData *data = [NSData dataWithContentsOfURL:url];
     return data;
@@ -343,7 +343,7 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)refreshReceiptOnSuccess:(RMStoreSuccessBlock)successBlock
                         failure:(RMStoreFailureBlock)failureBlock
 {
-    NSAssert(_refreshReceiptRequest, @"attempted to start a new refresh receipt request before the previous one finished or failed");
+    NSAssert(!_refreshReceiptRequest, @"attempted to start a new refresh receipt request before the previous one finished or failed");
     _refreshReceiptFailureBlock = failureBlock;
     _refreshReceiptSuccessBlock = successBlock;
     _refreshReceiptRequest = [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:@{}];
