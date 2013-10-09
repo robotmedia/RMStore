@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8700D1C117DCA548005C8F5D /* NSNotification+RMStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */; };
 		8700D1D717DCB011005C8F5D /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8700D1D617DCB011005C8F5D /* libOCMock.a */; };
+		8745CCA5180558990014A274 /* RMTestObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8745CCA4180558990014A274 /* RMTestObserver.m */; };
 		87950C2317E127A4001DF541 /* RMStoreLocalReceiptVerificatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87950C2217E127A4001DF541 /* RMStoreLocalReceiptVerificatorTests.m */; };
 		87D5A74217DE893E000E2B6C /* RMProducstRequestDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87D5A74117DE893E000E2B6C /* RMProducstRequestDelegateTests.m */; };
 		A0AF3D0C17A802F300D2E836 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
@@ -71,6 +72,7 @@
 		8700D1D317DCB011005C8F5D /* OCMockObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockObject.h; sourceTree = "<group>"; };
 		8700D1D417DCB011005C8F5D /* OCMockRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockRecorder.h; sourceTree = "<group>"; };
 		8700D1D617DCB011005C8F5D /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
+		8745CCA4180558990014A274 /* RMTestObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTestObserver.m; sourceTree = "<group>"; };
 		87950C2217E127A4001DF541 /* RMStoreLocalReceiptVerificatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreLocalReceiptVerificatorTests.m; sourceTree = "<group>"; };
 		87D5A74117DE893E000E2B6C /* RMProducstRequestDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMProducstRequestDelegateTests.m; sourceTree = "<group>"; };
 		A0AF3D0817A802F300D2E836 /* libRMStore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRMStore.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -238,6 +240,7 @@
 				87D5A74117DE893E000E2B6C /* RMProducstRequestDelegateTests.m */,
 				87950C2217E127A4001DF541 /* RMStoreLocalReceiptVerificatorTests.m */,
 				A0AF3D2917A802F300D2E836 /* RMStoreTests.m */,
+				8745CCA4180558990014A274 /* RMTestObserver.m */,
 				A0AF3D2317A802F300D2E836 /* Supporting Files */,
 				8700D1CC17DCB011005C8F5D /* usr */,
 			);
@@ -430,6 +433,7 @@
 				8700D1C117DCA548005C8F5D /* NSNotification+RMStoreTests.m in Sources */,
 				87D5A74217DE893E000E2B6C /* RMProducstRequestDelegateTests.m in Sources */,
 				87950C2317E127A4001DF541 /* RMStoreLocalReceiptVerificatorTests.m in Sources */,
+				8745CCA5180558990014A274 /* RMTestObserver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
