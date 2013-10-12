@@ -115,11 +115,11 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 /// @name Getting the receipt
 ///---------------------------------------------
 
-/** Returns the data of the bundle’s App Store receipt, or nil if the receipt is missing. 
- If this method returns `nil` you can refresh the receipt by calling `refreshReceipt`.
+/** Returns the url of the bundle’s App Store receipt, or nil if the receipt is missing.
+ If this method returns `nil` you should refresh the receipt by calling `refreshReceipt`.
  @see refreshReceipt
 */
-+ (NSData*)receipt __attribute__((availability(ios,introduced=7.0)));
++ (NSURL*)receiptURL __attribute__((availability(ios,introduced=7.0)));
 
 /** Request to refresh the App Store receipt in case the receipt is invalid or missing.
  */
