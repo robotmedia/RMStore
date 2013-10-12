@@ -165,7 +165,7 @@ extern NSString* const RMStoreNotificationStoreError;
 
 - (void)testRestoreTransactions_Nil_Nil
 {
-    [_store restoreTransactions];
+    [_store restoreTransactionsOnSuccess:nil failure:nil];
 }
 
 - (void)testRestoreTransactions_Block_Block
