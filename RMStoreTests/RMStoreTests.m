@@ -27,6 +27,8 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-retain-cycles" // To use ST macros in blocks
 
+extern NSString* const RMSKRefreshReceiptFailed;
+extern NSString* const RMSKRefreshReceiptFinished;
 extern NSString* const RMSKRestoreTransactionsFailed;
 extern NSString* const RMSKRestoreTransactionsFinished;
 
@@ -171,6 +173,30 @@ extern NSString* const RMStoreNotificationStoreError;
     [_store restoreTransactionsOnSuccess:^{
     } failure:^(NSError *error) {
     }];
+}
+
+#pragma mark Receipt
+
+- (void)testReceiptURL
+{
+    NSURL *result = [RMStore receiptURL];
+    NSURL *expected = [[NSBundle mainBundle] appStoreReceiptURL];
+    STAssertEqualObjects(result, expected, @"");
+}
+
+- (void)testRefreshReceipt
+{
+    [_store refreshReceipt];
+}
+
+- (void)testRefreshReceipt_Nil_Nil
+{
+    [_store refreshReceiptOnSuccess:nil failure:nil];
+}
+
+- (void)testRefreshReceipt_Block_Block
+{
+    [_store refreshReceiptOnSuccess:^{} failure:^(NSError *error) {}];
 }
 
 #pragma mark Product management
@@ -571,6 +597,38 @@ extern NSString* const RMStoreNotificationStoreError;
     
     [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:originalError];
 
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+#pragma mark SKRequestDelegate
+
+- (void)testRequestDidFinish
+{
+    id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFinished];
+    
+    id store = _store;
+    id requestMock = [OCMockObject mockForClass:[SKRequest class]];
+    [store requestDidFinish:requestMock];
+    
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+- (void)testRequestDidFailWithError
+{
+    NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+    id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
+        STAssertEqualObjects(error, originalError, @"");
+        return YES;
+    }];
+
+    id store = _store;
+    id requestMock = [OCMockObject mockForClass:[SKRequest class]];
+
+    [store request:requestMock didFailWithError:originalError];
+    
     [observerMock verify];
     [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
