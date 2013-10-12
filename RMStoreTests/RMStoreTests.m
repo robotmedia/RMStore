@@ -141,6 +141,11 @@ extern NSString* const RMStoreNotificationStoreError;
     STAssertTrue(failureBlockCalled, @"");
 }
 
+- (void)testAddPaymentUser
+{
+    [_store addPayment:@"test" user:@"test" success:nil failure:nil];
+}
+
 - (void)testRequestProducts_One
 {
     [_store requestProducts:[NSSet setWithObject:@"test"]];
@@ -173,6 +178,11 @@ extern NSString* const RMStoreNotificationStoreError;
     [_store restoreTransactionsOnSuccess:^{
     } failure:^(NSError *error) {
     }];
+}
+
+- (void)testRestoreTransactionsOfUser
+{
+    [_store restoreTransactionsOfUser:@"test" onSuccess:nil failure:nil];
 }
 
 #pragma mark Receipt
