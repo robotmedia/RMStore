@@ -11,6 +11,7 @@
 		8700D1D717DCB011005C8F5D /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8700D1D617DCB011005C8F5D /* libOCMock.a */; };
 		8745CCA5180558990014A274 /* RMTestObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8745CCA4180558990014A274 /* RMTestObserver.m */; };
 		87950C2317E127A4001DF541 /* RMStoreLocalReceiptVerificatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87950C2217E127A4001DF541 /* RMStoreLocalReceiptVerificatorTests.m */; };
+		87C2EE7B1809970C00677475 /* RMAppReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C2EE7A1809970C00677475 /* RMAppReceipt.m */; };
 		87D5A74217DE893E000E2B6C /* RMProducstRequestDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87D5A74117DE893E000E2B6C /* RMProducstRequestDelegateTests.m */; };
 		A0AF3D0C17A802F300D2E836 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
 		A0AF3D1117A802F300D2E836 /* RMStore.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A0AF3D1017A802F300D2E836 /* RMStore.h */; };
@@ -74,6 +75,8 @@
 		8700D1D617DCB011005C8F5D /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
 		8745CCA4180558990014A274 /* RMTestObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTestObserver.m; sourceTree = "<group>"; };
 		87950C2217E127A4001DF541 /* RMStoreLocalReceiptVerificatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreLocalReceiptVerificatorTests.m; sourceTree = "<group>"; };
+		87C2EE791809970C00677475 /* RMAppReceipt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMAppReceipt.h; sourceTree = "<group>"; };
+		87C2EE7A1809970C00677475 /* RMAppReceipt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAppReceipt.m; sourceTree = "<group>"; };
 		87D5A74117DE893E000E2B6C /* RMProducstRequestDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMProducstRequestDelegateTests.m; sourceTree = "<group>"; };
 		A0AF3D0817A802F300D2E836 /* libRMStore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRMStore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0AF3D0B17A802F300D2E836 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -287,6 +290,8 @@
 		A0AF3DB317A90F7F00D2E836 /* Optional */ = {
 			isa = PBXGroup;
 			children = (
+				87C2EE791809970C00677475 /* RMAppReceipt.h */,
+				87C2EE7A1809970C00677475 /* RMAppReceipt.m */,
 				A0AF3DAF17A90F5800D2E836 /* RMStoreLocalReceiptVerificator.h */,
 				A0AF3DB017A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m */,
 			);
@@ -422,6 +427,7 @@
 			files = (
 				A0AF3D1317A802F300D2E836 /* RMStore.m in Sources */,
 				A0AF3DB117A90F5800D2E836 /* RMStoreLocalReceiptVerificator.m in Sources */,
+				87C2EE7B1809970C00677475 /* RMAppReceipt.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
