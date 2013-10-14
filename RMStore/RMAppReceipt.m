@@ -11,8 +11,11 @@
 #include <openssl/pkcs7.h>
 #include <openssl/objects.h>
 
+// From https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ReceiptFields.html#//apple_ref/doc/uid/TP40010573-CH106-SW1
 NSInteger const RMAppReceiptASN1TypeBundleIdentifier = 2;
 NSInteger const RMAppReceiptASN1TypeAppVersion = 3;
+NSInteger const RMAppReceiptASN1TypeOpaqueValue = 4;
+NSInteger const RMAppReceiptASN1TypeHash = 5;
 NSInteger const RMAppReceiptASN1TypeOriginalAppVersion = 19;
 NSInteger const RMAppReceiptASN1TypeExpirationDate = 21;
 
@@ -135,6 +138,12 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
                 break;
             case RMAppReceiptASN1TypeAppVersion:
                 _appVersion = RMASN1ReadUTF8String(&s, omax);
+                break;
+            case RMAppReceiptASN1TypeOpaqueValue:
+                _opaqueValue = data;
+                break;
+            case RMAppReceiptASN1TypeHash:
+                _hash = data;
                 break;
             case RMAppReceiptASN1TypeOriginalAppVersion:
                 _originalAppVersion = RMASN1ReadUTF8String(&s, omax);

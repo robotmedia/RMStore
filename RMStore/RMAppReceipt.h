@@ -12,6 +12,8 @@
 
 @property (nonatomic, strong, readonly) NSString *bundleIdentifier;
 @property (nonatomic, strong, readonly) NSString *appVersion;
+@property (nonatomic, strong, readonly) NSData *opaqueValue;
+@property (nonatomic, strong, readonly) NSData *hash;
 @property (nonatomic, strong, readonly) NSString *originalAppVersion;
 @property (nonatomic, strong, readonly) NSDate *expirationDate;
 
