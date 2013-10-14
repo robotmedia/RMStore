@@ -30,6 +30,12 @@ NSInteger const RMAppReceiptASN1TypeSubscriptionExpirationDate = 1708;
 NSInteger const RMAppReceiptASN1TypeWebOrderLineItemID = 1711;
 NSInteger const RMAppReceiptASN1TypeCancellationDate = 1712;
 
+@interface RMAppReceiptIAP()
+
+- (id)initWithASN1Data:(NSData*)asn1Data;
+
+@end
+
 @interface RMAppReceipt()<RMStoreObserver>
 
 @end
@@ -38,7 +44,7 @@ NSInteger const RMAppReceiptASN1TypeCancellationDate = 1712;
 
 static RMAppReceipt *_bundleReceipt = nil;
 
-int RMASN1ReadInteger(const unsigned char **pp, long omax)
+int RMASN1ReadInteger(const uint8_t **pp, long omax)
 {
     int tag, class;
     long length;
@@ -46,16 +52,16 @@ int RMASN1ReadInteger(const unsigned char **pp, long omax)
     ASN1_get_object(pp, &length, &tag, &class, omax);
     if (tag == V_ASN1_INTEGER)
     {
-        for (int i = 0, mask = 1; i < length; i++, mask = mask<<2)
+        for (int i = 0; i < length; i++)
         {
-            value += *pp[i] * mask;
+            value = value * 0x100 + (*pp)[i];
         }
     }
     *pp += length;
     return value;
 }
 
-NSData* RMASN1ReadOctectString(const unsigned char **pp, long omax)
+NSData* RMASN1ReadOctectString(const uint8_t **pp, long omax)
 {
     int tag, class;
     long length;
@@ -69,7 +75,7 @@ NSData* RMASN1ReadOctectString(const unsigned char **pp, long omax)
     return data;
 }
 
-NSString* RMASN1ReadString(const unsigned char **pp, long omax, int expectedTag, NSStringEncoding encoding)
+NSString* RMASN1ReadString(const uint8_t **pp, long omax, int expectedTag, NSStringEncoding encoding)
 {
     int tag, class;
     long length;
@@ -83,12 +89,12 @@ NSString* RMASN1ReadString(const unsigned char **pp, long omax, int expectedTag,
     return value;
 }
 
-NSString* RMASN1ReadUTF8String(const unsigned char **pp, long omax)
+NSString* RMASN1ReadUTF8String(const uint8_t **pp, long omax)
 {
     return RMASN1ReadString(pp, omax, V_ASN1_UTF8STRING, NSUTF8StringEncoding);
 }
 
-NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
+NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
 {
     return RMASN1ReadString(pp, omax, V_ASN1_IA5STRING, NSASCIIStringEncoding);
 }
@@ -102,9 +108,6 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
     return self;
 }
 
-/*
- Based in https://github.com/rmaddy/VerifyStoreReceiptiOS
- */
 - (void)loadFromPath:(NSString*)path
 {
     const char *cpath = [[path stringByStandardizingPath] fileSystemRepresentation];
@@ -116,9 +119,10 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
     
     if (!p7) return;
     
+    NSMutableArray *purchases = [NSMutableArray array];
     ASN1_OCTET_STRING *octets = p7->d.sign->contents->d.data;
     [RMAppReceipt enumerateASN1Attributes:octets->data length:octets->length usingBlock:^(NSData *data, int type, long omax) {
-        const unsigned char *s = data.bytes;
+        const uint8_t *s = data.bytes;
         switch (type)
         {
             case RMAppReceiptASN1TypeBundleIdentifier:
@@ -134,8 +138,11 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
                 _hash = data;
                 break;
             case RMAppReceiptASN1TypeInAppPurchaseReceipt:
-                _inAppPurchases = [RMAppReceipt inAppPurchasesFromReceipt:data];
+            {
+                RMAppReceiptIAP *purchase = [[RMAppReceiptIAP alloc] initWithASN1Data:data];
+                [purchases addObject:purchase];
                 break;
+            }
             case RMAppReceiptASN1TypeOriginalAppVersion:
                 _originalAppVersion = RMASN1ReadUTF8String(&s, omax);
                 break;
@@ -147,17 +154,20 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
             }
         }
     }];
+    _inAppPurchases = purchases;
     
     PKCS7_free(p7);
 }
 
-
-+ (void)enumerateASN1Attributes:(const unsigned char*)p length:(long)tlength usingBlock:(void (^)(NSData *data, int type, long omax))block
+/*
+ Based on https://github.com/rmaddy/VerifyStoreReceiptiOS
+ */
++ (void)enumerateASN1Attributes:(const uint8_t*)p length:(long)tlength usingBlock:(void (^)(NSData *data, int type, long omax))block
 {
     int type, tag;
     long length;
     
-    const unsigned char *end = p + tlength;
+    const uint8_t *end = p + tlength;
     
     ASN1_get_object(&p, &length, &type, &tag, end - p);
     if (type != V_ASN1_SET) return;
@@ -175,7 +185,7 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
         NSData *data = RMASN1ReadOctectString(&p, sequenceEnd - p);
         if (!data) continue;
         
-        const unsigned char *s = data.bytes;
+        const uint8_t *s = data.bytes;
         long omax = sequenceEnd - s;
         block(data, attributeType, omax);
         
@@ -196,12 +206,6 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
         formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     });
     return [formatter dateFromString:string];
-}
-
-+ (NSArray*)inAppPurchasesFromReceipt:(NSData*)receipt
-{
-    NSMutableArray *purchases = [NSMutableArray array];
-    return purchases;
 }
 
 + (RMAppReceipt*)bundleReceipt
@@ -235,5 +239,57 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
 
 @implementation RMAppReceiptIAP
 
+- (id)initWithASN1Data:(NSData*)asn1Data
+{
+    if (self = [super init])
+    {
+        [RMAppReceipt enumerateASN1Attributes:asn1Data.bytes length:asn1Data.length usingBlock:^(NSData *data, int type, long omax) {
+            const uint8_t *p = data.bytes;
+            switch (type)
+            {
+                case RMAppReceiptASN1TypeQuantity:
+                    _quantity = RMASN1ReadInteger(&p, omax);
+                    break;
+                case RMAppReceiptASN1TypeProductIdentifier:
+                    _productIdentifier = RMASN1ReadUTF8String(&p, omax);
+                    break;
+                case RMAppReceiptASN1TypeTransactionIdentifier:
+                    _transactionIdentifier = RMASN1ReadUTF8String(&p, omax);
+                    break;
+                case RMAppReceiptASN1TypePurchaseDate:
+                {
+                    NSString *string = RMASN1ReadIA5SString(&p, omax);
+                    _purchaseDate = [RMAppReceipt formatRFC3339String:string];
+                    break;
+                }
+                case RMAppReceiptASN1TypeOriginalTransactionIdentifier:
+                    _originalTransactionIdentifier = RMASN1ReadUTF8String(&p, omax);
+                    break;
+                case RMAppReceiptASN1TypeOriginalPurchaseDate:
+                {
+                    NSString *string = RMASN1ReadIA5SString(&p, omax);
+                    _originalPurchaseDate = [RMAppReceipt formatRFC3339String:string];
+                    break;
+                }
+                case RMAppReceiptASN1TypeSubscriptionExpirationDate:
+                {
+                    NSString *string = RMASN1ReadIA5SString(&p, omax);
+                    _subscriptionExpirationDate = [RMAppReceipt formatRFC3339String:string];
+                    break;
+                }
+                case RMAppReceiptASN1TypeWebOrderLineItemID:
+                    _webOrderLineItemID = RMASN1ReadInteger(&p, omax);
+                    break;
+                case RMAppReceiptASN1TypeCancellationDate:
+                {
+                    NSString *string = RMASN1ReadIA5SString(&p, omax);
+                    _cancellationDate = [RMAppReceipt formatRFC3339String:string];
+                    break;
+                }
+            }
+        }];
+    }
+    return self;
+}
 
 @end
