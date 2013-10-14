@@ -51,13 +51,6 @@
     }];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    const BOOL canMakePayments = [RMStore canMakePayments];
-    self.tableView.hidden = !canMakePayments;
-    self.paymentsDisabledLabel.hidden = canMakePayments;
-}
-
 #pragma mark Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -84,6 +77,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (![RMStore canMakePayments]) return;
+    
     NSString *productID = [_products objectAtIndex:indexPath.row];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
