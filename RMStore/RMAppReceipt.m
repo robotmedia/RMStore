@@ -8,6 +8,8 @@
 
 #import "RMAppReceipt.h"
 #import "RMStore.h"
+#include <openssl/pkcs7.h>
+#include <openssl/objects.h>
 
 NSInteger const RMAppReceiptASN1TypeBundleIdentifier = 2;
 NSInteger const RMAppReceiptASN1TypeAppVersion = 3;
@@ -36,8 +38,13 @@ static RMAppReceipt *_bundleReceipt = nil;
     if (!_bundleReceipt)
     {
         NSURL *URL = [RMStore receiptURL];
-        _bundleReceipt = [[RMAppReceipt alloc] initWithURL:URL];
-        [[RMStore defaultStore] addStoreObserver:_bundleReceipt];
+        NSString *path = URL.path;
+        const BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:nil];
+        if (exists)
+        {
+            _bundleReceipt = [[RMAppReceipt alloc] initWithURL:URL];
+            [[RMStore defaultStore] addStoreObserver:_bundleReceipt];
+        }
     }
     return _bundleReceipt;
 }
