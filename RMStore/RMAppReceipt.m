@@ -16,8 +16,19 @@ NSInteger const RMAppReceiptASN1TypeBundleIdentifier = 2;
 NSInteger const RMAppReceiptASN1TypeAppVersion = 3;
 NSInteger const RMAppReceiptASN1TypeOpaqueValue = 4;
 NSInteger const RMAppReceiptASN1TypeHash = 5;
+NSInteger const RMAppReceiptASN1TypeInAppPurchaseReceipt = 17;
 NSInteger const RMAppReceiptASN1TypeOriginalAppVersion = 19;
 NSInteger const RMAppReceiptASN1TypeExpirationDate = 21;
+
+NSInteger const RMAppReceiptASN1TypeQuantity = 1701;
+NSInteger const RMAppReceiptASN1TypeProductIdentifier = 1702;
+NSInteger const RMAppReceiptASN1TypeTransactionIdentifier = 1703;
+NSInteger const RMAppReceiptASN1TypePurchaseDate = 1704;
+NSInteger const RMAppReceiptASN1TypeOriginalTransactionIdentifier = 1705;
+NSInteger const RMAppReceiptASN1TypeOriginalPurchaseDate = 1706;
+NSInteger const RMAppReceiptASN1TypeSubscriptionExpirationDate = 1708;
+NSInteger const RMAppReceiptASN1TypeWebOrderLineItemID = 1711;
+NSInteger const RMAppReceiptASN1TypeCancellationDate = 1712;
 
 @interface RMAppReceipt()<RMStoreObserver>
 
@@ -33,9 +44,12 @@ int RMASN1ReadInteger(const unsigned char **pp, long omax)
     long length;
     int value = 0;
     ASN1_get_object(pp, &length, &tag, &class, omax);
-    if (tag == V_ASN1_INTEGER && length == 1)
+    if (tag == V_ASN1_INTEGER)
     {
-        value = *pp[0];
+        for (int i = 0, mask = 1; i < length; i++, mask = mask<<2)
+        {
+            value += *pp[i] * mask;
+        }
     }
     *pp += length;
     return value;
@@ -123,7 +137,7 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
         
         const uint8_t *sequenceEnd = p + length;
         
-        int attr_type = RMASN1ReadInteger(&p, sequenceEnd - p);
+        int attributeType = RMASN1ReadInteger(&p, sequenceEnd - p);
         RMASN1ReadInteger(&p, sequenceEnd - p); // Consume attribute version
         
         NSData *data = RMASN1ReadOctectString(&p, sequenceEnd - p);
@@ -131,7 +145,7 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
         
         const unsigned char *s = data.bytes;
         long omax = sequenceEnd - s;
-        switch (attr_type)
+        switch (attributeType)
         {
             case RMAppReceiptASN1TypeBundleIdentifier:
                 _bundleIdentifier = RMASN1ReadUTF8String(&s, omax);
@@ -145,6 +159,9 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
             case RMAppReceiptASN1TypeHash:
                 _hash = data;
                 break;
+            case RMAppReceiptASN1TypeInAppPurchaseReceipt:
+                _inAppPurchases = [RMAppReceipt inAppPurchasesFromReceipt:data];
+                break;
             case RMAppReceiptASN1TypeOriginalAppVersion:
                 _originalAppVersion = RMASN1ReadUTF8String(&s, omax);
                 break;
@@ -154,7 +171,6 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
                 _expirationDate = [RMAppReceipt formatRFC3339String:string];
                 break;
             }
-
         }
         
         while (p < sequenceEnd)
@@ -167,6 +183,7 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
     PKCS7_free(p7);
 }
 
+
 + (NSDate*)formatRFC3339String:(NSString*)string
 {
     static NSDateFormatter *formatter;
@@ -176,6 +193,12 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
         formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     });
     return [formatter dateFromString:string];
+}
+
++ (NSArray*)inAppPurchasesFromReceipt:(NSData*)receipt
+{
+    NSMutableArray *purchases = [NSMutableArray array];
+    return purchases;
 }
 
 + (RMAppReceipt*)bundleReceipt
@@ -204,5 +227,10 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
         _bundleReceipt = nil;
     }
 }
+
+@end
+
+@implementation RMAppReceiptIAP
+
 
 @end
