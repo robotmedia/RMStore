@@ -117,35 +117,9 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
     if (!p7) return;
     
     ASN1_OCTET_STRING *octets = p7->d.sign->contents->d.data;
-    const uint8_t *p = octets->data;
-    const uint8_t *end = p + octets->length;
-    
-    int type, tag;
-    long length = 0;
-    
-    ASN1_get_object(&p, &length, &type, &tag, end - p);
-    if (type != V_ASN1_SET)
-    {
-        PKCS7_free(p7);
-        return;
-    }
-    
-    while (p < end)
-    {
-        ASN1_get_object(&p, &length, &type, &tag, end - p);
-        if (type != V_ASN1_SEQUENCE) break;
-        
-        const uint8_t *sequenceEnd = p + length;
-        
-        int attributeType = RMASN1ReadInteger(&p, sequenceEnd - p);
-        RMASN1ReadInteger(&p, sequenceEnd - p); // Consume attribute version
-        
-        NSData *data = RMASN1ReadOctectString(&p, sequenceEnd - p);
-        if (!data) continue;
-        
+    [RMAppReceipt enumerateASN1Attributes:octets->data length:octets->length usingBlock:^(NSData *data, int type, long omax) {
         const unsigned char *s = data.bytes;
-        long omax = sequenceEnd - s;
-        switch (attributeType)
+        switch (type)
         {
             case RMAppReceiptASN1TypeBundleIdentifier:
                 _bundleIdentifier = RMASN1ReadUTF8String(&s, omax);
@@ -172,6 +146,38 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
                 break;
             }
         }
+    }];
+    
+    PKCS7_free(p7);
+}
+
+
++ (void)enumerateASN1Attributes:(const unsigned char*)p length:(long)tlength usingBlock:(void (^)(NSData *data, int type, long omax))block
+{
+    int type, tag;
+    long length;
+    
+    const unsigned char *end = p + tlength;
+    
+    ASN1_get_object(&p, &length, &type, &tag, end - p);
+    if (type != V_ASN1_SET) return;
+    
+    while (p < end)
+    {
+        ASN1_get_object(&p, &length, &type, &tag, end - p);
+        if (type != V_ASN1_SEQUENCE) break;
+        
+        const uint8_t *sequenceEnd = p + length;
+        
+        int attributeType = RMASN1ReadInteger(&p, sequenceEnd - p);
+        RMASN1ReadInteger(&p, sequenceEnd - p); // Consume attribute version
+        
+        NSData *data = RMASN1ReadOctectString(&p, sequenceEnd - p);
+        if (!data) continue;
+        
+        const unsigned char *s = data.bytes;
+        long omax = sequenceEnd - s;
+        block(data, attributeType, omax);
         
         while (p < sequenceEnd)
         { // Skip remaining fields
@@ -179,10 +185,7 @@ NSString* RMASN1ReadIA5SString(const unsigned char **pp, long omax)
             p += length;
         }
     }
-    
-    PKCS7_free(p7);
 }
-
 
 + (NSDate*)formatRFC3339String:(NSString*)string
 {
