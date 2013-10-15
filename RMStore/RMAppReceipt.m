@@ -100,15 +100,16 @@ static RMAppReceipt *_bundleReceipt = nil;
     if (self = [super init])
     {
         NSMutableArray *purchases = [NSMutableArray array];
-        [RMAppReceipt enumerateASN1Attributes:asn1Data.bytes length:asn1Data.length usingBlock:^(NSData *data, int type, long omax) {
+        [RMAppReceipt enumerateASN1Attributes:asn1Data.bytes length:asn1Data.length usingBlock:^(NSData *data, int type) {
             const uint8_t *s = data.bytes;
+            const NSUInteger length = data.length;
             switch (type)
             {
                 case RMAppReceiptASN1TypeBundleIdentifier:
-                    _bundleIdentifier = RMASN1ReadUTF8String(&s, omax);
+                    _bundleIdentifier = RMASN1ReadUTF8String(&s, length);
                     break;
                 case RMAppReceiptASN1TypeAppVersion:
-                    _appVersion = RMASN1ReadUTF8String(&s, omax);
+                    _appVersion = RMASN1ReadUTF8String(&s, length);
                     break;
                 case RMAppReceiptASN1TypeOpaqueValue:
                     _opaqueValue = data;
@@ -123,11 +124,11 @@ static RMAppReceipt *_bundleReceipt = nil;
                     break;
                 }
                 case RMAppReceiptASN1TypeOriginalAppVersion:
-                    _originalAppVersion = RMASN1ReadUTF8String(&s, omax);
+                    _originalAppVersion = RMASN1ReadUTF8String(&s, length);
                     break;
                 case RMAppReceiptASN1TypeExpirationDate:
                 {
-                    NSString *string = RMASN1ReadIA5SString(&s, omax);
+                    NSString *string = RMASN1ReadIA5SString(&s, length);
                     _expirationDate = [RMAppReceipt formatRFC3339String:string];
                     break;
                 }
@@ -179,7 +180,7 @@ static RMAppReceipt *_bundleReceipt = nil;
 /*
  Based on https://github.com/rmaddy/VerifyStoreReceiptiOS
  */
-+ (void)enumerateASN1Attributes:(const uint8_t*)p length:(long)tlength usingBlock:(void (^)(NSData *data, int type, long omax))block
++ (void)enumerateASN1Attributes:(const uint8_t*)p length:(long)tlength usingBlock:(void (^)(NSData *data, int type))block
 {
     int type, tag;
     long length;
@@ -202,9 +203,7 @@ static RMAppReceipt *_bundleReceipt = nil;
         NSData *data = RMASN1ReadOctectString(&p, sequenceEnd - p);
         if (data)
         {
-            const uint8_t *s = data.bytes;
-            const long omax = sequenceEnd - s;
-            block(data, attributeType, omax);
+            block(data, attributeType);
         }
         
         while (p < sequenceEnd)
@@ -221,9 +220,10 @@ static RMAppReceipt *_bundleReceipt = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+        formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ssZ";
     });
-    return [formatter dateFromString:string];
+    NSDate *date = [formatter dateFromString:string];
+    return date;
 }
 
 #pragma mark - RMStoreObserver
@@ -245,46 +245,47 @@ static RMAppReceipt *_bundleReceipt = nil;
 {
     if (self = [super init])
     {
-        [RMAppReceipt enumerateASN1Attributes:asn1Data.bytes length:asn1Data.length usingBlock:^(NSData *data, int type, long omax) {
+        [RMAppReceipt enumerateASN1Attributes:asn1Data.bytes length:asn1Data.length usingBlock:^(NSData *data, int type) {
             const uint8_t *p = data.bytes;
+            const NSUInteger length = data.length;
             switch (type)
             {
                 case RMAppReceiptASN1TypeQuantity:
-                    _quantity = RMASN1ReadInteger(&p, omax);
+                    _quantity = RMASN1ReadInteger(&p, length);
                     break;
                 case RMAppReceiptASN1TypeProductIdentifier:
-                    _productIdentifier = RMASN1ReadUTF8String(&p, omax);
+                    _productIdentifier = RMASN1ReadUTF8String(&p, length);
                     break;
                 case RMAppReceiptASN1TypeTransactionIdentifier:
-                    _transactionIdentifier = RMASN1ReadUTF8String(&p, omax);
+                    _transactionIdentifier = RMASN1ReadUTF8String(&p, length);
                     break;
                 case RMAppReceiptASN1TypePurchaseDate:
                 {
-                    NSString *string = RMASN1ReadIA5SString(&p, omax);
+                    NSString *string = RMASN1ReadIA5SString(&p, length);
                     _purchaseDate = [RMAppReceipt formatRFC3339String:string];
                     break;
                 }
                 case RMAppReceiptASN1TypeOriginalTransactionIdentifier:
-                    _originalTransactionIdentifier = RMASN1ReadUTF8String(&p, omax);
+                    _originalTransactionIdentifier = RMASN1ReadUTF8String(&p, length);
                     break;
                 case RMAppReceiptASN1TypeOriginalPurchaseDate:
                 {
-                    NSString *string = RMASN1ReadIA5SString(&p, omax);
+                    NSString *string = RMASN1ReadIA5SString(&p, length);
                     _originalPurchaseDate = [RMAppReceipt formatRFC3339String:string];
                     break;
                 }
                 case RMAppReceiptASN1TypeSubscriptionExpirationDate:
                 {
-                    NSString *string = RMASN1ReadIA5SString(&p, omax);
+                    NSString *string = RMASN1ReadIA5SString(&p, length);
                     _subscriptionExpirationDate = [RMAppReceipt formatRFC3339String:string];
                     break;
                 }
                 case RMAppReceiptASN1TypeWebOrderLineItemID:
-                    _webOrderLineItemID = RMASN1ReadInteger(&p, omax);
+                    _webOrderLineItemID = RMASN1ReadInteger(&p, length);
                     break;
                 case RMAppReceiptASN1TypeCancellationDate:
                 {
-                    NSString *string = RMASN1ReadIA5SString(&p, omax);
+                    NSString *string = RMASN1ReadIA5SString(&p, length);
                     _cancellationDate = [RMAppReceipt formatRFC3339String:string];
                     break;
                 }
