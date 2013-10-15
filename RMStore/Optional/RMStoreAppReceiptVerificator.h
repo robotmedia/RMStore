@@ -21,12 +21,28 @@
 #import <Foundation/Foundation.h>
 #import "RMStore.h"
 
+/**
+ Reference implementation of an app receipt verificator. If security is a concern you might want to avoid using a verificator whose code is open source.
+ */
 __attribute__((availability(ios,introduced=7.0)))
 @interface RMStoreAppReceiptVerificator : NSObject<RMStoreReceiptVerificator>
 
+/**
+ The value that will be used to validate the bundle identifier included in the app receipt. Given that it is possible to modify the app bundle in jailbroken devices, setting this value from a hardcoded string might provide better protection.
+ @returns The given value, or the app's bundle identifier by defult.
+ */
 @property (nonatomic, strong) NSString *bundleIdentifier;
+
+/**
+ The value that will be used to validate the bundle version included in the app receipt. Given that it is possible to modify the app bundle in jailbroken devices, setting this value from a hardcoded string might provide better protection.
+ @returns The given value, or the app's bundle version by defult.
+ */
 @property (nonatomic, strong) NSString *bundleVersion;
 
+/**
+ Verifies the app receipt by checking the integrity of the receipt, and comparing its bundle identifier and bundle version to the values returned by the corresponding properties.
+ @return YES if the receipt if verified, NO otherwise.
+ */
 - (BOOL)verifyAppReceipt;
 
 @end
