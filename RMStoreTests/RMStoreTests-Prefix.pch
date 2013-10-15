@@ -1,0 +1,9 @@
+//
+// Prefix header for all source files of the 'RMStoreTests' target in the 'RMStore' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif
+
+#define SKIP_IF_VERSION(v) if (floor(NSFoundationVersionNumber) <= v) return;

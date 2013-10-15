@@ -24,8 +24,6 @@
 #import <OCMock/OCMock.h>
 #import "RMStore.h"
 
-#define IOS7_OR_HIGHER_ONLY if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_6_1) return;
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-retain-cycles" // To use ST macros in blocks
 
@@ -144,7 +142,7 @@ extern NSString* const RMStoreNotificationStoreError;
 }
 
 - (void)testAddPaymentUser
-{ IOS7_OR_HIGHER_ONLY
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     [_store addPayment:@"test" user:@"test" success:nil failure:nil];
 }
 
@@ -183,7 +181,7 @@ extern NSString* const RMStoreNotificationStoreError;
 }
 
 - (void)testRestoreTransactionsOfUser
-{ IOS7_OR_HIGHER_ONLY
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     
     [_store restoreTransactionsOfUser:@"test" onSuccess:nil failure:nil];
 }
@@ -191,7 +189,7 @@ extern NSString* const RMStoreNotificationStoreError;
 #pragma mark Receipt
 
 - (void)testReceiptURL
-{ IOS7_OR_HIGHER_ONLY
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     
     NSURL *result = [RMStore receiptURL];
     NSURL *expected = [[NSBundle mainBundle] appStoreReceiptURL];
@@ -199,17 +197,17 @@ extern NSString* const RMStoreNotificationStoreError;
 }
 
 - (void)testRefreshReceipt
-{ IOS7_OR_HIGHER_ONLY
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     [_store refreshReceipt];
 }
 
 - (void)testRefreshReceipt_Nil_Nil
-{ IOS7_OR_HIGHER_ONLY
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     [_store refreshReceiptOnSuccess:nil failure:nil];
 }
 
 - (void)testRefreshReceipt_Block_Block
-{ IOS7_OR_HIGHER_ONLY
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     [_store refreshReceiptOnSuccess:^{} failure:^(NSError *error) {}];
 }
 
