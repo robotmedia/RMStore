@@ -87,13 +87,7 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     return RMASN1ReadString(pp, omax, V_ASN1_IA5STRING, NSASCIIStringEncoding);
 }
 
-@interface RMAppReceipt()<RMStoreObserver>
-
-@end
-
 @implementation RMAppReceipt
-
-static RMAppReceipt *_bundleReceipt = nil;
 
 - (id)initWithASN1Data:(NSData*)asn1Data
 {
@@ -141,19 +135,16 @@ static RMAppReceipt *_bundleReceipt = nil;
 
 + (RMAppReceipt*)bundleReceipt
 {
-    if (!_bundleReceipt)
-    {
-        NSURL *URL = [RMStore receiptURL];
-        NSString *path = URL.path;
-        const BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:nil];
-        if (!exists) return nil;
-        
-        NSData *data = [RMAppReceipt dataFromPCKS7Path:path];
-        if (!data) return nil;
-        _bundleReceipt = [[RMAppReceipt alloc] initWithASN1Data:data];
-        [[RMStore defaultStore] addStoreObserver:_bundleReceipt];
-    }
-    return _bundleReceipt;
+    NSURL *URL = [RMStore receiptURL];
+    NSString *path = URL.path;
+    const BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:nil];
+    if (!exists) return nil;
+    
+    NSData *data = [RMAppReceipt dataFromPCKS7Path:path];
+    if (!data) return nil;
+    
+    RMAppReceipt *receipt = [[RMAppReceipt alloc] initWithASN1Data:data];
+    return receipt;
 }
 
 #pragma mark - Utils
@@ -224,17 +215,6 @@ static RMAppReceipt *_bundleReceipt = nil;
     });
     NSDate *date = [formatter dateFromString:string];
     return date;
-}
-
-#pragma mark - RMStoreObserver
-
-- (void)storeRefreshReceiptFinished:(NSNotification *)notification
-{
-    [[RMStore defaultStore] removeStoreObserver:self];
-    if (self == _bundleReceipt)
-    {
-        _bundleReceipt = nil;
-    }
 }
 
 @end
