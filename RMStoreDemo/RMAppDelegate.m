@@ -26,7 +26,7 @@
 #import "RMStoreAppReceiptVerificator.h"
 
 @implementation RMAppDelegate {
-    RMStoreReceiptVerificator *_receiptVerificator;
+   id<RMStoreReceiptVerificator> _receiptVerificator;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
