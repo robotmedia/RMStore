@@ -179,15 +179,16 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
         
         const uint8_t *sequenceEnd = p + length;
         
-        int attributeType = RMASN1ReadInteger(&p, sequenceEnd - p);
+        const int attributeType = RMASN1ReadInteger(&p, sequenceEnd - p);
         RMASN1ReadInteger(&p, sequenceEnd - p); // Consume attribute version
         
         NSData *data = RMASN1ReadOctectString(&p, sequenceEnd - p);
-        if (!data) continue;
-        
-        const uint8_t *s = data.bytes;
-        long omax = sequenceEnd - s;
-        block(data, attributeType, omax);
+        if (data)
+        {
+            const uint8_t *s = data.bytes;
+            const long omax = sequenceEnd - s;
+            block(data, attributeType, omax);
+        }
         
         while (p < sequenceEnd)
         { // Skip remaining fields
