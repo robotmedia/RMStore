@@ -32,9 +32,9 @@
 
 - (id)initWithASN1Data:(NSData*)asn1Data;
 
-+ (RMAppReceipt*)bundleReceipt;
-
 - (BOOL)containsInAppPurchaseOfProductIdentifier:(NSString*)productIdentifier;
+
++ (RMAppReceipt*)bundleReceipt;
 
 @end
 
