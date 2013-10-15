@@ -22,6 +22,8 @@
 
 + (RMAppReceipt*)bundleReceipt;
 
+- (BOOL)containsInAppPurchaseOfProductIdentifier:(NSString*)productIdentifier;
+
 @end
 
 @interface RMAppReceiptIAP : NSObject

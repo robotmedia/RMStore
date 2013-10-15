@@ -133,6 +133,15 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     return self;
 }
 
+- (BOOL)containsInAppPurchaseOfProductIdentifier:(NSString*)productIdentifier
+{
+    for (RMAppReceiptIAP *purchase in _inAppPurchases)
+    {
+        if ([purchase.productIdentifier isEqualToString:productIdentifier]) return YES;
+    }
+    return NO;
+}
+
 + (RMAppReceipt*)bundleReceipt
 {
     NSURL *URL = [RMStore receiptURL];
