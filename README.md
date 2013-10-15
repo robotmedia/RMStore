@@ -133,36 +133,38 @@ Payment transaction notifications are sent after a payment has been requested or
 - (void)storeRefreshReceiptFinished:(NSNotification*)notification { }
 ```
 
-
 ##Receipt verification
 
-While RMStore doesn't perform receipt verification by default, you can provide your own custom verification or use the app-side verification provided by the library.
+RMStore doesn't perform receipt verification by default but provides reference implementations. You can provide your own custom verification or use the local receipt verificators provided by the library.
 
-###App-side verification
+###Local verification
 
-RMStore provides optional app-side receipt verification via `RMStoreLocalReceiptVerificator`. To use it, add [RMStoreLocalReceiptVerificator.h](https://github.com/robotmedia/RMStore/blob/master/RMStore/RMStoreLocalReceiptVerificator.h) and [RMStoreLocalReceiptVerificator.m](https://github.com/robotmedia/RMStore/blob/master/RMStore/RMStoreLocalReceiptVerificator.m) to your project and set the verification delegate (`receiptVerificator`) at startup. For example:
+RMStore provides optional local receipt verification via `RMStoreAppReceiptVerificator` (for iOS 7 or higher) and `RMStoreTransactionReceiptVerificator` (for iOS 6 or lower). To use any of them, add the corresponding files from the Optional folder into your project and set the verification delegate (`receiptVerificator`) at startup. For example:
 
 ```objective-c
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    _receiptVerificator = [[RMStoreLocalReceiptVerificator alloc] init]; // Keep a reference to the verificator as the below property is weak
+    const BOOL iOS7OrHigher = floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1;
+    _receiptVerificator = iOS7OrHigher ? [[RMStoreAppReceiptVerificator alloc] init] : [[RMStoreTransactionReceiptVerificator alloc] init];
     [RMStore defaultStore].receiptVerificator = _receiptVerificator;
     // Your code
     return YES;
 }
 ```
 
+If security is a concern you might want to avoid using an open source verification logic, and provide your own custom verfication instead.
+
 ###Custom verification
 
-Apple strongly recommends to use your own server-side verification. To do this, implement the `RMStoreReceiptVerificator` protocol:
+RMStore delegates receipt verfication and you can provide your own implementation using the `RMStoreReceiptVerificator` protocol:
 
 ```objective-c
-- (void)verifyReceiptOfTransaction:(SKPaymentTransaction*)transaction
+- (void)verifyTransaction:(SKPaymentTransaction*)transaction
                            success:(void (^)())successBlock
                            failure:(void (^)(NSError *error))failureBlock;
 ```
 
-In most cases you will call a web service that performs the same logic than `RMStoreLocalReceiptVerificator`, but on your server. Call `successBlock` if the receipt passes verification, and `failureBlock` in any other case.
+Call `successBlock` if the receipt passes verification, and `failureBlock` in any other case.
 
 You will also need to set the `receiptVerificator` delegate at startup, as indicated above.
 
