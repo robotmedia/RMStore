@@ -8,9 +8,9 @@ RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.m
 
 ```objective-c
 [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
-    NSLog(@"Purchased!", @"");
+    NSLog(@"Purchased!");
 } failure:^(SKPaymentTransaction *transaction, NSError *error) {
-    NSLog(@"Something went wrong", @"");
+    NSLog(@"Something went wrong");
 }];
 ```
 
@@ -29,9 +29,9 @@ RMStore adds blocks to all asynchronous StoreKit operations.
 ```objective-c
 NSSet *products = [NSSet setWithArray:@[@"fabulousIdol", @"rootBeer", @"rubberChicken"]];
 [[RMStore defaultStore] requestProducts:products success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
-    NSLog(@"Products loaded", @"");
+    NSLog(@"Products loaded");
 } failure:^(NSError *error) {
-    NSLog(@"Something went wrong", @"");
+    NSLog(@"Something went wrong");
 }];
 ```
 
@@ -39,9 +39,9 @@ NSSet *products = [NSSet setWithArray:@[@"fabulousIdol", @"rootBeer", @"rubberCh
 
 ```objective-c
 [[RMStore defaultStore] addPayment:@"waxLips" success:^(SKPaymentTransaction *transaction) {
-    NSLog(@"Product purchased", @"");
+    NSLog(@"Product purchased");
 } failure:^(SKPaymentTransaction *transaction, NSError *error) {
-    NSLog(@"Something went wrong", @"");
+    NSLog(@"Something went wrong");
 }];
 ```
 
@@ -49,9 +49,9 @@ NSSet *products = [NSSet setWithArray:@[@"fabulousIdol", @"rootBeer", @"rubberCh
 
 ```objective-c
 [[RMStore defaultStore] restoreTransactionsOnSuccess:^{
-    NSLog(@"Transactions restored", @"");
+    NSLog(@"Transactions restored");
 } failure:^(NSError *error) {
-    NSLog(@"Something went wrong", @"");
+    NSLog(@"Something went wrong");
 }];
 ```
 
