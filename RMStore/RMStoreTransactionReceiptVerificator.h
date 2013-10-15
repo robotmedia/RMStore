@@ -1,5 +1,5 @@
 //
-//  RMStoreLocalReceiptVerificator.h
+//  RMStoreTransactionReceiptVerificator.h
 //  RMStore
 //
 //  Created by Hermes Pique on 7/31/13.
@@ -22,6 +22,6 @@
 #import "RMStore.h"
 
 __attribute__((availability(ios,deprecated=7.0)))
-@interface RMStoreLocalReceiptVerificator : NSObject<RMStoreReceiptVerificator>  
+@interface RMStoreTransactionReceiptVerificator : NSObject<RMStoreReceiptVerificator>  
 
 @end

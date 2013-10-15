@@ -1,5 +1,5 @@
 //
-//  RMStoreLocalReceiptVerificatorTests.m
+//  RMStoreTransactionReceiptVerificatorTests.m
 //  RMStore
 //
 //  Created by Hermes on 9/12/13.
@@ -7,20 +7,20 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
-#import "RMStoreLocalReceiptVerificator.h"
+#import "RMStoreTransactionReceiptVerificator.h"
 #import <OCMock/OCMock.h>
 
-@interface RMStoreLocalReceiptVerificatorTests : SenTestCase
+@interface RMStoreTransactionReceiptVerificatorTests : SenTestCase
 
 @end
 
-@implementation RMStoreLocalReceiptVerificatorTests {
-    RMStoreLocalReceiptVerificator *_verificator;
+@implementation RMStoreTransactionReceiptVerificatorTests {
+    RMStoreTransactionReceiptVerificator *_verificator;
 }
 
 - (void)setUp
 {
-    _verificator = [[RMStoreLocalReceiptVerificator alloc] init];
+    _verificator = [[RMStoreTransactionReceiptVerificator alloc] init];
 }
 
 - (void)testverifyReceiptOfTransaction_NoReceipt_Nil_Nil
