@@ -130,7 +130,7 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
  @param failureBlock The block to be called if the refresh receipt request fails. Can be `nil`.
  */
 - (void)refreshReceiptOnSuccess:(void (^)())successBlock
-                        failure:(void (^)(NSError *error))failureBlock;
+                        failure:(void (^)(NSError *error))failureBlock __attribute__((availability(ios,introduced=7.0)));
 
 ///---------------------------------------------
 /// @name Setting Delegates
