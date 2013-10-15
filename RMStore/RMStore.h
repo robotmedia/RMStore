@@ -248,7 +248,7 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
  */
 @property (nonatomic, readonly) NSArray *products;
 
-/** Used in `storePaymentTransactionFailed`, `storeProductsRequestFailed` and `storeRestoreTransactionsFailed`.
+/** Used in `storePaymentTransactionFailed`, `storeProductsRequestFailed`, `storeRefreshReceiptFailed` and `storeRestoreTransactionsFailed`.
  */
 @property (nonatomic, readonly) NSError *storeError;
 
