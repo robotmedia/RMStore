@@ -46,8 +46,8 @@ NSInteger const RMAppReceiptASN1TypeCancellationDate = 1712;
 
 int RMASN1ReadInteger(const uint8_t **pp, long omax)
 {
-    int tag, class;
-    long length;
+    int tag, class = 0;
+    long length = 0;
     int value = 0;
     ASN1_get_object(pp, &length, &tag, &class, omax);
     if (tag == V_ASN1_INTEGER)
@@ -63,8 +63,8 @@ int RMASN1ReadInteger(const uint8_t **pp, long omax)
 
 NSData* RMASN1ReadOctectString(const uint8_t **pp, long omax)
 {
-    int tag, class;
-    long length;
+    int tag, class = 0;
+    long length = 0;
     NSData *data = nil;
     ASN1_get_object(pp, &length, &tag, &class, omax);
     if (tag == V_ASN1_OCTET_STRING)
@@ -77,8 +77,8 @@ NSData* RMASN1ReadOctectString(const uint8_t **pp, long omax)
 
 NSString* RMASN1ReadString(const uint8_t **pp, long omax, int expectedTag, NSStringEncoding encoding)
 {
-    int tag, class;
-    long length;
+    int tag, class = 0;
+    long length = 0;
     NSString *value = nil;
     ASN1_get_object(pp, &length, &tag, &class, omax);
     if (tag == expectedTag)
@@ -194,8 +194,8 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
  */
 + (void)enumerateASN1Attributes:(const uint8_t*)p length:(long)tlength usingBlock:(void (^)(NSData *data, int type))block
 {
-    int type, tag;
-    long length;
+    int type, tag = 0;
+    long length = 0;
     
     const uint8_t *end = p + tlength;
     
