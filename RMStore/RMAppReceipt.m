@@ -30,19 +30,7 @@ NSInteger const RMAppReceiptASN1TypeSubscriptionExpirationDate = 1708;
 NSInteger const RMAppReceiptASN1TypeWebOrderLineItemID = 1711;
 NSInteger const RMAppReceiptASN1TypeCancellationDate = 1712;
 
-@interface RMAppReceiptIAP()
-
-- (id)initWithASN1Data:(NSData*)asn1Data;
-
-@end
-
-@interface RMAppReceipt()<RMStoreObserver>
-
-@end
-
-@implementation RMAppReceipt
-
-static RMAppReceipt *_bundleReceipt = nil;
+#pragma mark - ANS1
 
 int RMASN1ReadInteger(const uint8_t **pp, long omax)
 {
@@ -99,64 +87,93 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     return RMASN1ReadString(pp, omax, V_ASN1_IA5STRING, NSASCIIStringEncoding);
 }
 
-- (id)initWithURL:(NSURL *)URL
+@interface RMAppReceipt()<RMStoreObserver>
+
+@end
+
+@implementation RMAppReceipt
+
+static RMAppReceipt *_bundleReceipt = nil;
+
+- (id)initWithASN1Data:(NSData*)asn1Data
 {
     if (self = [super init])
-    {      
-        [self loadFromPath:URL.path];
+    {
+        NSMutableArray *purchases = [NSMutableArray array];
+        [RMAppReceipt enumerateASN1Attributes:asn1Data.bytes length:asn1Data.length usingBlock:^(NSData *data, int type, long omax) {
+            const uint8_t *s = data.bytes;
+            switch (type)
+            {
+                case RMAppReceiptASN1TypeBundleIdentifier:
+                    _bundleIdentifier = RMASN1ReadUTF8String(&s, omax);
+                    break;
+                case RMAppReceiptASN1TypeAppVersion:
+                    _appVersion = RMASN1ReadUTF8String(&s, omax);
+                    break;
+                case RMAppReceiptASN1TypeOpaqueValue:
+                    _opaqueValue = data;
+                    break;
+                case RMAppReceiptASN1TypeHash:
+                    _hash = data;
+                    break;
+                case RMAppReceiptASN1TypeInAppPurchaseReceipt:
+                {
+                    RMAppReceiptIAP *purchase = [[RMAppReceiptIAP alloc] initWithASN1Data:data];
+                    [purchases addObject:purchase];
+                    break;
+                }
+                case RMAppReceiptASN1TypeOriginalAppVersion:
+                    _originalAppVersion = RMASN1ReadUTF8String(&s, omax);
+                    break;
+                case RMAppReceiptASN1TypeExpirationDate:
+                {
+                    NSString *string = RMASN1ReadIA5SString(&s, omax);
+                    _expirationDate = [RMAppReceipt formatRFC3339String:string];
+                    break;
+                }
+            }
+        }];
+        _inAppPurchases = purchases;
     }
     return self;
 }
 
-- (void)loadFromPath:(NSString*)path
++ (RMAppReceipt*)bundleReceipt
+{
+    if (!_bundleReceipt)
+    {
+        NSURL *URL = [RMStore receiptURL];
+        NSString *path = URL.path;
+        const BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:nil];
+        if (!exists) return nil;
+        
+        NSData *data = [RMAppReceipt dataFromPCKS7Path:path];
+        if (!data) return nil;
+        _bundleReceipt = [[RMAppReceipt alloc] initWithASN1Data:data];
+        [[RMStore defaultStore] addStoreObserver:_bundleReceipt];
+    }
+    return _bundleReceipt;
+}
+
+#pragma mark - Utils
+
++ (NSData*)dataFromPCKS7Path:(NSString*)path
 {
     const char *cpath = [[path stringByStandardizingPath] fileSystemRepresentation];
     FILE *fp = fopen(cpath, "rb");
-    if (!fp) return;
+    if (!fp) return nil;
     
     PKCS7 *p7 = d2i_PKCS7_fp(fp, NULL);
     fclose(fp);
     
-    if (!p7) return;
+    if (!p7) return nil;
     
-    NSMutableArray *purchases = [NSMutableArray array];
     ASN1_OCTET_STRING *octets = p7->d.sign->contents->d.data;
-    [RMAppReceipt enumerateASN1Attributes:octets->data length:octets->length usingBlock:^(NSData *data, int type, long omax) {
-        const uint8_t *s = data.bytes;
-        switch (type)
-        {
-            case RMAppReceiptASN1TypeBundleIdentifier:
-                _bundleIdentifier = RMASN1ReadUTF8String(&s, omax);
-                break;
-            case RMAppReceiptASN1TypeAppVersion:
-                _appVersion = RMASN1ReadUTF8String(&s, omax);
-                break;
-            case RMAppReceiptASN1TypeOpaqueValue:
-                _opaqueValue = data;
-                break;
-            case RMAppReceiptASN1TypeHash:
-                _hash = data;
-                break;
-            case RMAppReceiptASN1TypeInAppPurchaseReceipt:
-            {
-                RMAppReceiptIAP *purchase = [[RMAppReceiptIAP alloc] initWithASN1Data:data];
-                [purchases addObject:purchase];
-                break;
-            }
-            case RMAppReceiptASN1TypeOriginalAppVersion:
-                _originalAppVersion = RMASN1ReadUTF8String(&s, omax);
-                break;
-            case RMAppReceiptASN1TypeExpirationDate:
-            {
-                NSString *string = RMASN1ReadIA5SString(&s, omax);
-                _expirationDate = [RMAppReceipt formatRFC3339String:string];
-                break;
-            }
-        }
-    }];
-    _inAppPurchases = purchases;
-    
+
+    NSData *data = [NSData dataWithBytes:octets->data length:octets->length];
+
     PKCS7_free(p7);
+    return data;
 }
 
 /*
@@ -207,22 +224,6 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
         formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     });
     return [formatter dateFromString:string];
-}
-
-+ (RMAppReceipt*)bundleReceipt
-{
-    if (!_bundleReceipt)
-    {
-        NSURL *URL = [RMStore receiptURL];
-        NSString *path = URL.path;
-        const BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:nil];
-        if (exists)
-        {
-            _bundleReceipt = [[RMAppReceipt alloc] initWithURL:URL];
-            [[RMStore defaultStore] addStoreObserver:_bundleReceipt];
-        }
-    }
-    return _bundleReceipt;
 }
 
 #pragma mark - RMStoreObserver

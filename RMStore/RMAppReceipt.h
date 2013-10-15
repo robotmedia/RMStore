@@ -18,12 +18,11 @@
 @property (nonatomic, strong, readonly) NSString *originalAppVersion;
 @property (nonatomic, strong, readonly) NSDate *expirationDate;
 
-- (id)initWithURL:(NSURL*)URL;
+- (id)initWithASN1Data:(NSData*)asn1Data;
 
 + (RMAppReceipt*)bundleReceipt;
 
 @end
-
 
 @interface RMAppReceiptIAP : NSObject
 
@@ -36,5 +35,7 @@
 @property (nonatomic, strong, readonly) NSDate *subscriptionExpirationDate;
 @property (nonatomic, strong, readonly) NSDate *cancellationDate;
 @property (nonatomic, readonly) NSInteger webOrderLineItemID;
+
+- (id)initWithASN1Data:(NSData*)asn1Data;
 
 @end
