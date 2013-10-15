@@ -615,7 +615,7 @@ extern NSString* const RMStoreNotificationStoreError;
 
 #pragma mark SKRequestDelegate
 
-- (void)testRequestDidFinish
+- (void)testRequestDidFinish_noBlocks
 {
     id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFinished];
     
@@ -627,7 +627,7 @@ extern NSString* const RMStoreNotificationStoreError;
     [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
-- (void)testRequestDidFailWithError
+- (void)testRequestDidFailWithError_noBlocks
 {
     NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
@@ -642,6 +642,52 @@ extern NSString* const RMStoreNotificationStoreError;
     [store request:requestMock didFailWithError:originalError];
     
     [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+- (void)testRequestDidFinish_withBlocks
+{
+    __block BOOL executed;
+    id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFinished];
+    [_store refreshReceiptOnSuccess:^{
+        executed = YES;
+    } failure:^(NSError *error) {
+        STFail(@"");
+    }];
+
+    id store = _store;
+    id requestMock = [OCMockObject mockForClass:[SKRequest class]];
+    [store requestDidFinish:requestMock];
+    
+    [observerMock verify];
+    STAssertTrue(executed, @"");
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+- (void)testRequestDidFailWithError_withBlocks
+{
+    __block BOOL executed;
+    NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+    id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
+        STAssertEqualObjects(error, originalError, @"");
+        return YES;
+    }];
+    [_store refreshReceiptOnSuccess:^{
+        STFail(@"");
+    } failure:^(NSError *error) {
+        executed = YES;
+        STAssertEqualObjects(error, originalError, @"");
+    }];
+
+    
+    id store = _store;
+    id requestMock = [OCMockObject mockForClass:[SKRequest class]];
+    
+    [store request:requestMock didFailWithError:originalError];
+    
+    [observerMock verify];
+    STAssertTrue(executed, @"");
     [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
