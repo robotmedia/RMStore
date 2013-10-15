@@ -616,7 +616,7 @@ extern NSString* const RMStoreNotificationStoreError;
 #pragma mark SKRequestDelegate
 
 - (void)testRequestDidFinish_noBlocks
-{
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFinished];
     
     id store = _store;
@@ -628,7 +628,7 @@ extern NSString* const RMStoreNotificationStoreError;
 }
 
 - (void)testRequestDidFailWithError_noBlocks
-{
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
         NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
@@ -646,7 +646,7 @@ extern NSString* const RMStoreNotificationStoreError;
 }
 
 - (void)testRequestDidFinish_withBlocks
-{
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     __block BOOL executed;
     id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFinished];
     [_store refreshReceiptOnSuccess:^{
@@ -665,7 +665,7 @@ extern NSString* const RMStoreNotificationStoreError;
 }
 
 - (void)testRequestDidFailWithError_withBlocks
-{
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     __block BOOL executed;
     NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
