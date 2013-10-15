@@ -342,7 +342,6 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)refreshReceiptOnSuccess:(RMStoreSuccessBlock)successBlock
                         failure:(RMStoreFailureBlock)failureBlock
 {
-    NSAssert(!_refreshReceiptRequest, @"attempted to start a new refresh receipt request before the previous one finished or failed");
     _refreshReceiptFailureBlock = failureBlock;
     _refreshReceiptSuccessBlock = successBlock;
     _refreshReceiptRequest = [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:@{}];
