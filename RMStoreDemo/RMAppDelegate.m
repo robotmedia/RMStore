@@ -21,10 +21,12 @@
 #import "RMAppDelegate.h"
 #import "RMStoreViewController.h"
 #import "RMPurchasesViewController.h"
-#import "RMStoreLocalReceiptVerificator.h"
+#import "RMStore.h"
+#import "RMStoreTransactionReceiptVerificator.h"
+#import "RMStoreAppReceiptVerificator.h"
 
 @implementation RMAppDelegate {
-    RMStoreLocalReceiptVerificator *_receiptVerificator;
+    RMStoreReceiptVerificator *_receiptVerificator;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -47,8 +49,8 @@
 
 - (void)configureStore
 {
-    // Using local receipt verification. You might want to implement your own server-side verification instead.
-    _receiptVerificator = [[RMStoreLocalReceiptVerificator alloc] init];
+    const BOOL iOS7OrHigher = floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1;
+    _receiptVerificator = iOS7OrHigher ? [[RMStoreAppReceiptVerificator alloc] init] : [[RMStoreTransactionReceiptVerificator alloc] init];
     [RMStore defaultStore].receiptVerificator = _receiptVerificator;
 }
 
