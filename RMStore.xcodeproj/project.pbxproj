@@ -21,6 +21,7 @@
 		8793E80C180D5136005D7A66 /* RMStoreAppReceiptVerificator.m in Sources */ = {isa = PBXBuildFile; fileRef = 8793E803180D512E005D7A66 /* RMStoreAppReceiptVerificator.m */; };
 		8793E80D180D5138005D7A66 /* RMStoreTransactionReceiptVerificator.m in Sources */ = {isa = PBXBuildFile; fileRef = 8793E805180D512E005D7A66 /* RMStoreTransactionReceiptVerificator.m */; };
 		87950C2317E127A4001DF541 /* RMStoreTransactionReceiptVerificatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87950C2217E127A4001DF541 /* RMStoreTransactionReceiptVerificatorTests.m */; };
+		87A2A3A0180D7B0400376773 /* RMAppReceiptTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A39F180D7B0400376773 /* RMAppReceiptTests.m */; };
 		87D5A74217DE893E000E2B6C /* RMProducstRequestDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87D5A74117DE893E000E2B6C /* RMProducstRequestDelegateTests.m */; };
 		A0AF3D0C17A802F300D2E836 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
 		A0AF3D1117A802F300D2E836 /* RMStore.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A0AF3D1017A802F300D2E836 /* RMStore.h */; };
@@ -90,6 +91,8 @@
 		8793E804180D512E005D7A66 /* RMStoreTransactionReceiptVerificator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMStoreTransactionReceiptVerificator.h; sourceTree = "<group>"; };
 		8793E805180D512E005D7A66 /* RMStoreTransactionReceiptVerificator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreTransactionReceiptVerificator.m; sourceTree = "<group>"; };
 		87950C2217E127A4001DF541 /* RMStoreTransactionReceiptVerificatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreTransactionReceiptVerificatorTests.m; sourceTree = "<group>"; };
+		87A2A39F180D7B0400376773 /* RMAppReceiptTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAppReceiptTests.m; sourceTree = "<group>"; };
+		87A2A3A1180D7E2900376773 /* RMStoreTests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RMStoreTests-Prefix.pch"; sourceTree = "<group>"; };
 		87D5A74117DE893E000E2B6C /* RMProducstRequestDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMProducstRequestDelegateTests.m; sourceTree = "<group>"; };
 		A0AF3D0817A802F300D2E836 /* libRMStore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRMStore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0AF3D0B17A802F300D2E836 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -270,9 +273,10 @@
 			isa = PBXGroup;
 			children = (
 				8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */,
+				87A2A39F180D7B0400376773 /* RMAppReceiptTests.m */,
 				87D5A74117DE893E000E2B6C /* RMProducstRequestDelegateTests.m */,
-				87950C2217E127A4001DF541 /* RMStoreTransactionReceiptVerificatorTests.m */,
 				A0AF3D2917A802F300D2E836 /* RMStoreTests.m */,
+				87950C2217E127A4001DF541 /* RMStoreTransactionReceiptVerificatorTests.m */,
 				8745CCA4180558990014A274 /* RMTestObserver.m */,
 				A0AF3D2317A802F300D2E836 /* Supporting Files */,
 				8700D1CC17DCB011005C8F5D /* usr */,
@@ -285,6 +289,7 @@
 			children = (
 				A0AF3D2417A802F300D2E836 /* RMStoreTests-Info.plist */,
 				A0AF3D2517A802F300D2E836 /* InfoPlist.strings */,
+				87A2A3A1180D7E2900376773 /* RMStoreTests-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -460,6 +465,7 @@
 				87D5A74217DE893E000E2B6C /* RMProducstRequestDelegateTests.m in Sources */,
 				87950C2317E127A4001DF541 /* RMStoreTransactionReceiptVerificatorTests.m in Sources */,
 				8745CCA5180558990014A274 /* RMTestObserver.m in Sources */,
+				87A2A3A0180D7B0400376773 /* RMAppReceiptTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -614,7 +620,7 @@
 				);
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "RMStore/RMStore-Prefix.pch";
+				GCC_PREFIX_HEADER = "RMStoreTests/RMStoreTests-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"${SRCROOT}/${TARGET_NAME}/usr/include/**",
 					"RMStore/Optional/openssl-1.0.1e/include",
@@ -638,7 +644,7 @@
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "RMStore/RMStore-Prefix.pch";
+				GCC_PREFIX_HEADER = "RMStoreTests/RMStoreTests-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					"${SRCROOT}/${TARGET_NAME}/usr/include/**",
 					"RMStore/Optional/openssl-1.0.1e/include",
