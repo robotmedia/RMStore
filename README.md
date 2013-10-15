@@ -1,5 +1,5 @@
 #RMStore
-[![Build Status](https://travis-ci.org/robotmedia/RMStore.png)](https://travis-ci.org/robotmedia/RMStore)
+<!--- [![Build Status](https://travis-ci.org/robotmedia/RMStore.png)](https://travis-ci.org/robotmedia/RMStore) -->
 
 
 A lightweight iOS library for In-App Purchases.
@@ -50,6 +50,16 @@ NSSet *products = [NSSet setWithArray:@[@"fabulousIdol", @"rootBeer", @"rubberCh
 ```objective-c
 [[RMStore defaultStore] restoreTransactionsOnSuccess:^{
     NSLog(@"Transactions restored");
+} failure:^(NSError *error) {
+    NSLog(@"Something went wrong");
+}];
+```
+
+###Refresh receipt (iOS 7+ only)
+
+```objective-c
+[[RMStore defaultStore] refreshReceiptOnSuccess:^{
+    NSLog(@"Receipt refreshed");
 } failure:^(NSError *error) {
     NSLog(@"Something went wrong");
 }];
@@ -111,6 +121,18 @@ Payment transaction notifications are sent after a payment has been requested or
 
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification { }
 ```
+
+###Refresh receipt notifications (iOS 7+ only)
+
+```objective-c
+- (void)storeRefreshReceiptFailed:(NSNotification*)notification;
+{
+    NSError *error = notification.storeError;
+}
+
+- (void)storeRefreshReceiptFinished:(NSNotification*)notification { }
+```
+
 
 ##Receipt verification
 
