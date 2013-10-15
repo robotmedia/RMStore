@@ -55,6 +55,16 @@ NSSet *products = [NSSet setWithArray:@[@"fabulousIdol", @"rootBeer", @"rubberCh
 }];
 ```
 
+###Refresh receipt (iOS 7+ only)
+
+```objective-c
+[[RMStore defaultStore] refreshReceiptOnSuccess:^{
+    NSLog(@"Receipt refreshed");
+} failure:^(NSError *error) {
+    NSLog(@"Something went wrong");
+}];
+```
+
 ##Notifications
 
 RMStore sends notifications of StoreKit related events and extends `NSNotification` to provide relevant information. To receive them, implement the desired methods of the `RMStoreObserver` protocol and add the observer to `RMStore`.
@@ -111,6 +121,18 @@ Payment transaction notifications are sent after a payment has been requested or
 
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification { }
 ```
+
+###Refresh receipt notifications (iOS 7+ only)
+
+```objective-c
+- (void)storeRefreshReceiptFailed:(NSNotification*)notification;
+{
+    NSError *error = notification.storeError;
+}
+
+- (void)storeRefreshReceiptFinished:(NSNotification*)notification { }
+```
+
 
 ##Receipt verification
 
