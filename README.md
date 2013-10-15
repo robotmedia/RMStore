@@ -135,11 +135,13 @@ Payment transaction notifications are sent after a payment has been requested or
 
 ##Receipt verification
 
-RMStore doesn't perform receipt verification by default but provides reference implementations. You can provide your own custom verification or use the local receipt verificators provided by the library.
+RMStore doesn't perform receipt verification by default but provides reference implementations. You can implement your own custom verification or use the reference verificators provided by the library.
 
-###Local verification
+Both options are outlined below. For more info, check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Receipt-verification). 
 
-RMStore provides optional local receipt verification via `RMStoreAppReceiptVerificator` (for iOS 7 or higher) and `RMStoreTransactionReceiptVerificator` (for iOS 6 or lower). To use any of them, add the corresponding files from the Optional folder into your project and set the verification delegate (`receiptVerificator`) at startup. For example:
+###Reference verificators
+
+RMStore provides receipt verification via `RMStoreAppReceiptVerificator` (for iOS 7 or higher) and `RMStoreTransactionReceiptVerificator` (for iOS 6 or lower). To use any of them, add the corresponding files from [RMStore/Optional](https://github.com/robotmedia/RMStore/tree/master/RMStore/Optional) into your project and set the verificator delegate (`receiptVerificator`) at startup. For example:
 
 ```objective-c
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -152,11 +154,11 @@ RMStore provides optional local receipt verification via `RMStoreAppReceiptVerif
 }
 ```
 
-If security is a concern you might want to avoid using an open source verification logic, and provide your own custom verfication instead.
+If security is a concern you might want to avoid using an open source verification logic, and provide your own custom verificator instead.
 
-###Custom verification
+###Custom verificator
 
-RMStore delegates receipt verfication and you can provide your own implementation using the `RMStoreReceiptVerificator` protocol:
+RMStore delegates receipt verification, enabling you to provide your own implementation using  the `RMStoreReceiptVerificator` protocol:
 
 ```objective-c
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
