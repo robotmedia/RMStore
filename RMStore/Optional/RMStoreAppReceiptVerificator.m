@@ -49,6 +49,7 @@ static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVer
 
 - (BOOL)verifyAppReceipt
 {
+    // TODO: verify signature
     RMAppReceipt *receipt = [RMAppReceipt bundleReceipt];
     return [self verifyAppReceipt:receipt];
 }
@@ -89,6 +90,7 @@ static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVer
     {
         return NO;
     }
+    // TODO: verify hash
     return YES;
 }
 
