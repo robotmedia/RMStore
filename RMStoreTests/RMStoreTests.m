@@ -689,7 +689,7 @@ extern NSString* const RMStoreNotificationStoreError;
 
 @implementation RMStoreReceiptVerificatorSuccess
 
-- (void)verifyReceiptOfTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
+- (void)verifyTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
 {
     if (successBlock) successBlock();
 }
@@ -698,7 +698,7 @@ extern NSString* const RMStoreNotificationStoreError;
 
 @implementation RMStoreReceiptVerificatorFailure
 
-- (void)verifyReceiptOfTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
+- (void)verifyTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
 {
     if (failureBlock) failureBlock(nil);
 }

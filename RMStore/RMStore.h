@@ -211,7 +211,7 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 @protocol RMStoreReceiptVerificator <NSObject>
 
-- (void)verifyReceiptOfTransaction:(SKPaymentTransaction*)transaction
+- (void)verifyTransaction:(SKPaymentTransaction*)transaction
                            success:(void (^)())successBlock
                            failure:(void (^)(NSError *error))failureBlock;
 

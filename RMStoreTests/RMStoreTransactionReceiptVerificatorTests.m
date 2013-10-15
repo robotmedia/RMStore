@@ -23,37 +23,37 @@
     _verificator = [[RMStoreTransactionReceiptVerificator alloc] init];
 }
 
-- (void)testverifyReceiptOfTransaction_NoReceipt_Nil_Nil
+- (void)testVerifyTransaction_NoReceipt_Nil_Nil
 {
     id transaction = [self mockPaymentTransactionWithReceipt:nil];
-    [_verificator verifyReceiptOfTransaction:transaction success:nil failure:nil];
+    [_verificator verifyTransaction:transaction success:nil failure:nil];
 }
 
-- (void)testverifyReceiptOfTransaction_NoReceipt
+- (void)testVerifyTransaction_NoReceipt
 {
     id transaction = [self mockPaymentTransactionWithReceipt:nil];
-    [_verificator verifyReceiptOfTransaction:transaction success:^{
+    [_verificator verifyTransaction:transaction success:^{
         STFail(@"");
     } failure:^(NSError *error) {
         STAssertNotNil(error, @"");
     }];
 }
 
-- (void)testverifyReceiptOfTransaction_Receipt
+- (void)testVerifyTransaction_Receipt
 {
     NSData *receipt = [@"receipt" dataUsingEncoding:NSUTF8StringEncoding];
     id transaction = [self mockPaymentTransactionWithReceipt:receipt];
-    [_verificator verifyReceiptOfTransaction:transaction success:^{
+    [_verificator verifyTransaction:transaction success:^{
         STFail(@"");
     } failure:^(NSError *error) {
     }];
 }
 
-- (void)testverifyReceiptOfTransaction_Receipt_Nil_Nil
+- (void)testVerifyTransaction_Receipt_Nil_Nil
 {
     NSData *receipt = [@"receipt" dataUsingEncoding:NSUTF8StringEncoding];
     id transaction = [self mockPaymentTransactionWithReceipt:receipt];
-    [_verificator verifyReceiptOfTransaction:transaction success:nil failure:nil];
+    [_verificator verifyTransaction:transaction success:nil failure:nil];
 }
 
 - (id)mockPaymentTransactionWithReceipt:(NSData*)receipt

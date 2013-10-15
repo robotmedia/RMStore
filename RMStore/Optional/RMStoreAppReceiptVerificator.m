@@ -25,7 +25,7 @@ static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVer
 
 @implementation RMStoreAppReceiptVerificator
 
-- (void)verifyReceiptOfTransaction:(SKPaymentTransaction*)transaction
+- (void)verifyTransaction:(SKPaymentTransaction*)transaction
                            success:(void (^)())successBlock
                            failure:(void (^)(NSError *error))failureBlock
 {

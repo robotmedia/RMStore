@@ -562,7 +562,7 @@ typedef void (^RMStoreSuccessBlock)();
     
     if (self.receiptVerificator != nil)
     {
-        [self.receiptVerificator verifyReceiptOfTransaction:transaction success:^{
+        [self.receiptVerificator verifyTransaction:transaction success:^{
             [self paymentQueue:queue verifiedTransaction:transaction];
         } failure:^(NSError *error) {
             [self paymentQueue:queue failedTransaction:transaction error:error];
@@ -624,7 +624,7 @@ typedef void (^RMStoreSuccessBlock)();
     _pendingRestoredTransactionsCount++;
     if (self.receiptVerificator != nil)
     {
-        [self.receiptVerificator verifyReceiptOfTransaction:transaction success:^{
+        [self.receiptVerificator verifyTransaction:transaction success:^{
             [self paymentQueue:queue verifiedTransaction:transaction];
             [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
         } failure:^(NSError *error) {

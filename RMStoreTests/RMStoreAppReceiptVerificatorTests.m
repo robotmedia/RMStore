@@ -24,16 +24,16 @@
     _verificator = [[RMStoreAppReceiptVerificator alloc] init];
 }
 
-- (void)testVerifyReceiptOfTransaction_transaction_nil_nil
+- (void)testVerifyTransaction_transaction_nil_nil
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     id transaction = [OCMockObject mockForClass:[SKPaymentTransaction class]];
-    [_verificator verifyReceiptOfTransaction:transaction success:nil failure:nil];
+    [_verificator verifyTransaction:transaction success:nil failure:nil];
 }
 
-- (void)testVerifyReceiptOfTransaction_transaction_block_block_fail
+- (void)testVerifyTransaction_transaction_block_block_fail
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     id transaction = [OCMockObject mockForClass:[SKPaymentTransaction class]];
-    [_verificator verifyReceiptOfTransaction:transaction success:^{
+    [_verificator verifyTransaction:transaction success:^{
         STFail(@"");
     } failure:^(NSError *error) {
         STAssertNotNil(error, @"");

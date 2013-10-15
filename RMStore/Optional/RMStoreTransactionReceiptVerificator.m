@@ -113,7 +113,7 @@ static const short _base64DecodingTable[256] = {
 
 @implementation RMStoreTransactionReceiptVerificator
 
-- (void)verifyReceiptOfTransaction:(SKPaymentTransaction*)transaction
+- (void)verifyTransaction:(SKPaymentTransaction*)transaction
                            success:(void (^)())successBlock
                            failure:(void (^)(NSError *error))failureBlock
 {    
