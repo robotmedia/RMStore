@@ -217,7 +217,7 @@ If you are using RMStore in your non-ARC project, you will need to set a `-fobjc
 
 ###For iOS 5.x
 
-There is a known vulnerability in iOS 5.1 or lower related to app-side receipt verification. RMStore does not address this vulnerability. If you are using `RMStoreLocalReceiptVerificator` in iOS 5.x, please read this [technical note](https://developer.apple.com/library/ios/releasenotes/StoreKit/IAP_ReceiptValidation/index.html#//apple_ref/doc/uid/TP40012484
+There is a known vulnerability in iOS 5.1 or lower related to app-side receipt verification. RMStore does not address this vulnerability. If you are using `RMStoreTransactionReceiptVerificator` in iOS 5.x, please read this [technical note](https://developer.apple.com/library/ios/releasenotes/StoreKit/IAP_ReceiptValidation/index.html#//apple_ref/doc/uid/TP40012484
 ). 
 
 ##Roadmap
