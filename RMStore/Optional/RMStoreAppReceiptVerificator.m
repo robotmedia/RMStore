@@ -38,8 +38,7 @@ static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVer
             {
                 [self verifyTransaction:transaction inReceipt:receipt success:successBlock failure:failureBlock];
             } else {
-                NSError *error = [NSError errorWithDomain:RMErroDomainStoreAppReceiptVerificator code:0 userInfo:nil]; // TODO: Error message
-                [self failWithBlock:failureBlock error:error];
+                [self failWithBlock:failureBlock message:NSLocalizedString(@"Invalid receipt after refresh", @"")];
             }
         } failure:^(NSError *error) {
             [self failWithBlock:failureBlock error:error];
@@ -101,21 +100,25 @@ static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVer
     const BOOL receiptVerified = [self verifyAppReceipt:receipt];
     if (!receiptVerified)
     {
-        NSError *error = [NSError errorWithDomain:RMErroDomainStoreAppReceiptVerificator code:0 userInfo:nil]; // TODO: Error message
-        [self failWithBlock:failureBlock error:error];
+        [self failWithBlock:failureBlock message:NSLocalizedString(@"The app receipt failed verification", @"")];
         return;
     }
     SKPayment *payment = transaction.payment;
     const BOOL transactionVerified = [receipt containsInAppPurchaseOfProductIdentifier:payment.productIdentifier];
     if (!transactionVerified)
     {
-        NSError *error = [NSError errorWithDomain:RMErroDomainStoreAppReceiptVerificator code:0 userInfo:nil]; // TODO: Error message
-        [self failWithBlock:failureBlock error:error];
+        [self failWithBlock:failureBlock message:NSLocalizedString(@"The app receipt doest not contain the given product", @"")];
     }
     if (successBlock)
     {
         successBlock();
     }
+}
+
+- (void)failWithBlock:(void (^)(NSError *error))failureBlock message:(NSString*)message
+{
+    NSError *error = [NSError errorWithDomain:RMErroDomainStoreAppReceiptVerificator code:0 userInfo:@{NSLocalizedDescriptionKey : message}];
+    [self failWithBlock:failureBlock error:error];
 }
 
 - (void)failWithBlock:(void (^)(NSError *error))failureBlock error:(NSError*)error
