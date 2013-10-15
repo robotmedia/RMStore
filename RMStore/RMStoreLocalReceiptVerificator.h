@@ -21,6 +21,7 @@
 #import <Foundation/Foundation.h>
 #import "RMStore.h"
 
-@interface RMStoreLocalReceiptVerificator : NSObject<RMStoreReceiptVerificator>
+__attribute__((availability(ios,deprecated=7.0)))
+@interface RMStoreLocalReceiptVerificator : NSObject<RMStoreReceiptVerificator>  
 
 @end

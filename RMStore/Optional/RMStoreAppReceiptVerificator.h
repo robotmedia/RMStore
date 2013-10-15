@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "RMStore.h"
 
+__attribute__((availability(ios,introduced=7.0)))
 @interface RMStoreAppReceiptVerificator : NSObject<RMStoreReceiptVerificator>
 
 @property (nonatomic, strong) NSString *bundleIdentifier;
