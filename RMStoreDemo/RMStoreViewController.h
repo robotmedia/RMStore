@@ -20,9 +20,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface RMStoreViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
-
-@property (weak, nonatomic) IBOutlet UILabel *paymentsDisabledLabel;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@interface RMStoreViewController : UITableViewController
 
 @end

@@ -27,6 +27,8 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-retain-cycles" // To use ST macros in blocks
 
+extern NSString* const RMSKRefreshReceiptFailed;
+extern NSString* const RMSKRefreshReceiptFinished;
 extern NSString* const RMSKRestoreTransactionsFailed;
 extern NSString* const RMSKRestoreTransactionsFinished;
 
@@ -139,6 +141,11 @@ extern NSString* const RMStoreNotificationStoreError;
     STAssertTrue(failureBlockCalled, @"");
 }
 
+- (void)testAddPaymentUser
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
+    [_store addPayment:@"test" user:@"test" success:nil failure:nil];
+}
+
 - (void)testRequestProducts_One
 {
     [_store requestProducts:[NSSet setWithObject:@"test"]];
@@ -163,7 +170,7 @@ extern NSString* const RMStoreNotificationStoreError;
 
 - (void)testRestoreTransactions_Nil_Nil
 {
-    [_store restoreTransactions];
+    [_store restoreTransactionsOnSuccess:nil failure:nil];
 }
 
 - (void)testRestoreTransactions_Block_Block
@@ -171,6 +178,37 @@ extern NSString* const RMStoreNotificationStoreError;
     [_store restoreTransactionsOnSuccess:^{
     } failure:^(NSError *error) {
     }];
+}
+
+- (void)testRestoreTransactionsOfUser
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
+    
+    [_store restoreTransactionsOfUser:@"test" onSuccess:nil failure:nil];
+}
+
+#pragma mark Receipt
+
+- (void)testReceiptURL
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
+    
+    NSURL *result = [RMStore receiptURL];
+    NSURL *expected = [[NSBundle mainBundle] appStoreReceiptURL];
+    STAssertEqualObjects(result, expected, @"");
+}
+
+- (void)testRefreshReceipt
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
+    [_store refreshReceipt];
+}
+
+- (void)testRefreshReceipt_Nil_Nil
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
+    [_store refreshReceiptOnSuccess:nil failure:nil];
+}
+
+- (void)testRefreshReceipt_Block_Block
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
+    [_store refreshReceiptOnSuccess:^{} failure:^(NSError *error) {}];
 }
 
 #pragma mark Product management
@@ -227,7 +265,9 @@ extern NSString* const RMStoreNotificationStoreError;
     STAssertEqualObjects(transaction.productIdentifier, @"test", @"");
     STAssertNotNil(transaction.transactionDate, @"");
     STAssertNil(transaction.transactionIdentifier, @"");
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
     STAssertNil(transaction.transactionReceipt, @"");
+#endif
     STAssertFalse(transaction.consumed, @"");
 }
 
@@ -573,6 +613,38 @@ extern NSString* const RMStoreNotificationStoreError;
     [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
+#pragma mark SKRequestDelegate
+
+- (void)testRequestDidFinish
+{
+    id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFinished];
+    
+    id store = _store;
+    id requestMock = [OCMockObject mockForClass:[SKRequest class]];
+    [store requestDidFinish:requestMock];
+    
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+- (void)testRequestDidFailWithError
+{
+    NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+    id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
+        STAssertEqualObjects(error, originalError, @"");
+        return YES;
+    }];
+
+    id store = _store;
+    id requestMock = [OCMockObject mockForClass:[SKRequest class]];
+
+    [store request:requestMock didFailWithError:originalError];
+    
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
 #pragma mark Private
 
 - (id)mockPaymentTransactionWithState:(SKPaymentTransactionState)state
@@ -617,7 +689,7 @@ extern NSString* const RMStoreNotificationStoreError;
 
 @implementation RMStoreReceiptVerificatorSuccess
 
-- (void)verifyReceiptOfTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
+- (void)verifyTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
 {
     if (successBlock) successBlock();
 }
@@ -626,7 +698,7 @@ extern NSString* const RMStoreNotificationStoreError;
 
 @implementation RMStoreReceiptVerificatorFailure
 
-- (void)verifyReceiptOfTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
+- (void)verifyTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
 {
     if (failureBlock) failureBlock(nil);
 }

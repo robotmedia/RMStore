@@ -33,7 +33,8 @@
     
 #warning Replace with your product ids.
     _products = @[@"net.robotmedia.test.consumable",
-                  @"net.robotmedia.test.nonconsumable"];
+                  @"net.robotmedia.test.nonconsumable",
+                  @"net.robotmedia.test.nonconsumable.2"];
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [[RMStore defaultStore] requestProducts:[NSSet setWithArray:_products] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
@@ -49,13 +50,6 @@
                                                  otherButtonTitles:nil];
         [alertView show];
     }];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    const BOOL canMakePayments = [RMStore canMakePayments];
-    self.tableView.hidden = !canMakePayments;
-    self.paymentsDisabledLabel.hidden = canMakePayments;
 }
 
 #pragma mark Table view data source
@@ -84,6 +78,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (![RMStore canMakePayments]) return;
+    
     NSString *productID = [_products objectAtIndex:indexPath.row];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {

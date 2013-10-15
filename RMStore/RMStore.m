@@ -27,6 +27,8 @@ NSString* const RMSKPaymentTransactionFailed = @"RMSKPaymentTransactionFailed";
 NSString* const RMSKPaymentTransactionFinished = @"RMSKPaymentTransactionFinished";
 NSString* const RMSKProductsRequestFailed = @"RMSKProductsRequestFailed";
 NSString* const RMSKProductsRequestFinished = @"RMSKProductsRequestFinished";
+NSString* const RMSKRefreshReceiptFailed = @"RMSKRefreshReceiptFailed";
+NSString* const RMSKRefreshReceiptFinished = @"RMSKRefreshReceiptFinished";
 NSString* const RMSKRestoreTransactionsFailed = @"RMSKRestoreTransactionsFailed";
 NSString* const RMSKRestoreTransactionsFinished = @"RMSKRestoreTransactionsFinished";
 
@@ -34,6 +36,7 @@ NSString* const RMStoreNotificationInvalidProductIdentifiers = @"invalidProductI
 NSString* const RMStoreNotificationProductIdentifier = @"productIdentifier";
 NSString* const RMStoreNotificationProducts = @"products";
 NSString* const RMStoreNotificationStoreError = @"storeError";
+NSString* const RMStoreNotificationStoreReceipt = @"storeReceipt";
 NSString* const RMStoreNotificationTransaction = @"transaction";
 
 NSString* const RMStoreUserDefaultsKey = @"purchases";
@@ -42,7 +45,9 @@ NSString* const RMStoreCoderConsumedKey = @"consumed";
 NSString* const RMStoreCoderProductIdentifierKey = @"productIdentifier";
 NSString* const RMStoreCoderTransactionDateKey = @"transactionDate";
 NSString* const RMStoreCoderTransactionIdentifierKey = @"transactionIdentifier";
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
 NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
+#endif
 
 #ifdef DEBUG
 #define RMStoreLog(...) NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]);
@@ -54,8 +59,8 @@ typedef void (^RMSKPaymentTransactionFailureBlock)(SKPaymentTransaction *transac
 typedef void (^RMSKPaymentTransactionSuccessBlock)(SKPaymentTransaction *transaction);
 typedef void (^RMSKProductsRequestFailureBlock)(NSError *error);
 typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *invalidIdentifiers);
-typedef void (^RMSKRestoreTransactionsFailureBlock)(NSError *error);
-typedef void (^RMSKRestoreTransactionsSuccessBlock)();
+typedef void (^RMStoreFailureBlock)(NSError *error);
+typedef void (^RMStoreSuccessBlock)();
 
 @implementation RMStoreTransaction
 
@@ -66,7 +71,9 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
         _productIdentifier = paymentTransaction.payment.productIdentifier;
         _transactionDate = paymentTransaction.transactionDate;
         _transactionIdentifier = paymentTransaction.transactionIdentifier;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
         _transactionReceipt = paymentTransaction.transactionReceipt;
+#endif
     }
     return self;
 }
@@ -79,7 +86,9 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
         _productIdentifier = [decoder decodeObjectForKey:RMStoreCoderProductIdentifierKey];
         _transactionDate = [decoder decodeObjectForKey:RMStoreCoderTransactionDateKey];
         _transactionIdentifier = [decoder decodeObjectForKey:RMStoreCoderTransactionIdentifierKey];
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
         _transactionReceipt = [decoder decodeObjectForKey:RMStoreCoderTransactionReceiptKey];
+#endif
     }
     return self;
 }
@@ -90,7 +99,9 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     [coder encodeObject:self.productIdentifier forKey:RMStoreCoderProductIdentifierKey];
     [coder encodeObject:self.transactionDate forKey:RMStoreCoderTransactionDateKey];
     if (self.transactionIdentifier != nil) { [coder encodeObject:self.transactionIdentifier forKey:RMStoreCoderTransactionIdentifierKey]; }
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
     if (self.transactionReceipt != nil) { [coder encodeObject:self.transactionReceipt forKey:RMStoreCoderTransactionReceiptKey]; }
+#endif
 }
 
 @end
@@ -168,6 +179,10 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
 
 @end
 
+@interface RMStore() <SKRequestDelegate>
+
+@end
+
 @implementation RMStore {
     NSMutableDictionary *_addPaymentParameters; // HACK: We use a dictionary of product identifiers because the returned SKPayment is different from the one we add to the queue. Bad Apple.
     NSMutableDictionary *_products;
@@ -176,8 +191,13 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     
     NSInteger _pendingRestoredTransactionsCount;
     BOOL _restoredCompletedTransactionsFinished;
-    void (^_restoreTransactionsSuccessBlock)();
+    
+    SKReceiptRefreshRequest *_refreshReceiptRequest;
+    void (^_refreshReceiptFailureBlock)(NSError* error);
+    void (^_refreshReceiptSuccessBlock)();
+    
     void (^_restoreTransactionsFailureBlock)(NSError* error);
+    void (^_restoreTransactionsSuccessBlock)();
 }
 
 - (id) init
@@ -222,8 +242,16 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
 }
 
 - (void)addPayment:(NSString*)productIdentifier
-           success:(RMSKPaymentTransactionSuccessBlock)successBlock
-           failure:(RMSKPaymentTransactionFailureBlock)failureBlock
+           success:(void (^)(SKPaymentTransaction *transaction))successBlock
+           failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
+{
+    [self addPayment:productIdentifier user:nil success:successBlock failure:failureBlock];
+}
+
+- (void)addPayment:(NSString*)productIdentifier
+              user:(NSString*)userIdentifier
+           success:(void (^)(SKPaymentTransaction *transaction))successBlock
+           failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
 {
     SKProduct *product = [self productForIdentifier:productIdentifier];
     if (product == nil)
@@ -236,8 +264,12 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
         }
         return;
     }
-    SKPayment *payment = [SKPayment paymentWithProduct:product];
-      
+    SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
+    if ([payment respondsToSelector:@selector(setApplicationUsername:)])
+    {
+        payment.applicationUsername = userIdentifier;
+    }
+    
     RMAddPaymentParameters *parameters = [[RMAddPaymentParameters alloc] init];
     parameters.successBlock = successBlock;
     parameters.failureBlock = failureBlock;
@@ -272,13 +304,49 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     [self restoreTransactionsOnSuccess:nil failure:nil];
 }
 
-- (void)restoreTransactionsOnSuccess:(RMSKRestoreTransactionsSuccessBlock)successBlock
-                             failure:(RMSKRestoreTransactionsFailureBlock)failureBlock
+- (void)restoreTransactionsOnSuccess:(RMStoreSuccessBlock)successBlock
+                             failure:(RMStoreFailureBlock)failureBlock
 {
     _pendingRestoredTransactionsCount = 0;
     _restoreTransactionsSuccessBlock = successBlock;
     _restoreTransactionsFailureBlock = failureBlock;
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+}
+
+- (void)restoreTransactionsOfUser:(NSString*)userIdentifier
+                        onSuccess:(void (^)())successBlock
+                          failure:(void (^)(NSError *error))failureBlock
+{
+    NSAssert([[SKPaymentQueue defaultQueue] respondsToSelector:@selector(restoreCompletedTransactionsWithApplicationUsername:)], @"restoreCompletedTransactionsWithApplicationUsername: not supported in this iOS version. Use restoreTransactionsOnSuccess:failure: instead.");
+    _pendingRestoredTransactionsCount = 0;
+    _restoreTransactionsSuccessBlock = successBlock;
+    _restoreTransactionsFailureBlock = failureBlock;
+    [[SKPaymentQueue defaultQueue] restoreCompletedTransactionsWithApplicationUsername:userIdentifier];
+}
+
+#pragma mark Receipt
+
++ (NSURL*)receiptURL
+{
+    // The general best practice of weak linking using the respondsToSelector: method cannot be used here. Prior to iOS 7, the method was implemented as private SPI, but that implementation called the doesNotRecognizeSelector: method.
+    NSAssert(floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1, @"appStoreReceiptURL not supported in this iOS version.");
+    NSURL *url = [[NSBundle mainBundle] appStoreReceiptURL];
+    return url;
+}
+
+- (void)refreshReceipt
+{
+    [self refreshReceiptOnSuccess:nil failure:nil];
+}
+
+- (void)refreshReceiptOnSuccess:(RMStoreSuccessBlock)successBlock
+                        failure:(RMStoreFailureBlock)failureBlock
+{
+    _refreshReceiptFailureBlock = failureBlock;
+    _refreshReceiptSuccessBlock = successBlock;
+    _refreshReceiptRequest = [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:@{}];
+    _refreshReceiptRequest.delegate = self;
+    [_refreshReceiptRequest start];
 }
 
 #pragma mark Product management
@@ -414,6 +482,8 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     [self addStoreObserver:observer selector:@selector(storeProductsRequestFinished:) notificationName:RMSKProductsRequestFinished];
     [self addStoreObserver:observer selector:@selector(storePaymentTransactionFailed:) notificationName:RMSKPaymentTransactionFailed];
     [self addStoreObserver:observer selector:@selector(storePaymentTransactionFinished:) notificationName:RMSKPaymentTransactionFinished];
+    [self addStoreObserver:observer selector:@selector(storeRefreshReceiptFailed:) notificationName:RMSKRefreshReceiptFailed];
+    [self addStoreObserver:observer selector:@selector(storeRefreshReceiptFinished:) notificationName:RMSKRefreshReceiptFinished];
     [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFailed:) notificationName:RMSKRestoreTransactionsFailed];
     [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFinished:) notificationName:RMSKRestoreTransactionsFinished];
 }
@@ -424,6 +494,8 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestFinished object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionFinished object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRefreshReceiptFailed object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRefreshReceiptFinished object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFinished object:self];
 }
@@ -490,7 +562,7 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     
     if (self.receiptVerificator != nil)
     {
-        [self.receiptVerificator verifyReceiptOfTransaction:transaction success:^{
+        [self.receiptVerificator verifyTransaction:transaction success:^{
             [self paymentQueue:queue verifiedTransaction:transaction];
         } failure:^(NSError *error) {
             [self paymentQueue:queue failedTransaction:transaction error:error];
@@ -552,7 +624,7 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     _pendingRestoredTransactionsCount++;
     if (self.receiptVerificator != nil)
     {
-        [self.receiptVerificator verifyReceiptOfTransaction:transaction success:^{
+        [self.receiptVerificator verifyTransaction:transaction success:^{
             [self paymentQueue:queue verifiedTransaction:transaction];
             [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
         } failure:^(NSError *error) {
@@ -592,7 +664,38 @@ typedef void (^RMSKRestoreTransactionsSuccessBlock)();
     return parameters;
 }
 
-#pragma mark - Private
+#pragma mark SKRequestDelegate
+
+- (void)requestDidFinish:(SKRequest *)request
+{
+    RMStoreLog(@"refresh receipt finished");
+    _refreshReceiptRequest = nil;
+    if (_refreshReceiptSuccessBlock)
+    {
+        _refreshReceiptSuccessBlock();
+        _refreshReceiptSuccessBlock = nil;
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRefreshReceiptFinished object:self];
+}
+
+- (void)request:(SKRequest *)request didFailWithError:(NSError *)error
+{
+    RMStoreLog(@"refresh receipt failed with error %@", error.debugDescription);
+    _refreshReceiptRequest = nil;
+    if (_refreshReceiptFailureBlock)
+    {
+        _refreshReceiptFailureBlock(error);
+        _refreshReceiptFailureBlock = nil;
+    }
+    NSDictionary *userInfo = nil;
+    if (error)
+    { // error might be nil (e.g., on airplane mode)
+        userInfo = @{RMStoreNotificationStoreError: error};
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRefreshReceiptFailed object:self userInfo:userInfo];
+}
+
+#pragma mark Private
 
 - (void)addProduct:(SKProduct*)product
 {
