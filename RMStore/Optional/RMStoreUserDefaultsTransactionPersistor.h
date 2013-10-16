@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "RMStore.h"
+@class RMStoreTransaction;
 
 @interface RMStoreUserDefaultsTransactionPersistor : NSObject<RMStoreTransactionPersistor>
 

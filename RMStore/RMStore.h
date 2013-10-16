@@ -171,20 +171,6 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 @end
 
-@interface RMStoreTransaction : NSObject<NSCoding>
-
-@property(nonatomic, assign) BOOL consumed;
-@property(nonatomic, copy) NSString *productIdentifier;
-@property(nonatomic, copy) NSDate *transactionDate;
-@property(nonatomic, copy) NSString *transactionIdentifier;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-@property(nonatomic, strong) NSData *transactionReceipt;
-#endif
-
-- (id)initWithPaymentTransaction:(SKPaymentTransaction*)paymentTransaction;
-
-@end
-
 @protocol RMStoreTransactionPersistor<NSObject>
 
 - (void)persistTransaction:(SKPaymentTransaction*)transaction;

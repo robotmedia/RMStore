@@ -19,6 +19,7 @@
 //
 
 #import "RMStoreUserDefaultsTransactionPersistor.h"
+#import "RMStoreTransaction.h"
 
 NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
 

@@ -8,6 +8,7 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 #import "RMStoreUserDefaultsTransactionPersistor.h"
+#import "RMStoreTransaction.h"
 #import <OCMock/OCMock.h>
 
 @interface RMStoreUserDefaultsTransactionPersistorTests : SenTestCase

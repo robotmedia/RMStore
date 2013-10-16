@@ -39,14 +39,6 @@ NSString* const RMStoreNotificationStoreError = @"storeError";
 NSString* const RMStoreNotificationStoreReceipt = @"storeReceipt";
 NSString* const RMStoreNotificationTransaction = @"transaction";
 
-NSString* const RMStoreCoderConsumedKey = @"consumed";
-NSString* const RMStoreCoderProductIdentifierKey = @"productIdentifier";
-NSString* const RMStoreCoderTransactionDateKey = @"transactionDate";
-NSString* const RMStoreCoderTransactionIdentifierKey = @"transactionIdentifier";
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
-#endif
-
 #ifdef DEBUG
 #define RMStoreLog(...) NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]);
 #else
@@ -59,50 +51,6 @@ typedef void (^RMSKProductsRequestFailureBlock)(NSError *error);
 typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *invalidIdentifiers);
 typedef void (^RMStoreFailureBlock)(NSError *error);
 typedef void (^RMStoreSuccessBlock)();
-
-@implementation RMStoreTransaction
-
-- (id)initWithPaymentTransaction:(SKPaymentTransaction*)paymentTransaction
-{
-    if (self = [super init])
-    {
-        _productIdentifier = paymentTransaction.payment.productIdentifier;
-        _transactionDate = paymentTransaction.transactionDate;
-        _transactionIdentifier = paymentTransaction.transactionIdentifier;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-        _transactionReceipt = paymentTransaction.transactionReceipt;
-#endif
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)decoder
-{
-    if (self = [super init])
-    {
-        _consumed = [decoder decodeBoolForKey:RMStoreCoderConsumedKey];
-        _productIdentifier = [decoder decodeObjectForKey:RMStoreCoderProductIdentifierKey];
-        _transactionDate = [decoder decodeObjectForKey:RMStoreCoderTransactionDateKey];
-        _transactionIdentifier = [decoder decodeObjectForKey:RMStoreCoderTransactionIdentifierKey];
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-        _transactionReceipt = [decoder decodeObjectForKey:RMStoreCoderTransactionReceiptKey];
-#endif
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder
-{
-    [coder encodeBool:self.consumed forKey:RMStoreCoderConsumedKey];
-    [coder encodeObject:self.productIdentifier forKey:RMStoreCoderProductIdentifierKey];
-    [coder encodeObject:self.transactionDate forKey:RMStoreCoderTransactionDateKey];
-    if (self.transactionIdentifier != nil) { [coder encodeObject:self.transactionIdentifier forKey:RMStoreCoderTransactionIdentifierKey]; }
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-    if (self.transactionReceipt != nil) { [coder encodeObject:self.transactionReceipt forKey:RMStoreCoderTransactionReceiptKey]; }
-#endif
-}
-
-@end
 
 @implementation NSNotification(RMStore)
 

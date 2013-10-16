@@ -10,6 +10,7 @@
 		8700D1C117DCA548005C8F5D /* NSNotification+RMStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */; };
 		8700D1D717DCB011005C8F5D /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8700D1D617DCB011005C8F5D /* libOCMock.a */; };
 		8745CCA5180558990014A274 /* RMTestObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8745CCA4180558990014A274 /* RMTestObserver.m */; };
+		876631F9180EEBF40049B368 /* RMStoreTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 876631F8180EEBF40049B368 /* RMStoreTransaction.m */; };
 		8793E799180C2ABE005D7A66 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8793E797180C2ABE005D7A66 /* libcrypto.a */; };
 		8793E79A180C2ABE005D7A66 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8793E798180C2ABE005D7A66 /* libssl.a */; };
 		8793E79D180C2C8E005D7A66 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8793E798180C2ABE005D7A66 /* libssl.a */; };
@@ -87,6 +88,8 @@
 		8700D1D417DCB011005C8F5D /* OCMockRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockRecorder.h; sourceTree = "<group>"; };
 		8700D1D617DCB011005C8F5D /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
 		8745CCA4180558990014A274 /* RMTestObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTestObserver.m; sourceTree = "<group>"; };
+		876631F7180EEBF40049B368 /* RMStoreTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMStoreTransaction.h; sourceTree = "<group>"; };
+		876631F8180EEBF40049B368 /* RMStoreTransaction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreTransaction.m; sourceTree = "<group>"; };
 		8793E797180C2ABE005D7A66 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = "RMStore/Optional/openssl-1.0.1e/lib/libcrypto.a"; sourceTree = "<group>"; };
 		8793E798180C2ABE005D7A66 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = "RMStore/Optional/openssl-1.0.1e/lib/libssl.a"; sourceTree = "<group>"; };
 		8793E800180D512E005D7A66 /* RMAppReceipt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMAppReceipt.h; sourceTree = "<group>"; };
@@ -219,6 +222,8 @@
 				8793E801180D512E005D7A66 /* RMAppReceipt.m */,
 				8793E802180D512E005D7A66 /* RMStoreAppReceiptVerificator.h */,
 				8793E803180D512E005D7A66 /* RMStoreAppReceiptVerificator.m */,
+				876631F7180EEBF40049B368 /* RMStoreTransaction.h */,
+				876631F8180EEBF40049B368 /* RMStoreTransaction.m */,
 				8793E804180D512E005D7A66 /* RMStoreTransactionReceiptVerificator.h */,
 				8793E805180D512E005D7A66 /* RMStoreTransactionReceiptVerificator.m */,
 				87A2A3A7180E82BB00376773 /* RMStoreUserDefaultsTransactionPersistor.h */,
@@ -469,6 +474,7 @@
 				8793E809180D512E005D7A66 /* RMStoreAppReceiptVerificator.m in Sources */,
 				87A2A3A9180E82BB00376773 /* RMStoreUserDefaultsTransactionPersistor.m in Sources */,
 				8793E808180D512E005D7A66 /* RMAppReceipt.m in Sources */,
+				876631F9180EEBF40049B368 /* RMStoreTransaction.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
