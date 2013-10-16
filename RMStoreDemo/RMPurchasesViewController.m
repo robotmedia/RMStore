@@ -64,7 +64,7 @@
 
 - (void)trashAction
 {
-    [[RMStore defaultStore].transactionPersistor clearPurchases];
+    [[RMStore defaultStore].transactionPersistor clearTransactions];
     [self.tableView reloadData];
 }
 

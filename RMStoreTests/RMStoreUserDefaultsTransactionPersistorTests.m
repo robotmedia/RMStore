@@ -27,7 +27,7 @@
 
 - (void)tearDown
 {
-    [_persistor clearPurchases];
+    [_persistor clearTransactions];
 }
 
 - (void)testAddTransaction
@@ -50,7 +50,7 @@
     STAssertTrue([_persistor isPurchasedForIdentifier:@"test"], @"");
     STAssertTrue([_persistor transactionsForProductIdentifier:@"test"].count == 1, @"");
     
-    [_persistor clearPurchases];
+    [_persistor clearTransactions];
     STAssertFalse([_persistor isPurchasedForIdentifier:@"test"], @"");
     STAssertTrue([_persistor transactionsForProductIdentifier:@"test"].count == 0, @"");
 }

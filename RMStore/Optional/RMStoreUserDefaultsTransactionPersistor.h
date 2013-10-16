@@ -12,7 +12,7 @@
 
 @interface RMStoreUserDefaultsTransactionPersistor : NSObject<RMStoreTransactionPersistor>
 
-- (void)clearPurchases;
+- (void)clearTransactions;
 
 - (BOOL)consumeProductForIdentifier:(NSString*)productIdentifier;
 

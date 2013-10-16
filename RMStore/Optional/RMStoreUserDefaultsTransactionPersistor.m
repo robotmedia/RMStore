@@ -46,7 +46,7 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
 
 #pragma mark - Public
 
-- (void)clearPurchases
+- (void)clearTransactions
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults removeObjectForKey:RMStoreTransactionsUserDefaultsKey];
