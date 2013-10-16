@@ -20,7 +20,7 @@
 
 #import "RMStoreUserDefaultsTransactionPersistor.h"
 
-NSString* const RMStoreUserDefaultsKey = @"purchases";
+NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
 
 @implementation RMStoreUserDefaultsTransactionPersistor
 
@@ -29,7 +29,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 - (void)persistTransaction:(SKPaymentTransaction*)paymentTransaction
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey] ? : [NSDictionary dictionary];
+    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey] ? : [NSDictionary dictionary];
     
     SKPayment *payment = paymentTransaction.payment;
     NSString *productIdentifier = payment.productIdentifier;
@@ -48,14 +48,14 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 - (void)clearPurchases
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults removeObjectForKey:RMStoreUserDefaultsKey];
+    [defaults removeObjectForKey:RMStoreTransactionsUserDefaultsKey];
     [defaults synchronize];
 }
 
 - (BOOL)consumeProductForIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey] ? : [NSDictionary dictionary];
+    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey] ? : [NSDictionary dictionary];
     NSArray *transactions = [purchases objectForKey:productIdentifier] ? : @[];
     for (NSData *data in transactions)
     {
@@ -77,7 +77,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 - (NSInteger)countPurchasesForIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey];
+    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey];
     NSArray *transactions = [purchases objectForKey:productIdentifier];
     NSInteger count = 0;
     for (NSData *data in transactions)
@@ -96,14 +96,14 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 - (NSArray*)purchasedProductIdentifiers
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey];
+    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey];
     return [purchases allKeys];
 }
 
 - (NSArray*)transactionsForProductIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey];
+    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey];
     NSArray *obfuscatedTransactions = [purchases objectForKey:productIdentifier] ? : @[];
     NSMutableArray *transactions = [NSMutableArray arrayWithCapacity:obfuscatedTransactions.count];
     for (NSData *data in obfuscatedTransactions)
@@ -138,10 +138,10 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 - (void)setTransactions:(NSArray*)transactions forProductIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey] ? : [NSDictionary dictionary];
+    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey] ? : [NSDictionary dictionary];
     NSMutableDictionary *updatedPurchases = [NSMutableDictionary dictionaryWithDictionary:purchases];
     [updatedPurchases setObject:transactions forKey:productIdentifier];
-    [defaults setObject:updatedPurchases forKey:RMStoreUserDefaultsKey];
+    [defaults setObject:updatedPurchases forKey:RMStoreTransactionsUserDefaultsKey];
     [defaults synchronize];
 }
 
