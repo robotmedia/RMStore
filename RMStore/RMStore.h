@@ -136,7 +136,9 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 /// @name Setting Delegates
 ///---------------------------------------------
 
-/** The receipt verificator. It is recommended to implement your own server-side verification if piracy is a concern. Alternatively, app-side verification is provided in `RMStoreLocalReceiptVerificator`.
+/** The receipt verificator. You can provide your own or use one of the reference implementations provided by the library.
+ @see RMStoreAppReceiptVerificator
+ @see RMStoreTransactionReceiptVerificator
  */
 @property (nonatomic, weak) id<RMStoreReceiptVerificator> receiptVerificator;
 
