@@ -20,12 +20,15 @@
 
 #import "RMPurchasesViewController.h"
 #import "RMStore.h"
+#import "RMStoreUserDefaultsTransactionPersistor.h"
 
 @interface RMPurchasesViewController()<RMStoreObserver>
 
 @end
 
-@implementation RMPurchasesViewController
+@implementation RMPurchasesViewController {
+    RMStoreUserDefaultsTransactionPersistor *_transactions;
+}
 
 - (void)viewDidLoad
 {
@@ -35,7 +38,9 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Restore", @"") style:UIBarButtonItemStyleBordered target:self action:@selector(restoreAction)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(trashAction)];
     
-    [[RMStore defaultStore] addStoreObserver:self];
+    RMStore *store = [RMStore defaultStore];
+    [store addStoreObserver:self];
+    _transactions = store.transactionPersistor;
 }
 
 - (void)dealloc
@@ -64,7 +69,7 @@
 
 - (void)trashAction
 {
-    [[RMStore defaultStore].transactionPersistor clearTransactions];
+    [_transactions clearTransactions];
     [self.tableView reloadData];
 }
 
@@ -72,7 +77,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[RMStore defaultStore].transactionPersistor purchasedProductIdentifiers].count;
+    return [_transactions purchasedProductIdentifiers].count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -83,11 +88,11 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
     }
     RMStore *store = [RMStore defaultStore];
-    NSArray *purchasedProducts = [store.transactionPersistor purchasedProductIdentifiers];
+    NSArray *purchasedProducts = [_transactions purchasedProductIdentifiers];
     NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
     SKProduct *product = [store productForIdentifier:productID];
     cell.textLabel.text = product ? product.localizedTitle : productID;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [store.transactionPersistor countPurchasesForIdentifier:productID]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [_transactions countPurchasesForIdentifier:productID]];
     return cell;
 }
 
@@ -95,10 +100,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    RMStore *store = [RMStore defaultStore];
-    NSArray *purchasedProducts = [store.transactionPersistor purchasedProductIdentifiers];
+    NSArray *purchasedProducts = [_transactions purchasedProductIdentifiers];
     NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
-    const BOOL consumed = [store.transactionPersistor consumeProductForIdentifier:productID];
+    const BOOL consumed = [_transactions consumeProductForIdentifier:productID];
     if (consumed)
     {
         [self.tableView reloadData];
