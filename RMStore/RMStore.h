@@ -189,18 +189,6 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 - (void)persistTransaction:(SKPaymentTransaction*)transaction;
 
-- (void)clearPurchases;
-
-- (BOOL)consumeProductForIdentifier:(NSString*)productIdentifier;
-
-- (NSInteger)countPurchasesForIdentifier:(NSString*)productIdentifier;
-
-- (BOOL)isPurchasedForIdentifier:(NSString*)productIdentifier;
-
-- (NSArray*)purchasedProductIdentifiers;
-
-- (NSArray*)transactionsForProductIdentifier:(NSString*)productIdentifier;
-
 @end
 
 @protocol RMStoreReceiptVerificator <NSObject>

@@ -24,6 +24,8 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 
 @implementation RMStoreUserDefaultsTransactionPersistor
 
+#pragma mark - RMStoreTransactionPersistor
+
 - (void)persistTransaction:(SKPaymentTransaction*)paymentTransaction
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -40,6 +42,8 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     [updatedTransactions addObject:data];
     [self setTransactions:updatedTransactions forProductIdentifier:productIdentifier];
 }
+
+#pragma mark - Public
 
 - (void)clearPurchases
 {
@@ -110,7 +114,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     return transactions;
 }
 
-#pragma mark - Private
+#pragma mark - Obfuscation
 
 - (NSData*)dataWithTransaction:(RMStoreTransaction*)transaction
 {
@@ -121,6 +125,16 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     return data;
 }
 
+- (RMStoreTransaction*)transactionWithData:(NSData*)data
+{
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    RMStoreTransaction *transaction = [unarchiver decodeObject];
+    [unarchiver finishDecoding];
+    return transaction;
+}
+
+#pragma mark - Private
+
 - (void)setTransactions:(NSArray*)transactions forProductIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -129,14 +143,6 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
     [updatedPurchases setObject:transactions forKey:productIdentifier];
     [defaults setObject:updatedPurchases forKey:RMStoreUserDefaultsKey];
     [defaults synchronize];
-}
-
-- (RMStoreTransaction*)transactionWithData:(NSData*)data
-{
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    RMStoreTransaction *transaction = [unarchiver decodeObject];
-    [unarchiver finishDecoding];
-    return transaction;
 }
 
 @end
