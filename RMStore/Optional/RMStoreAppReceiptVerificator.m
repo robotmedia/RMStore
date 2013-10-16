@@ -69,7 +69,7 @@ static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVer
 {
     if (!_bundleVersion)
     {
-        return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+        return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
     }
     return _bundleVersion;
 }
