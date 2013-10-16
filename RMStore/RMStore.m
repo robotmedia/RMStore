@@ -441,7 +441,7 @@ typedef void (^RMStoreSuccessBlock)();
     SKPayment *payment = transaction.payment;
 	NSString* productIdentifier = payment.productIdentifier;
     [queue finishTransaction:transaction];
-    [self.transactionPersistor addTransaction:transaction];
+    [self.transactionPersistor persistTransaction:transaction];
     
     RMAddPaymentParameters *wrapper = [self popAddPaymentParametersForIdentifier:productIdentifier];
     if (wrapper.successBlock != nil)

@@ -187,7 +187,7 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 @protocol RMStoreTransactionPersistor<NSObject>
 
-- (void)addTransaction:(SKPaymentTransaction*)transaction;
+- (void)persistTransaction:(SKPaymentTransaction*)transaction;
 
 - (void)clearPurchases;
 

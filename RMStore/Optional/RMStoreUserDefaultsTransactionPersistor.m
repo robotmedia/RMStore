@@ -24,7 +24,7 @@ NSString* const RMStoreUserDefaultsKey = @"purchases";
 
 @implementation RMStoreUserDefaultsTransactionPersistor
 
-- (void)addTransaction:(SKPaymentTransaction*)paymentTransaction
+- (void)persistTransaction:(SKPaymentTransaction*)paymentTransaction
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey] ? : [NSDictionary dictionary];

@@ -180,7 +180,7 @@
     id payment = [OCMockObject mockForClass:[SKPayment class]];
     [[[payment stub] andReturn:productIdentifier] productIdentifier];
     [[[transaction stub] andReturn:payment] payment];
-    [_persistor addTransaction:transaction];
+    [_persistor persistTransaction:transaction];
 }
 
 @end
