@@ -64,7 +64,7 @@
 
 - (void)trashAction
 {
-    [[RMStore defaultStore] clearPurchases];
+    [[RMStore defaultStore].transactionPersistor clearPurchases];
     [self.tableView reloadData];
 }
 
@@ -72,7 +72,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[RMStore defaultStore] purchasedProductIdentifiers].count;
+    return [[RMStore defaultStore].transactionPersistor purchasedProductIdentifiers].count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -83,11 +83,11 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
     }
     RMStore *store = [RMStore defaultStore];
-    NSArray *purchasedProducts = [store purchasedProductIdentifiers];
+    NSArray *purchasedProducts = [store.transactionPersistor purchasedProductIdentifiers];
     NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
     SKProduct *product = [store productForIdentifier:productID];
     cell.textLabel.text = product ? product.localizedTitle : productID;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [store countPurchasesForIdentifier:productID]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [store.transactionPersistor countPurchasesForIdentifier:productID]];
     return cell;
 }
 
@@ -96,9 +96,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     RMStore *store = [RMStore defaultStore];
-    NSArray *purchasedProducts = [store purchasedProductIdentifiers];
+    NSArray *purchasedProducts = [store.transactionPersistor purchasedProductIdentifiers];
     NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
-    const BOOL consumed = [store consumeProductForIdentifier:productID];
+    const BOOL consumed = [store.transactionPersistor consumeProductForIdentifier:productID];
     if (consumed)
     {
         [self.tableView reloadData];
