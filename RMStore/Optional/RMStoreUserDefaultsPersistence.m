@@ -77,13 +77,10 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
 
 - (NSInteger)countProductOfdentifier:(NSString*)productIdentifier
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey];
-    NSArray *transactions = [purchases objectForKey:productIdentifier];
+    NSArray *transactions = [self transactionsForProductOfIdentifier:productIdentifier];
     NSInteger count = 0;
-    for (NSData *data in transactions)
+    for (RMStoreTransaction *transaction in transactions)
     {
-        RMStoreTransaction *transaction = [self transactionWithData:data];
         if (!transaction.consumed) { count++; }
     }
     return count;
@@ -91,7 +88,8 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
 
 - (BOOL)isPurchasedProductOfIdentifier:(NSString*)productIdentifier
 {
-    return [self countProductOfdentifier:productIdentifier] > 0;
+    NSArray *transactions = [self transactionsForProductOfIdentifier:productIdentifier];
+    return transactions.count > 0;
 }
 
 - (NSSet*)purchasedProductIdentifiers
