@@ -69,7 +69,7 @@
 
 - (void)trashAction
 {
-    [_transactions clearTransactions];
+    [_transactions removeTransactions];
     [self.tableView reloadData];
 }
 
@@ -92,7 +92,7 @@
     NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
     SKProduct *product = [store productForIdentifier:productID];
     cell.textLabel.text = product ? product.localizedTitle : productID;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [_transactions countPurchasesForIdentifier:productID]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [_transactions countProductOfdentifier:productID]];
     return cell;
 }
 
@@ -102,7 +102,7 @@
 {
     NSArray *purchasedProducts = [_transactions purchasedProductIdentifiers];
     NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
-    const BOOL consumed = [_transactions consumeProductForIdentifier:productID];
+    const BOOL consumed = [_transactions consumeProductOfIdentifier:productID];
     if (consumed)
     {
         [self.tableView reloadData];

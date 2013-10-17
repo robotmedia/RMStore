@@ -27,18 +27,18 @@
 
 - (void)tearDown
 {
-    [_persistor clearTransactions];
+    [_persistor removeTransactions];
 }
 
 - (void)testAddTransaction
 {
-    STAssertTrue([_persistor transactionsForProductIdentifier:@"test"].count == 0, @"");
+    STAssertTrue([_persistor transactionsForProductOfIdentifier:@"test"].count == 0, @"");
     
     [self addPurchaseForProductIdentifier:@"test"];
     
-    STAssertTrue([_persistor isPurchasedForIdentifier:@"test"], @"");
-    STAssertEquals([_persistor countPurchasesForIdentifier:@"test"], 1, @"");
-    NSArray *transactions = [_persistor transactionsForProductIdentifier:@"test"];
+    STAssertTrue([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
+    STAssertEquals([_persistor countProductOfdentifier:@"test"], 1, @"");
+    NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
     STAssertTrue(transactions.count == 1, @"");
     RMStoreTransaction *transaction = [transactions objectAtIndex:0];
     STAssertEqualObjects(transaction.productIdentifier, @"test", @"");
@@ -47,30 +47,30 @@
 - (void)testClearPurchases
 {
     [self addPurchaseForProductIdentifier:@"test"];
-    STAssertTrue([_persistor isPurchasedForIdentifier:@"test"], @"");
-    STAssertTrue([_persistor transactionsForProductIdentifier:@"test"].count == 1, @"");
+    STAssertTrue([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
+    STAssertTrue([_persistor transactionsForProductOfIdentifier:@"test"].count == 1, @"");
     
-    [_persistor clearTransactions];
-    STAssertFalse([_persistor isPurchasedForIdentifier:@"test"], @"");
-    STAssertTrue([_persistor transactionsForProductIdentifier:@"test"].count == 0, @"");
+    [_persistor removeTransactions];
+    STAssertFalse([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
+    STAssertTrue([_persistor transactionsForProductOfIdentifier:@"test"].count == 0, @"");
 }
 
 - (void)testConsumeProductForIdentifierYES
 {
     [self addPurchaseForProductIdentifier:@"test"];
-    STAssertEquals([_persistor countPurchasesForIdentifier:@"test"], 1, @"");
+    STAssertEquals([_persistor countProductOfdentifier:@"test"], 1, @"");
     {
-        NSArray *transactions = [_persistor transactionsForProductIdentifier:@"test"];
+        NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
         RMStoreTransaction *transaction = [transactions objectAtIndex:0];
         STAssertFalse(transaction.consumed, @"");
     }
     
-    BOOL result = [_persistor consumeProductForIdentifier:@"test"];
+    BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
     
     STAssertTrue(result, @"");
-    STAssertEquals([_persistor countPurchasesForIdentifier:@"test"], 0, @"");
+    STAssertEquals([_persistor countProductOfdentifier:@"test"], 0, @"");
     {
-        NSArray *transactions = [_persistor transactionsForProductIdentifier:@"test"];
+        NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
         STAssertTrue(transactions.count == 1, @"");
         RMStoreTransaction *transaction = [transactions objectAtIndex:0];
         STAssertTrue(transaction.consumed, @"");
@@ -79,22 +79,22 @@
 
 - (void)testConsumeProductForIdentifierNO
 {
-    STAssertEquals([_persistor countPurchasesForIdentifier:@"test"], 0, @"");
+    STAssertEquals([_persistor countProductOfdentifier:@"test"], 0, @"");
     
-    BOOL result = [_persistor consumeProductForIdentifier:@"test"];
+    BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
     STAssertFalse(result, @"");
-    STAssertEquals([_persistor countPurchasesForIdentifier:@"test"], 0, @"");
+    STAssertEquals([_persistor countProductOfdentifier:@"test"], 0, @"");
 }
 
 - (void)testCountPurchasesForIdentifierZero
 {
-    STAssertEquals([_persistor countPurchasesForIdentifier:@"test"], 0, @"");
+    STAssertEquals([_persistor countProductOfdentifier:@"test"], 0, @"");
 }
 
 - (void)testCountPurchasesForIdentifierOne
 {
     [self addPurchaseForProductIdentifier:@"test"];
-    STAssertEquals([_persistor countPurchasesForIdentifier:@"test"], 1, @"");
+    STAssertEquals([_persistor countProductOfdentifier:@"test"], 1, @"");
 }
 
 - (void)testCountPurchasesForIdentifierMany
@@ -102,20 +102,20 @@
     [self addPurchaseForProductIdentifier:@"test"];
     [self addPurchaseForProductIdentifier:@"test"];
     [self addPurchaseForProductIdentifier:@"test"];
-    STAssertEquals([_persistor countPurchasesForIdentifier:@"test"], 3, @"");
+    STAssertEquals([_persistor countProductOfdentifier:@"test"], 3, @"");
 }
 
 - (void)isPurchasedForIdentifierYES
 {
     [self addPurchaseForProductIdentifier:@"test"];
     
-    BOOL result = [_persistor isPurchasedForIdentifier:@"test"];
+    BOOL result = [_persistor isPurchasedProductOfIdentifier:@"test"];
     STAssertTrue(result, @"");
 }
 
 - (void)isPurchasedForIdentifierNO
 {
-    BOOL result = [_persistor isPurchasedForIdentifier:@"test"];
+    BOOL result = [_persistor isPurchasedProductOfIdentifier:@"test"];
     STAssertFalse(result, @"");
 }
 
@@ -151,14 +151,14 @@
 
 - (void)testTransactionsForProductIdentifierZero
 {
-    NSArray *transactions = [_persistor transactionsForProductIdentifier:@"test"];
+    NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
     STAssertTrue(transactions.count == 0, @"");
 }
 
 - (void)testTransactionsForProductIdentifierOne
 {
     [self addPurchaseForProductIdentifier:@"test"];
-    NSArray *transactions = [_persistor transactionsForProductIdentifier:@"test"];
+    NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
     STAssertTrue(transactions.count == 1, @"");
 }
 
@@ -168,7 +168,7 @@
     [self addPurchaseForProductIdentifier:@"test1"];
     [self addPurchaseForProductIdentifier:@"test1"];
     [self addPurchaseForProductIdentifier:@"test2"];
-    NSArray *transactions = [_persistor transactionsForProductIdentifier:@"test1"];
+    NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test1"];
     STAssertTrue(transactions.count == 3, @"");
 }
 

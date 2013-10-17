@@ -12,17 +12,17 @@
 
 @interface RMStoreUserDefaultsTransactionPersistor : NSObject<RMStoreTransactionPersistor>
 
-- (void)clearTransactions;
+- (void)removeTransactions;
 
-- (BOOL)consumeProductForIdentifier:(NSString*)productIdentifier;
+- (BOOL)consumeProductOfIdentifier:(NSString*)productIdentifier;
 
-- (NSInteger)countPurchasesForIdentifier:(NSString*)productIdentifier;
+- (NSInteger)countProductOfdentifier:(NSString*)productIdentifier;
 
-- (BOOL)isPurchasedForIdentifier:(NSString*)productIdentifier;
+- (BOOL)isPurchasedProductOfIdentifier:(NSString*)productIdentifier;
 
 - (NSArray*)purchasedProductIdentifiers;
 
-- (NSArray*)transactionsForProductIdentifier:(NSString*)productIdentifier;
+- (NSArray*)transactionsForProductOfIdentifier:(NSString*)productIdentifier;
 
 @end
 

@@ -46,14 +46,14 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
 
 #pragma mark - Public
 
-- (void)clearTransactions
+- (void)removeTransactions
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults removeObjectForKey:RMStoreTransactionsUserDefaultsKey];
     [defaults synchronize];
 }
 
-- (BOOL)consumeProductForIdentifier:(NSString*)productIdentifier
+- (BOOL)consumeProductOfIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey] ? : [NSDictionary dictionary];
@@ -75,7 +75,7 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
     return NO;
 }
 
-- (NSInteger)countPurchasesForIdentifier:(NSString*)productIdentifier
+- (NSInteger)countProductOfdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey];
@@ -89,9 +89,9 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
     return count;
 }
 
-- (BOOL)isPurchasedForIdentifier:(NSString*)productIdentifier
+- (BOOL)isPurchasedProductOfIdentifier:(NSString*)productIdentifier
 {
-    return [self countPurchasesForIdentifier:productIdentifier] > 0;
+    return [self countProductOfdentifier:productIdentifier] > 0;
 }
 
 - (NSArray*)purchasedProductIdentifiers
@@ -101,7 +101,7 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
     return [purchases allKeys];
 }
 
-- (NSArray*)transactionsForProductIdentifier:(NSString*)productIdentifier
+- (NSArray*)transactionsForProductOfIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey];
