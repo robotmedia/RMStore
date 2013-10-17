@@ -158,6 +158,32 @@
     STAssertTrue(transactions.count == 3, @"");
 }
 
+#pragma mark - Obfuscation
+
+- (void)testDataWithTransaction
+{
+    RMStoreTransaction *transaction = [self sampleTransaction];
+    
+    NSData *data = [_persistor dataWithTransaction:transaction];
+    
+    STAssertNotNil(data, @"");
+    RMStoreTransaction *unobfuscatedTransaction = [_persistor transactionWithData:data];
+    [self compareTransaction:unobfuscatedTransaction withTransaction:transaction];
+}
+
+- (void)testTransactionWithData
+{
+    RMStoreTransaction *transaction = [self sampleTransaction];
+    NSData *data = [_persistor dataWithTransaction:transaction];
+    
+    RMStoreTransaction *result = [_persistor transactionWithData:data];
+
+    STAssertNotNil(result, @"");
+    [self compareTransaction:result withTransaction:transaction];
+}
+
+#pragma mark - Private
+
 - (SKPaymentTransaction*)persistMockTransactionOfProductIdentifer:(NSString*)productIdentifier
 {
     id transaction = [OCMockObject mockForClass:[SKPaymentTransaction class]];
@@ -168,6 +194,31 @@
     [[[payment stub] andReturn:productIdentifier] productIdentifier];
     [[[transaction stub] andReturn:payment] payment];
     [_persistor persistTransaction:transaction];
+    return transaction;
+}
+
+- (void)compareTransaction:(RMStoreTransaction*)transaction1 withTransaction:(RMStoreTransaction*)transaction2
+{
+    STAssertEqualObjects(transaction1.productIdentifier, transaction2.productIdentifier, @"");
+    STAssertEqualObjects(transaction1.transactionDate, transaction2.transactionDate, @"");
+    STAssertEqualObjects(transaction1.transactionIdentifier, transaction2.transactionIdentifier, @"");
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
+    STAssertEqualObjects(transaction1.transactionReceipt, transaction2.transactionReceipt, @"");
+#endif
+    STAssertEquals(transaction1.consumed, transaction2.consumed, @"");
+}
+
+
+- (RMStoreTransaction*)sampleTransaction
+{
+    RMStoreTransaction *transaction = [[RMStoreTransaction alloc] init];
+    transaction.productIdentifier = @"test";
+    transaction.transactionDate = [NSDate date];
+    transaction.transactionIdentifier = @"transaction";
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
+    transaction.transactionReceipt = [NSData data];
+#endif
+    transaction.consumed = YES;
     return transaction;
 }
 
