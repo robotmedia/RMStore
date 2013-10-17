@@ -28,151 +28,137 @@
 - (void)tearDown
 {
     [_persistor removeTransactions];
+    [super tearDown];
 }
 
-- (void)testAddTransaction
+- (void)testInitialState
 {
-    STAssertTrue([_persistor transactionsForProductOfIdentifier:@"test"].count == 0, @"");
+    STAssertTrue([_persistor purchasedProductIdentifiers].count == 0, @"");
+}
+
+- (void)testPersistTransaction
+{
+    SKPaymentTransaction *paymentTransaction = [self persistMockTransactionOfProductIdentifer:@"test"];
     
-    [self addPurchaseForProductIdentifier:@"test"];
-    
-    STAssertTrue([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
-    STAssertEquals([_persistor countProductOfdentifier:@"test"], 1, @"");
     NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
-    STAssertTrue(transactions.count == 1, @"");
-    RMStoreTransaction *transaction = [transactions objectAtIndex:0];
-    STAssertEqualObjects(transaction.productIdentifier, @"test", @"");
+    RMStoreTransaction *transaction = [transactions firstObject];
+    SKPayment *payment = paymentTransaction.payment;
+    STAssertNotNil(transaction, @"");
+    STAssertEqualObjects(transaction.productIdentifier, payment.productIdentifier, @"");
 }
 
-- (void)testClearPurchases
+- (void)testRemoveTransactions
 {
-    [self addPurchaseForProductIdentifier:@"test"];
-    STAssertTrue([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
-    STAssertTrue([_persistor transactionsForProductOfIdentifier:@"test"].count == 1, @"");
+    [self persistMockTransactionOfProductIdentifer:@"test"];
     
     [_persistor removeTransactions];
+
     STAssertFalse([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
-    STAssertTrue([_persistor transactionsForProductOfIdentifier:@"test"].count == 0, @"");
 }
 
-- (void)testConsumeProductForIdentifierYES
+- (void)testConsumeProductOfIdentifier_YES
 {
-    [self addPurchaseForProductIdentifier:@"test"];
-    STAssertEquals([_persistor countProductOfdentifier:@"test"], 1, @"");
-    {
-        NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
-        RMStoreTransaction *transaction = [transactions objectAtIndex:0];
-        STAssertFalse(transaction.consumed, @"");
-    }
+    [self persistMockTransactionOfProductIdentifer:@"test"];
     
     BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
     
     STAssertTrue(result, @"");
-    STAssertEquals([_persistor countProductOfdentifier:@"test"], 0, @"");
-    {
-        NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
-        STAssertTrue(transactions.count == 1, @"");
-        RMStoreTransaction *transaction = [transactions objectAtIndex:0];
-        STAssertTrue(transaction.consumed, @"");
-    }
 }
 
-- (void)testConsumeProductForIdentifierNO
+- (void)testConsumeProductOfIdentifier_NO_inexistingProduct
 {
-    STAssertEquals([_persistor countProductOfdentifier:@"test"], 0, @"");
-    
     BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
     STAssertFalse(result, @"");
-    STAssertEquals([_persistor countProductOfdentifier:@"test"], 0, @"");
 }
 
-- (void)testCountPurchasesForIdentifierZero
+- (void)testConsumeProductOfIdentifier_NO_alreadyConsumedProduct
+{
+    [self persistMockTransactionOfProductIdentifer:@"test"];
+    [_persistor consumeProductOfIdentifier:@"test"];
+
+    BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
+    STAssertFalse(result, @"");
+}
+
+- (void)testcountProductOfdentifier_zero
 {
     STAssertEquals([_persistor countProductOfdentifier:@"test"], 0, @"");
 }
 
-- (void)testCountPurchasesForIdentifierOne
+- (void)testcountProductOfdentifier_one
 {
-    [self addPurchaseForProductIdentifier:@"test"];
+    [self persistMockTransactionOfProductIdentifer:@"test"];
     STAssertEquals([_persistor countProductOfdentifier:@"test"], 1, @"");
 }
 
-- (void)testCountPurchasesForIdentifierMany
+- (void)testcountProductOfdentifier_many
 {
-    [self addPurchaseForProductIdentifier:@"test"];
-    [self addPurchaseForProductIdentifier:@"test"];
-    [self addPurchaseForProductIdentifier:@"test"];
+    [self persistMockTransactionOfProductIdentifer:@"test"];
+    [self persistMockTransactionOfProductIdentifer:@"test"];
+    [self persistMockTransactionOfProductIdentifer:@"test"];
     STAssertEquals([_persistor countProductOfdentifier:@"test"], 3, @"");
 }
 
-- (void)isPurchasedForIdentifierYES
+- (void)testIsPurchasedProductOfIdentifier_YES
 {
-    [self addPurchaseForProductIdentifier:@"test"];
+    [self persistMockTransactionOfProductIdentifer:@"test"];
     
     BOOL result = [_persistor isPurchasedProductOfIdentifier:@"test"];
     STAssertTrue(result, @"");
 }
 
-- (void)isPurchasedForIdentifierNO
+- (void)testIsPurchasedProductOfIdentifier_NO
 {
     BOOL result = [_persistor isPurchasedProductOfIdentifier:@"test"];
     STAssertFalse(result, @"");
 }
 
-- (void)testPurchasedProductIdentifiersEmpty
+- (void)testPurchasedProductIdentifiers_empty
 {
     NSArray *result = [_persistor purchasedProductIdentifiers];
     STAssertTrue(result.count == 0, @"");
 }
 
-- (void)testPurchasedProductIdentifiersOne
+- (void)testPurchasedProductIdentifiers_one
 {
-    [self addPurchaseForProductIdentifier:@"test"];
+    [self persistMockTransactionOfProductIdentifer:@"test"];
     NSArray *result = [_persistor purchasedProductIdentifiers];
     STAssertTrue(result.count == 1, @"");
     STAssertEqualObjects([result lastObject], @"test", nil);
 }
 
-- (void)testPurchasedProductIdentifiersNoRepeats
+- (void)testPurchasedProductIdentifiers_many
 {
-    [self addPurchaseForProductIdentifier:@"test"];
-    [self addPurchaseForProductIdentifier:@"test"];
-    NSArray *result = [_persistor purchasedProductIdentifiers];
-    STAssertTrue(result.count == 1, @"");
-}
-
-- (void)testPurchasedProductIdentifiersMany
-{
-    [self addPurchaseForProductIdentifier:@"test1"];
-    [self addPurchaseForProductIdentifier:@"test2"];
+    [self persistMockTransactionOfProductIdentifer:@"test1"];
+    [self persistMockTransactionOfProductIdentifer:@"test2"];
     NSArray *result = [_persistor purchasedProductIdentifiers];
     STAssertTrue(result.count == 2, @"");
 }
 
-- (void)testTransactionsForProductIdentifierZero
+- (void)testTransactionsForProductIdentifier_zero
 {
     NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
     STAssertTrue(transactions.count == 0, @"");
 }
 
-- (void)testTransactionsForProductIdentifierOne
+- (void)testTransactionsForProductIdentifier_one
 {
-    [self addPurchaseForProductIdentifier:@"test"];
+    [self persistMockTransactionOfProductIdentifer:@"test"];
     NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
     STAssertTrue(transactions.count == 1, @"");
 }
 
-- (void)testTransactionsForProductIdentifierMany
+- (void)testTransactionsForProductIdentifier_many
 {
-    [self addPurchaseForProductIdentifier:@"test1"];
-    [self addPurchaseForProductIdentifier:@"test1"];
-    [self addPurchaseForProductIdentifier:@"test1"];
-    [self addPurchaseForProductIdentifier:@"test2"];
+    [self persistMockTransactionOfProductIdentifer:@"test1"];
+    [self persistMockTransactionOfProductIdentifer:@"test1"];
+    [self persistMockTransactionOfProductIdentifer:@"test1"];
+    [self persistMockTransactionOfProductIdentifer:@"test2"];
     NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test1"];
     STAssertTrue(transactions.count == 3, @"");
 }
 
-- (void)addPurchaseForProductIdentifier:(NSString*)productIdentifier
+- (SKPaymentTransaction*)persistMockTransactionOfProductIdentifer:(NSString*)productIdentifier
 {
     id transaction = [OCMockObject mockForClass:[SKPaymentTransaction class]];
     [[[transaction stub] andReturn:[NSDate date]] transactionDate];
@@ -182,6 +168,7 @@
     [[[payment stub] andReturn:productIdentifier] productIdentifier];
     [[[transaction stub] andReturn:payment] payment];
     [_persistor persistTransaction:transaction];
+    return transaction;
 }
 
 @end
