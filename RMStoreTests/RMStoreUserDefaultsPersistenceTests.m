@@ -115,23 +115,23 @@
 
 - (void)testPurchasedProductIdentifiers_empty
 {
-    NSArray *result = [_persistor purchasedProductIdentifiers];
+    NSSet *result = [_persistor purchasedProductIdentifiers];
     STAssertTrue(result.count == 0, @"");
 }
 
 - (void)testPurchasedProductIdentifiers_one
 {
     [self persistMockTransactionOfProductIdentifer:@"test"];
-    NSArray *result = [_persistor purchasedProductIdentifiers];
+    NSSet *result = [_persistor purchasedProductIdentifiers];
     STAssertTrue(result.count == 1, @"");
-    STAssertEqualObjects([result lastObject], @"test", nil);
+    STAssertEqualObjects([result anyObject], @"test", nil);
 }
 
 - (void)testPurchasedProductIdentifiers_many
 {
     [self persistMockTransactionOfProductIdentifer:@"test1"];
     [self persistMockTransactionOfProductIdentifer:@"test2"];
-    NSArray *result = [_persistor purchasedProductIdentifiers];
+    NSSet *result = [_persistor purchasedProductIdentifiers];
     STAssertTrue(result.count == 2, @"");
 }
 

@@ -50,7 +50,7 @@
 
 /** Returns the product identifiers of all products that have a transaction.
  */
-- (NSArray*)purchasedProductIdentifiers;
+- (NSSet*)purchasedProductIdentifiers;
 
 /**
  Returns all the transactions for the given product.

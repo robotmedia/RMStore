@@ -28,6 +28,7 @@
 
 @implementation RMPurchasesViewController {
     RMStoreUserDefaultsPersistence *_transactions;
+    NSArray *_productIdentifiers;
 }
 
 - (void)viewDidLoad
@@ -41,6 +42,7 @@
     RMStore *store = [RMStore defaultStore];
     [store addStoreObserver:self];
     _transactions = store.transactionPersistor;
+    _productIdentifiers = [[_transactions purchasedProductIdentifiers] allObjects];
 }
 
 - (void)dealloc
@@ -77,7 +79,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_transactions purchasedProductIdentifiers].count;
+    return _productIdentifiers.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -88,8 +90,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
     }
     RMStore *store = [RMStore defaultStore];
-    NSArray *purchasedProducts = [_transactions purchasedProductIdentifiers];
-    NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
+    NSString *productID = [_productIdentifiers objectAtIndex:indexPath.row];
     SKProduct *product = [store productForIdentifier:productID];
     cell.textLabel.text = product ? product.localizedTitle : productID;
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [_transactions countProductOfdentifier:productID]];
@@ -100,8 +101,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *purchasedProducts = [_transactions purchasedProductIdentifiers];
-    NSString *productID = [purchasedProducts objectAtIndex:indexPath.row];
+    NSString *productID = [_productIdentifiers objectAtIndex:indexPath.row];
     const BOOL consumed = [_transactions consumeProductOfIdentifier:productID];
     if (consumed)
     {
@@ -118,7 +118,8 @@
 
 - (void)storePaymentTransactionFinished:(NSNotification*)notification
 {
-    [self.tableView reloadData];    
+    _productIdentifiers = [[_transactions purchasedProductIdentifiers] allObjects];
+    [self.tableView reloadData];
 }
 
 @end

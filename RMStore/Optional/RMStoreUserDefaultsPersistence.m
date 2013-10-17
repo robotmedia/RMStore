@@ -94,11 +94,12 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
     return [self countProductOfdentifier:productIdentifier] > 0;
 }
 
-- (NSArray*)purchasedProductIdentifiers
+- (NSSet*)purchasedProductIdentifiers
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey];
-    return [purchases allKeys];
+    NSSet *productIdentifiers = [NSSet setWithArray:purchases.allKeys];
+    return productIdentifiers;
 }
 
 - (NSArray*)transactionsForProductOfIdentifier:(NSString*)productIdentifier
