@@ -29,6 +29,7 @@
 		87A2A3A9180E82BB00376773 /* RMStoreUserDefaultsPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A3A8180E82BB00376773 /* RMStoreUserDefaultsPersistence.m */; };
 		87A2A3AA180E82BB00376773 /* RMStoreUserDefaultsPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A3A8180E82BB00376773 /* RMStoreUserDefaultsPersistence.m */; };
 		87A2A3AC180E8AF500376773 /* RMStoreUserDefaultsPersistenceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A3AB180E8AF500376773 /* RMStoreUserDefaultsPersistenceTests.m */; };
+		87B7853F18105E6A00B5E54E /* RMStoreTransactionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87B7853E18105E6A00B5E54E /* RMStoreTransactionTests.m */; };
 		87D5A74217DE893E000E2B6C /* RMProducstRequestDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87D5A74117DE893E000E2B6C /* RMProducstRequestDelegateTests.m */; };
 		A0AF3D0C17A802F300D2E836 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
 		A0AF3D1117A802F300D2E836 /* RMStore.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A0AF3D1017A802F300D2E836 /* RMStore.h */; };
@@ -107,6 +108,7 @@
 		87A2A3A7180E82BB00376773 /* RMStoreUserDefaultsPersistence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMStoreUserDefaultsPersistence.h; sourceTree = "<group>"; };
 		87A2A3A8180E82BB00376773 /* RMStoreUserDefaultsPersistence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreUserDefaultsPersistence.m; sourceTree = "<group>"; };
 		87A2A3AB180E8AF500376773 /* RMStoreUserDefaultsPersistenceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreUserDefaultsPersistenceTests.m; sourceTree = "<group>"; };
+		87B7853E18105E6A00B5E54E /* RMStoreTransactionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreTransactionTests.m; sourceTree = "<group>"; };
 		87D5A74117DE893E000E2B6C /* RMProducstRequestDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMProducstRequestDelegateTests.m; sourceTree = "<group>"; };
 		A0AF3D0817A802F300D2E836 /* libRMStore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRMStore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0AF3D0B17A802F300D2E836 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -297,6 +299,7 @@
 				87A2A3A4180D82EF00376773 /* RMStoreAppReceiptVerificatorTests.m */,
 				A0AF3D2917A802F300D2E836 /* RMStoreTests.m */,
 				87950C2217E127A4001DF541 /* RMStoreTransactionReceiptVerificatorTests.m */,
+				87B7853E18105E6A00B5E54E /* RMStoreTransactionTests.m */,
 				87A2A3AB180E8AF500376773 /* RMStoreUserDefaultsPersistenceTests.m */,
 				8745CCA4180558990014A274 /* RMTestObserver.m */,
 				A0AF3D2317A802F300D2E836 /* Supporting Files */,
@@ -486,6 +489,7 @@
 				87A2A3A5180D82EF00376773 /* RMStoreAppReceiptVerificatorTests.m in Sources */,
 				A0AF3D2A17A802F300D2E836 /* RMStoreTests.m in Sources */,
 				8700D1C117DCA548005C8F5D /* NSNotification+RMStoreTests.m in Sources */,
+				87B7853F18105E6A00B5E54E /* RMStoreTransactionTests.m in Sources */,
 				87D5A74217DE893E000E2B6C /* RMProducstRequestDelegateTests.m in Sources */,
 				87950C2317E127A4001DF541 /* RMStoreTransactionReceiptVerificatorTests.m in Sources */,
 				8745CCA5180558990014A274 /* RMTestObserver.m in Sources */,
