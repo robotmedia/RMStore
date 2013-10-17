@@ -1,5 +1,5 @@
 //
-//  RMStoreUserDefaultsTransactionPersistorTests.m
+//  RMStoreUserDefaultsPersistenceTests.m
 //  RMStore
 //
 //  Created by Hermes on 10/16/13.
@@ -7,22 +7,22 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
-#import "RMStoreUserDefaultsTransactionPersistor.h"
+#import "RMStoreUserDefaultsPersistence.h"
 #import "RMStoreTransaction.h"
 #import <OCMock/OCMock.h>
 
-@interface RMStoreUserDefaultsTransactionPersistorTests : SenTestCase
+@interface RMStoreUserDefaultsPersistenceTests : SenTestCase
 
 @end
 
-@implementation RMStoreUserDefaultsTransactionPersistorTests {
-    RMStoreUserDefaultsTransactionPersistor *_persistor;
+@implementation RMStoreUserDefaultsPersistenceTests {
+    RMStoreUserDefaultsPersistence *_persistor;
 }
 
 - (void)setUp
 {
     [super setUp];
-    _persistor = [[RMStoreUserDefaultsTransactionPersistor alloc] init];
+    _persistor = [[RMStoreUserDefaultsPersistence alloc] init];
 }
 
 - (void)tearDown

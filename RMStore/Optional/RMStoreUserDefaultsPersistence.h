@@ -1,5 +1,5 @@
 //
-//  RMStoreUserDefaultsTransactionPersistor.h
+//  RMStoreUserDefaultsPersistence.h
 //  RMStore
 //
 //  Created by Hermes on 10/16/13.
@@ -10,7 +10,7 @@
 #import "RMStore.h"
 @class RMStoreTransaction;
 
-@interface RMStoreUserDefaultsTransactionPersistor : NSObject<RMStoreTransactionPersistor>
+@interface RMStoreUserDefaultsPersistence : NSObject<RMStoreTransactionPersistor>
 
 - (void)removeTransactions;
 
@@ -26,7 +26,7 @@
 
 @end
 
-@interface RMStoreUserDefaultsTransactionPersistor(Obfuscation)
+@interface RMStoreUserDefaultsPersistence(Obfuscation)
 
 - (NSData*)dataWithTransaction:(RMStoreTransaction*)transaction;
 

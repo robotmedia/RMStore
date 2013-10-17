@@ -20,14 +20,14 @@
 
 #import "RMPurchasesViewController.h"
 #import "RMStore.h"
-#import "RMStoreUserDefaultsTransactionPersistor.h"
+#import "RMStoreUserDefaultsPersistence.h"
 
 @interface RMPurchasesViewController()<RMStoreObserver>
 
 @end
 
 @implementation RMPurchasesViewController {
-    RMStoreUserDefaultsTransactionPersistor *_transactions;
+    RMStoreUserDefaultsPersistence *_transactions;
 }
 
 - (void)viewDidLoad

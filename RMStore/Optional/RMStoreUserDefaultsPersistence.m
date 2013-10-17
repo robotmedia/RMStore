@@ -1,5 +1,5 @@
 //
-//  RMStoreUserDefaultsTransactionPersistor.m
+//  RMStoreUserDefaultsPersistence.m
 //  RMStore
 //
 //  Created by Hermes on 10/16/13.
@@ -18,12 +18,12 @@
 //  limitations under the License.
 //
 
-#import "RMStoreUserDefaultsTransactionPersistor.h"
+#import "RMStoreUserDefaultsPersistence.h"
 #import "RMStoreTransaction.h"
 
 NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
 
-@implementation RMStoreUserDefaultsTransactionPersistor
+@implementation RMStoreUserDefaultsPersistence
 
 #pragma mark - RMStoreTransactionPersistor
 
