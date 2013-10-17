@@ -22,26 +22,60 @@
 #import "RMStore.h"
 @class RMStoreTransaction;
 
+/** Transaction persistence using NSUserDefaults. For heighneted security, consider subclassing this class and overriding the Obfuscation category methods.
+ */
 @interface RMStoreUserDefaultsPersistence : NSObject<RMStoreTransactionPersistor>
 
+/** Remove all transactions from user defaults.
+ */
 - (void)removeTransactions;
 
+/** Consume the given product if available. Intended for consumable products.
+ @param productIdentifier Identifier of the product to be consumed.
+ @return YES if the product was consumed, NO otherwise.
+ */
 - (BOOL)consumeProductOfIdentifier:(NSString*)productIdentifier;
 
+/** Returns the number of transactions for the given product that have not been consumed. Intended for consumable products.
+ @return The number of transactions for the given product that have not been consumed.
+ */
 - (NSInteger)countProductOfdentifier:(NSString*)productIdentifier;
 
+/**
+ Indicates wheter the given product has been purchased. Intended for non-consumables.
+ @param productIdentifier Identifier of the product.
+ @return YES if there is at least one transaction for the given product, NO otherwise. Note that the transaction might have been consumed if the product is consumable.
+ */
 - (BOOL)isPurchasedProductOfIdentifier:(NSString*)productIdentifier;
 
+/** Returns the product identifiers of all products that have a transaction.
+ */
 - (NSArray*)purchasedProductIdentifiers;
 
+/**
+ Returns all the transactions for the given product.
+ @param productIdentifier Identifier of the product whose transactions will be returned.
+ @return An array of RMStoreTransaction objects (not SKPaymentTransaction) for the given product.
+ @see RMStoreTransaction
+ */
 - (NSArray*)transactionsForProductOfIdentifier:(NSString*)productIdentifier;
 
 @end
 
+/** Subclasess should override these methods to use their own obfuscation.
+ */
 @interface RMStoreUserDefaultsPersistence(Obfuscation)
 
+/** Returns a data representation of the given transaction. The default implementation uses NSKeyedArchiver.
+ @param transaction Transaction to be converted into data
+ @return Data representation of the given transaction
+ */
 - (NSData*)dataWithTransaction:(RMStoreTransaction*)transaction;
 
+/** Returns a transaction from the given data. The default implementation uses NSKeyedUnarchiver.
+ @param data Data from which a transaction will be obtained
+ @return Transaction from the given data
+ */
 - (RMStoreTransaction*)transactionWithData:(NSData*)data;
 
 @end
