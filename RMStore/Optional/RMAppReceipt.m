@@ -153,7 +153,7 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     return NO;
 }
 
--(BOOL)isAutoRenewableSubscriptionActive:(NSString *)productIdentifier forDate:(NSDate *)date
+-(BOOL)containsActiveAutoRenewableSubscriptionOfProductIdentifier:(NSString *)productIdentifier forDate:(NSDate *)date
 {
     RMAppReceiptIAP *lastTransaction = nil;
     
