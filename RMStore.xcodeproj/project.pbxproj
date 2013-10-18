@@ -686,7 +686,7 @@
 				INFOPLIST_FILE = "RMStoreDemo/RMStoreDemo-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/hpique/workspace/RMStore/RMStore/Optional/openssl-1.0.1e/lib",
+					"RMStore/Optional/openssl-1.0.1e/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -711,7 +711,7 @@
 				INFOPLIST_FILE = "RMStoreDemo/RMStoreDemo-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/hpique/workspace/RMStore/RMStore/Optional/openssl-1.0.1e/lib",
+					"RMStore/Optional/openssl-1.0.1e/lib",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
