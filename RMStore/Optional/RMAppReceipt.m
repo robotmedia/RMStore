@@ -161,7 +161,7 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     {
         if( [iap.productIdentifier isEqualToString:productIdentifier] )
         {
-            NSAssert( iap.webOrderLineItemID != 0, @"The product %@ is not an auto-renewable subscription.", productIdentifier );
+            NSAssert( iap.subscriptionExpirationDate != nil, @"The product %@ is not an auto-renewable subscription.", productIdentifier );
 
             if( iap.cancellationDate ) return NO;
 
