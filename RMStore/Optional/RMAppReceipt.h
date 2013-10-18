@@ -67,6 +67,13 @@
  */
 - (BOOL)containsInAppPurchaseOfProductIdentifier:(NSString*)productIdentifier;
 
+/** Returns wether the given auto-renewable subscription identifier exists in the receipt and it is still valid.
+ @productIdentifier The identifier of the auto-renewable subscription.
+ @aDate The date to compare with, usually the current date. It is recommended to pass a server time to be sure the phone's time has not been tampered.
+ @returns YES if the auto-renewable product has not expired, NO otherwise.
+ */
+- (BOOL)isAutoRenewableSubscriptionValid:(NSString *)productIdentifier forDate:(NSDate *)aDate;
+
 /**
  Returns the app receipt contained in the bundle, if any and valid. Extracts the receipt in ASN1 from the PKCS #7 container and then parses the ASN1 data into a RMAppReceipt instance.
  @returns The app receipt contained in the bundle, or nil if there is no receipt or if it is invalid.

@@ -154,6 +154,24 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     return NO;
 }
 
+-(BOOL) isAutoRenewableSubscriptionValid:(NSString *)productIdentifier forDate:(NSDate *)aDate
+{
+    NSDate *expirationDate = nil;
+    for( RMAppReceiptIAP *iap in [self inAppPurchases] )
+    {
+        if( [iap.productIdentifier isEqualToString:productIdentifier] )
+        {
+            NSAssert( iap.webOrderLineItemID != 0, @"The product %@ is not an auto-renewable subscription.", productIdentifier );
+
+            if( iap.cancellationDate ) return NO;
+
+            if( !expirationDate || [iap.subscriptionExpirationDate compare:expirationDate] == NSOrderedDescending )
+                expirationDate = iap.subscriptionExpirationDate;
+        }
+    }
+    return [expirationDate compare:aDate] == NSOrderedDescending;
+}
+
 + (RMAppReceipt*)bundleReceipt
 {
     NSURL *URL = [RMStore receiptURL];
