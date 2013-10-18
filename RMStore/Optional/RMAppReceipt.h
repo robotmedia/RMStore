@@ -62,18 +62,20 @@ __attribute__((availability(ios,introduced=7.0)))
  */
 - (id)initWithASN1Data:(NSData*)asn1Data;
 
-/** Returns whetever there is an in-app purchase in the receipt for the given product.
- @productIdentifier The identifier of the product.
+/** Returns whether there is an in-app purchase in the receipt for the given product.
+ @param productIdentifier The identifier of the product.
  @returns YES if there is an in-app purchase for the given product, NO otherwise.
  */
 - (BOOL)containsInAppPurchaseOfProductIdentifier:(NSString*)productIdentifier;
 
-/** Returns wether the given auto-renewable subscription identifier exists in the receipt and it is still valid.
- @productIdentifier The identifier of the auto-renewable subscription.
- @aDate The date to compare with, usually the current date. It is recommended to pass a server time to be sure the phone's time has not been tampered.
- @returns YES if the auto-renewable product has not expired, NO otherwise.
+/** Returns whether the latest auto-renewable subscription for the given product identifier is valid for the given date.
+ @param productIdentifier The identifier of the auto-renewable subscription.
+ @param date The date in which the latest auto-renewable subscription should be valid. If you are using the current date, you might not want to take it from the device in case the user has changed it.
+ @returns YES if the latest auto-renewable subscription is valid for the given date, NO otherwise.
+ @warning Auto-renewable subscription lapses are possible. If you are checking against the current date, you might want to deduct some time as tolerance.
+ @warning If this method fails Apple recommends to refresh the receipt and try again once.
  */
-- (BOOL)isAutoRenewableSubscriptionValid:(NSString *)productIdentifier forDate:(NSDate *)aDate;
+- (BOOL)isAutoRenewableSubscriptionValid:(NSString *)productIdentifier forDate:(NSDate *)date;
 
 /**
  Returns the app receipt contained in the bundle, if any and valid. Extracts the receipt in ASN1 from the PKCS #7 container and then parses the ASN1 data into a RMAppReceipt instance.

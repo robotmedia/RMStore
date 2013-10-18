@@ -153,7 +153,7 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     return NO;
 }
 
--(BOOL)isAutoRenewableSubscriptionValid:(NSString *)productIdentifier forDate:(NSDate *)aDate
+-(BOOL)isAutoRenewableSubscriptionValid:(NSString *)productIdentifier forDate:(NSDate *)date
 {
     RMAppReceiptIAP *lastTransaction = nil;
     for (RMAppReceiptIAP *iap in [self inAppPurchases])
@@ -168,11 +168,11 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
         }
     }
     
-    if (!lastTransaction) return NO;
+    if (!lastTransaction) return NO; // Redundant check for clarity purposes
     
     if (lastTransaction.cancellationDate) return NO;
     
-    return [lastTransaction.subscriptionExpirationDate compare:aDate] == NSOrderedDescending;
+    return [lastTransaction.subscriptionExpirationDate compare:date] == NSOrderedDescending;
 }
 
 + (RMAppReceipt*)bundleReceipt
