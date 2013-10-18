@@ -148,4 +148,12 @@ __attribute__((availability(ios,introduced=7.0)))
  */
 - (id)initWithASN1Data:(NSData*)asn1Data;
 
+/** Returns whether the auto renewable subscription is active for the given date.
+ @param date The date in which the auto-renewable subscription should be active. If you are using the current date, you might not want to take it from the device in case the user has changed it.
+ @returns YES if the auto-renewable subscription is active for the given date, NO otherwise.
+ @warning Auto-renewable subscription lapses are possible. If you are checking against the current date, you might want to deduct some time as tolerance.
+ @warning If this method fails Apple recommends to refresh the receipt and try again once.
+ */
+- (BOOL)isActiveAutoRenewableSubscriptionForDate:(NSDate*)date;
+
 @end
