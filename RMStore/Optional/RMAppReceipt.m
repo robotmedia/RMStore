@@ -19,7 +19,6 @@
 //
 
 #import "RMAppReceipt.h"
-#import "RMStore.h"
 #include <openssl/pkcs7.h>
 #include <openssl/objects.h>
 
@@ -156,7 +155,7 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
 
 + (RMAppReceipt*)bundleReceipt
 {
-    NSURL *URL = [RMStore receiptURL];
+    NSURL *URL = [[NSBundle mainBundle] appStoreReceiptURL];
     NSString *path = URL.path;
     const BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:nil];
     if (!exists) return nil;
