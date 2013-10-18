@@ -219,9 +219,9 @@ If you are using RMStore in your non-ARC project, you will need to set a `-fobjc
 
 RMStore is in early stage and currently supports consumables and non-consumables only. Future enhancements will include:
 
-* Content download support
-* Subcriptions support
-* OS X support
+* [Content download support](https://github.com/robotmedia/RMStore/issues/2)
+* [Better subcriptions support](https://github.com/robotmedia/RMStore/issues/3)
+* [Better OS X support](https://github.com/robotmedia/RMStore/issues/4)
 
 If you are looking for something more mature, check out [CargoBay](https://github.com/mattt/CargoBay) or [MKStoreKit](https://github.com/MugunthKumar/MKStoreKit).
 
