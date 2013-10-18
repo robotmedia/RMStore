@@ -153,22 +153,26 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     return NO;
 }
 
--(BOOL) isAutoRenewableSubscriptionValid:(NSString *)productIdentifier forDate:(NSDate *)aDate
+-(BOOL)isAutoRenewableSubscriptionValid:(NSString *)productIdentifier forDate:(NSDate *)aDate
 {
-    NSDate *expirationDate = nil;
-    for( RMAppReceiptIAP *iap in [self inAppPurchases] )
+    RMAppReceiptIAP *lastTransaction = nil;
+    for (RMAppReceiptIAP *iap in [self inAppPurchases])
     {
-        if( [iap.productIdentifier isEqualToString:productIdentifier] )
+        if (![iap.productIdentifier isEqualToString:productIdentifier]) continue;
+
+        NSAssert(iap.subscriptionExpirationDate != nil, @"The product %@ is not an auto-renewable subscription.", productIdentifier);
+        
+        if (!lastTransaction || [iap.subscriptionExpirationDate compare:lastTransaction.subscriptionExpirationDate] == NSOrderedDescending)
         {
-            NSAssert( iap.subscriptionExpirationDate != nil, @"The product %@ is not an auto-renewable subscription.", productIdentifier );
-
-            if( iap.cancellationDate ) return NO;
-
-            if( !expirationDate || [iap.subscriptionExpirationDate compare:expirationDate] == NSOrderedDescending )
-                expirationDate = iap.subscriptionExpirationDate;
+            lastTransaction = iap;
         }
     }
-    return [expirationDate compare:aDate] == NSOrderedDescending;
+    
+    if (!lastTransaction) return NO;
+    
+    if (lastTransaction.cancellationDate) return NO;
+    
+    return [lastTransaction.subscriptionExpirationDate compare:aDate] == NSOrderedDescending;
 }
 
 + (RMAppReceipt*)bundleReceipt
