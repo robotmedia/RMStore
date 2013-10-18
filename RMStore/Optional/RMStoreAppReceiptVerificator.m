@@ -30,21 +30,16 @@ static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVer
                            failure:(void (^)(NSError *error))failureBlock
 {
     RMAppReceipt *receipt = [RMAppReceipt bundleReceipt];
-    if (!receipt)
-    {
-        [[RMStore defaultStore] refreshReceiptOnSuccess:^{
-            RMAppReceipt *receipt = [RMAppReceipt bundleReceipt];
-            if (receipt)
-            {
-                [self verifyTransaction:transaction inReceipt:receipt success:successBlock failure:failureBlock];
-            } else {
-                [self failWithBlock:failureBlock message:NSLocalizedString(@"Invalid receipt after refresh", @"")];
-            }
-        } failure:^(NSError *error) {
-            [self failWithBlock:failureBlock error:error];
-        }];
-    }
-    [self verifyTransaction:transaction inReceipt:receipt success:successBlock failure:failureBlock];
+    const BOOL verified = [self verifyTransaction:transaction inReceipt:receipt success:successBlock failure:nil]; // failureBlock is nil intentionally. See below.
+    if (verified) return;
+
+    // Apple recommends to refresh the receipt if validation fails on iOS
+    [[RMStore defaultStore] refreshReceiptOnSuccess:^{
+        RMAppReceipt *receipt = [RMAppReceipt bundleReceipt];
+        [self verifyTransaction:transaction inReceipt:receipt success:successBlock failure:failureBlock];
+    } failure:^(NSError *error) {
+        [self failWithBlock:failureBlock error:error];
+    }];
 }
 
 - (BOOL)verifyAppReceipt
@@ -94,7 +89,7 @@ static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVer
     return YES;
 }
 
-- (void)verifyTransaction:(SKPaymentTransaction*)transaction
+- (BOOL)verifyTransaction:(SKPaymentTransaction*)transaction
                 inReceipt:(RMAppReceipt*)receipt
                            success:(void (^)())successBlock
                            failure:(void (^)(NSError *error))failureBlock
@@ -103,18 +98,20 @@ static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVer
     if (!receiptVerified)
     {
         [self failWithBlock:failureBlock message:NSLocalizedString(@"The app receipt failed verification", @"")];
-        return;
+        return NO;
     }
     SKPayment *payment = transaction.payment;
     const BOOL transactionVerified = [receipt containsInAppPurchaseOfProductIdentifier:payment.productIdentifier];
     if (!transactionVerified)
     {
         [self failWithBlock:failureBlock message:NSLocalizedString(@"The app receipt doest not contain the given product", @"")];
+        return NO;
     }
     if (successBlock)
     {
         successBlock();
     }
+    return YES;
 }
 
 - (void)failWithBlock:(void (^)(NSError *error))failureBlock message:(NSString*)message
