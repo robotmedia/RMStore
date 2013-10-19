@@ -39,16 +39,6 @@ NSString* const RMStoreNotificationStoreError = @"storeError";
 NSString* const RMStoreNotificationStoreReceipt = @"storeReceipt";
 NSString* const RMStoreNotificationTransaction = @"transaction";
 
-NSString* const RMStoreUserDefaultsKey = @"purchases";
-
-NSString* const RMStoreCoderConsumedKey = @"consumed";
-NSString* const RMStoreCoderProductIdentifierKey = @"productIdentifier";
-NSString* const RMStoreCoderTransactionDateKey = @"transactionDate";
-NSString* const RMStoreCoderTransactionIdentifierKey = @"transactionIdentifier";
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
-#endif
-
 #ifdef DEBUG
 #define RMStoreLog(...) NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]);
 #else
@@ -61,75 +51,6 @@ typedef void (^RMSKProductsRequestFailureBlock)(NSError *error);
 typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *invalidIdentifiers);
 typedef void (^RMStoreFailureBlock)(NSError *error);
 typedef void (^RMStoreSuccessBlock)();
-
-@implementation RMStoreTransaction
-
-- (id)initWithPaymentTransaction:(SKPaymentTransaction*)paymentTransaction
-{
-    if (self = [super init])
-    {
-        _productIdentifier = paymentTransaction.payment.productIdentifier;
-        _transactionDate = paymentTransaction.transactionDate;
-        _transactionIdentifier = paymentTransaction.transactionIdentifier;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-        _transactionReceipt = paymentTransaction.transactionReceipt;
-#endif
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)decoder
-{
-    if (self = [super init])
-    {
-        _consumed = [decoder decodeBoolForKey:RMStoreCoderConsumedKey];
-        _productIdentifier = [decoder decodeObjectForKey:RMStoreCoderProductIdentifierKey];
-        _transactionDate = [decoder decodeObjectForKey:RMStoreCoderTransactionDateKey];
-        _transactionIdentifier = [decoder decodeObjectForKey:RMStoreCoderTransactionIdentifierKey];
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-        _transactionReceipt = [decoder decodeObjectForKey:RMStoreCoderTransactionReceiptKey];
-#endif
-    }
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)coder
-{
-    [coder encodeBool:self.consumed forKey:RMStoreCoderConsumedKey];
-    [coder encodeObject:self.productIdentifier forKey:RMStoreCoderProductIdentifierKey];
-    [coder encodeObject:self.transactionDate forKey:RMStoreCoderTransactionDateKey];
-    if (self.transactionIdentifier != nil) { [coder encodeObject:self.transactionIdentifier forKey:RMStoreCoderTransactionIdentifierKey]; }
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-    if (self.transactionReceipt != nil) { [coder encodeObject:self.transactionReceipt forKey:RMStoreCoderTransactionReceiptKey]; }
-#endif
-}
-
-@end
-
-@interface RMStoreDefaultTransactionObfuscator : NSObject<RMStoreTransactionObfuscator>
-@end
-
-@implementation RMStoreDefaultTransactionObfuscator
-
-- (NSData*)dataWithTransaction:(RMStoreTransaction*)transaction
-{
-    RMStoreLog(@"WARNING: using default weak obfuscation. Provide your own obfuscator if piracy is a concern.");
-    NSMutableData *data = [[NSMutableData alloc] init];
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
-    [archiver encodeObject:transaction];
-    [archiver finishEncoding];
-    return data;
-}
-
-- (RMStoreTransaction*)transactionWithData:(NSData*)data
-{
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    RMStoreTransaction *transaction = [unarchiver decodeObject];
-    [unarchiver finishDecoding];
-    return transaction;
-}
-
-@end
 
 @implementation NSNotification(RMStore)
 
@@ -187,7 +108,6 @@ typedef void (^RMStoreSuccessBlock)();
     NSMutableDictionary *_addPaymentParameters; // HACK: We use a dictionary of product identifiers because the returned SKPayment is different from the one we add to the queue. Bad Apple.
     NSMutableDictionary *_products;
     NSMutableSet *_productsRequestDelegates;
-    RMStoreDefaultTransactionObfuscator *_defaultTransactionObfuscator;
     
     NSInteger _pendingRestoredTransactionsCount;
     BOOL _restoredCompletedTransactionsFinished;
@@ -207,8 +127,6 @@ typedef void (^RMStoreSuccessBlock)();
         _addPaymentParameters = [NSMutableDictionary dictionary];
         _products = [NSMutableDictionary dictionary];
         _productsRequestDelegates = [NSMutableSet set];
-        _defaultTransactionObfuscator = [[RMStoreDefaultTransactionObfuscator alloc] init];
-        _transactionObfuscator = _defaultTransactionObfuscator;
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
     }
     return self;
@@ -365,115 +283,6 @@ typedef void (^RMStoreSuccessBlock)();
 	return formattedString;
 }
 
-#pragma mark Purchase management
-
-- (void)addPurchaseForProductIdentifier:(NSString*)productIdentifier
-{
-    [self addPurchaseForProductIdentifier:productIdentifier paymentTransaction:nil];
-}
-
-- (void)clearPurchases
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults removeObjectForKey:RMStoreUserDefaultsKey];
-    [defaults synchronize];
-}
-
-- (BOOL)consumeProductForIdentifier:(NSString*)productIdentifier
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey] ? : [NSDictionary dictionary];
-    NSArray *transactions = [purchases objectForKey:productIdentifier] ? : @[];
-    for (NSData *data in transactions)
-    {
-        RMStoreTransaction *transaction = [self.transactionObfuscator transactionWithData:data];
-        if (!transaction.consumed)
-        {
-            transaction.consumed = YES;
-            NSData *updatedData = [self.transactionObfuscator dataWithTransaction:transaction];
-            NSMutableArray *updatedTransactions = [NSMutableArray arrayWithArray:transactions];
-            NSInteger index = [updatedTransactions indexOfObject:data];
-            [updatedTransactions replaceObjectAtIndex:index withObject:updatedData];
-            [self setTransactions:updatedTransactions forProductIdentifier:productIdentifier];
-            return YES;
-        }
-    }
-    return NO;
-}
-
-- (NSInteger)countPurchasesForIdentifier:(NSString*)productIdentifier
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey];
-    NSArray *transactions = [purchases objectForKey:productIdentifier];
-    NSInteger count = 0;
-    for (NSData *data in transactions)
-    {
-        RMStoreTransaction *transaction = [self.transactionObfuscator transactionWithData:data];
-        if (!transaction.consumed) { count++; }
-    }
-    return count;
-}
-
-- (BOOL)isPurchasedForIdentifier:(NSString*)productIdentifier
-{
-    return [self countPurchasesForIdentifier:productIdentifier] > 0;
-}
-
-- (NSArray*)purchasedProductIdentifiers
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey];
-    return [purchases allKeys];
-}
-
-- (NSArray*)transactionsForProductIdentifier:(NSString*)productIdentifier
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey];
-    NSArray *obfuscatedTransactions = [purchases objectForKey:productIdentifier] ? : @[];
-    NSMutableArray *transactions = [NSMutableArray arrayWithCapacity:obfuscatedTransactions.count];
-    for (NSData *data in obfuscatedTransactions)
-    {
-        RMStoreTransaction *transaction = [self.transactionObfuscator transactionWithData:data];
-        [transactions addObject:transaction];
-    }
-    return transactions;
-}
-
-// Private
-
-- (void)addPurchaseForProductIdentifier:(NSString*)productIdentifier paymentTransaction:(SKPaymentTransaction*)paymentTransaction
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey] ? : [NSDictionary dictionary];
-    NSArray *transactions = [purchases objectForKey:productIdentifier] ? : @[];
-    NSMutableArray *updatedTransactions = [NSMutableArray arrayWithArray:transactions];
-
-    RMStoreTransaction *transaction;
-    if (paymentTransaction != nil)
-    {
-        transaction = [[RMStoreTransaction alloc] initWithPaymentTransaction:paymentTransaction];
-    } else {
-        transaction = [[RMStoreTransaction alloc] init];
-        transaction.productIdentifier = productIdentifier;
-        transaction.transactionDate = [NSDate date];
-    }
-    NSData *data = [self.transactionObfuscator dataWithTransaction:transaction];
-    [updatedTransactions addObject:data];
-    [self setTransactions:updatedTransactions forProductIdentifier:productIdentifier];
-}
-
-- (void)setTransactions:(NSArray*)transactions forProductIdentifier:(NSString*)productIdentifier
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreUserDefaultsKey] ? : [NSDictionary dictionary];
-    NSMutableDictionary *updatedPurchases = [NSMutableDictionary dictionaryWithDictionary:purchases];
-    [updatedPurchases setObject:transactions forKey:productIdentifier];
-    [defaults setObject:updatedPurchases forKey:RMStoreUserDefaultsKey];
-    [defaults synchronize];
-}
-
 #pragma mark Observers
 
 - (void)addStoreObserver:(id<RMStoreObserver>)observer
@@ -580,7 +389,7 @@ typedef void (^RMStoreSuccessBlock)();
     SKPayment *payment = transaction.payment;
 	NSString* productIdentifier = payment.productIdentifier;
     [queue finishTransaction:transaction];
-    [self addPurchaseForProductIdentifier:productIdentifier paymentTransaction:transaction];
+    [self.transactionPersistor persistTransaction:transaction];
     
     RMAddPaymentParameters *wrapper = [self popAddPaymentParametersForIdentifier:productIdentifier];
     if (wrapper.successBlock != nil)

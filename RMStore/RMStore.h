@@ -22,7 +22,7 @@
 #import <StoreKit/StoreKit.h>
 
 @protocol RMStoreReceiptVerificator;
-@protocol RMStoreTransactionObfuscator;
+@protocol RMStoreTransactionPersistor;
 @protocol RMStoreObserver;
 
 extern NSString *const RMStoreErrorDomain;
@@ -142,9 +142,9 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
  */
 @property (nonatomic, weak) id<RMStoreReceiptVerificator> receiptVerificator;
 
-/** The transaction obfuscator. It is recommended to provide your own obfuscator if piracy is a concern. The store will use weak obfuscation via `NSKeyedArchiver` by default.
+/** The transaction persistor. It is recommended to provide your own obfuscator if piracy is a concern. The store will use weak obfuscation via `NSKeyedArchiver` by default.
  */
-@property (nonatomic, weak) id<RMStoreTransactionObfuscator> transactionObfuscator;
+@property (nonatomic, weak) id<RMStoreTransactionPersistor> transactionPersistor;
 
 #pragma mark Product management
 ///---------------------------------------------
@@ -154,25 +154,6 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 - (SKProduct*)productForIdentifier:(NSString*)productIdentifier;
 
 + (NSString*)localizedPriceOfProduct:(SKProduct*)product;
-
-#pragma mark Purchase management
-///---------------------------------------------
-/// @name Managing Purchases
-///---------------------------------------------
-
-- (void)addPurchaseForProductIdentifier:(NSString*)productIdentifier;
-
-- (void)clearPurchases;
-
-- (BOOL)consumeProductForIdentifier:(NSString*)productIdentifier;
-
-- (NSInteger)countPurchasesForIdentifier:(NSString*)productIdentifier;
-
-- (BOOL)isPurchasedForIdentifier:(NSString*)productIdentifier;
-
-- (NSArray*)purchasedProductIdentifiers;
-
-- (NSArray*)transactionsForProductIdentifier:(NSString*)productIdentifier;
 
 #pragma mark Notifications
 ///---------------------------------------------
@@ -192,22 +173,9 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 @end
 
-@interface RMStoreTransaction : NSObject<NSCoding>
+@protocol RMStoreTransactionPersistor<NSObject>
 
-@property(nonatomic, assign) BOOL consumed;
-@property(nonatomic, copy) NSString *productIdentifier;
-@property(nonatomic, copy) NSDate *transactionDate;
-@property(nonatomic, copy) NSString *transactionIdentifier;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-@property(nonatomic, strong) NSData *transactionReceipt;
-#endif
-
-@end
-
-@protocol RMStoreTransactionObfuscator<NSObject>
-
-- (NSData*)dataWithTransaction:(RMStoreTransaction*)transaction;
-- (RMStoreTransaction*)transactionWithData:(NSData*)data;
+- (void)persistTransaction:(SKPaymentTransaction*)transaction;
 
 @end
 
