@@ -21,9 +21,11 @@
 #import <Foundation/Foundation.h>
 #import "RMStore.h"
 
+/** Transaction persistence using the keychain.
+ */
 @interface RMStoreKeychainPersistence : NSObject<RMStoreTransactionPersistor>
 
-/** Remove all transactions from the keychain.
+/** Remove all persisted transactions from the keychain.
  */
 - (void)removeTransactions;
 
@@ -34,6 +36,7 @@
 - (BOOL)consumeProductOfIdentifier:(NSString*)productIdentifier;
 
 /** Returns the number of persisted transactions for the given product that have not been consumed. Intended for consumable products.
+ @param productIdentifier Identifier of the product to be counted.
  @return The number of persisted transactions for the given product that have not been consumed.
  */
 - (NSInteger)countProductOfdentifier:(NSString*)productIdentifier;
@@ -41,7 +44,7 @@
 /**
  Indicates wheter the given product has been purchased. Intended for non-consumables.
  @param productIdentifier Identifier of the product.
- @return YES if there is at least one transaction for the given product, NO otherwise. Note that the transaction might have been consumed if the product is consumable.
+ @return YES if there is at least one transaction for the given product, NO otherwise. Note that if the product is consumable this method will still return YES even if all transactions have been consumed.
  */
 - (BOOL)isPurchasedProductOfIdentifier:(NSString*)productIdentifier;
 

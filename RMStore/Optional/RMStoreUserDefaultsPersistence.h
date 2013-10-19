@@ -22,7 +22,7 @@
 #import "RMStore.h"
 @class RMStoreTransaction;
 
-/** Transaction persistence using NSUserDefaults. For heighneted security, consider subclassing this class and overriding the Obfuscation category methods.
+/** Transaction persistence using NSUserDefaults. For heightened security, consider subclassing this class and overriding the Obfuscation category methods.
  */
 @interface RMStoreUserDefaultsPersistence : NSObject<RMStoreTransactionPersistor>
 
@@ -44,7 +44,7 @@
 /**
  Indicates wheter the given product has been purchased. Intended for non-consumables.
  @param productIdentifier Identifier of the product.
- @return YES if there is at least one transaction for the given product, NO otherwise. Note that the transaction might have been consumed if the product is consumable.
+ @return YES if there is at least one transaction for the given product, NO otherwise. Note that if the product is consumable this method will still return YES even if all transactions have been consumed.
  */
 - (BOOL)isPurchasedProductOfIdentifier:(NSString*)productIdentifier;
 
