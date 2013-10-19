@@ -20,14 +20,14 @@
 
 #import "RMPurchasesViewController.h"
 #import "RMStore.h"
-#import "RMStoreUserDefaultsPersistence.h"
+#import "RMStoreKeychainPersistence.h"
 
 @interface RMPurchasesViewController()<RMStoreObserver>
 
 @end
 
 @implementation RMPurchasesViewController {
-    RMStoreUserDefaultsPersistence *_transactions;
+    RMStoreKeychainPersistence *_persistence;
     NSArray *_productIdentifiers;
 }
 
@@ -41,8 +41,8 @@
     
     RMStore *store = [RMStore defaultStore];
     [store addStoreObserver:self];
-    _transactions = store.transactionPersistor;
-    _productIdentifiers = [[_transactions purchasedProductIdentifiers] allObjects];
+    _persistence = store.transactionPersistor;
+    _productIdentifiers = [[_persistence purchasedProductIdentifiers] allObjects];
 }
 
 - (void)dealloc
@@ -71,7 +71,7 @@
 
 - (void)trashAction
 {
-    [_transactions removeTransactions];
+    [_persistence removeTransactions];
     [self.tableView reloadData];
 }
 
@@ -93,7 +93,7 @@
     NSString *productID = [_productIdentifiers objectAtIndex:indexPath.row];
     SKProduct *product = [store productForIdentifier:productID];
     cell.textLabel.text = product ? product.localizedTitle : productID;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [_transactions countProductOfdentifier:productID]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [_persistence countProductOfdentifier:productID]];
     return cell;
 }
 
@@ -102,7 +102,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *productID = [_productIdentifiers objectAtIndex:indexPath.row];
-    const BOOL consumed = [_transactions consumeProductOfIdentifier:productID];
+    const BOOL consumed = [_persistence consumeProductOfIdentifier:productID];
     if (consumed)
     {
         [self.tableView reloadData];
@@ -118,7 +118,7 @@
 
 - (void)storePaymentTransactionFinished:(NSNotification*)notification
 {
-    _productIdentifiers = [[_transactions purchasedProductIdentifiers] allObjects];
+    _productIdentifiers = [[_persistence purchasedProductIdentifiers] allObjects];
     [self.tableView reloadData];
 }
 
