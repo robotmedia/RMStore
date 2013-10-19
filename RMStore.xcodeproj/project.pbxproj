@@ -590,7 +590,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/hpique/workspace/RMStore/RMStore/Optional/openssl-1.0.1e/lib",
+					"RMStore/Optional/openssl-1.0.1e/lib",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -611,7 +611,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/hpique/workspace/RMStore/RMStore/Optional/openssl-1.0.1e/lib",
+					"RMStore/Optional/openssl-1.0.1e/lib",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
