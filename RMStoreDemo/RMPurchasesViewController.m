@@ -72,6 +72,7 @@
 - (void)trashAction
 {
     [_persistence removeTransactions];
+    _productIdentifiers = [[_persistence purchasedProductIdentifiers] allObjects];
     [self.tableView reloadData];
 }
 
