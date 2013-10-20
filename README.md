@@ -4,7 +4,7 @@
 
 A lightweight iOS library for In-App Purchases.
 
-RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.md#storekit-with-blocks) and [notifications](https://github.com/robotmedia/RMStore/blob/master/README.md#notifications) to StoreKit, plus [receipt verification](https://github.com/robotmedia/RMStore/blob/master/README.md#receipt-verification) and [purchase management](https://github.com/robotmedia/RMStore/blob/master/README.md#purchase-management). All in one class without external dependencies. Purchasing a product is as simple as:
+RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.md#storekit-with-blocks) and [notifications](https://github.com/robotmedia/RMStore/blob/master/README.md#notifications) to StoreKit, plus [receipt verification](https://github.com/robotmedia/RMStore/blob/master/README.md#receipt-verification) and [transaction persistence](https://github.com/robotmedia/RMStore/blob/master/README.md#transaction-persistence). All in one class without external dependencies. Purchasing a product is as simple as:
 
 ```objective-c
 [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
@@ -170,44 +170,11 @@ Call `successBlock` if the receipt passes verification, and `failureBlock` in an
 
 You will also need to set the `receiptVerificator` delegate at startup, as indicated above.
 
-##Purchase management
+##Transaction persistence
 
-RMStore stores transactions in `NSUserDefaults` with weak obfuscation and allows you to implement your own. It also offers various methods to query and manage purchases.
+RMStore delegates transaction persistence and provides two optional reference implementations for storing transactions in the Keychain or in `NSUserDefaults`. You can implement your transaction, use the reference implementations provided by the library or, in the case of non-consumables and auto-renewable subscriptions, get the transactions directly from the receipt.
 
-Below are the most common use cases related to purchases.
-
-###Working with non-consumables
-
-Non-consumables can only be purchased once. To know if a non-consumable has been purchased:
-
-```objective-c
-BOOL purchased = [[RMStore defaultStore] isPurchasedForIdentifier:@"fabulousIdol"];
-```
-###Working with consumables
-
-Consumables can be purchased more than once and tipically will be consumed at most once per purchase. Here is how you would normally operate with a non-consumable:
-
-```objective-c
-NSInteger purchaseCount = [[RMStore defaultStore] countPurchasesForIdentifier:@"banana"];
-if (purchaseCount > 0)
-{
-    BOOL success = [[RMStore defaultStore] consumeProductForIdentifier:@"banana"];
-}
-```
-
-###Managing purchases manually
-
-In some cases you might want to bypass payment with StoreKit and mark a product as purchased manually (e.g., for promotional purposes). You can do this with:
-
-```objective-c
-[[RMStore defaultStore] addPurchaseForProductIdentifier:@"breathMints"];
-````
-
-###Obfuscation
-
-By default RMStore stores transactions in `NSUserDefaults` as objects using `NSCoding`, as a form of weak obfuscation. It is recommended to provide your own custom obfuscation by implementing the `RMStoreTransactionObfuscator` protocol and setting the `transactionObfuscator` delegate at startup.
-
-You will be obfuscating `RMStoreTransaction` instances, an analogue of `SKPaymentTransaction` which supports `NSCopying`, unlike the original.
+For more info, check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Transaction-persistence).
 
 ##Requirements
 
