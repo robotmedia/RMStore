@@ -74,10 +74,13 @@ NSData* RMKeychainGetValue(NSString *key)
     [searchDictionary setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
     
     CFDataRef value = nil;
+#if defined(NS_BLOCK_ASSERTIONS)
+    SecItemCopyMatching((__bridge CFDictionaryRef)searchDictionary, (CFTypeRef *)&value);
+#else
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)searchDictionary, (CFTypeRef *)&value);
-    
     NSCAssert(status == errSecSuccess || status == errSecItemNotFound, @"failed to add key %@ with error %ld.", key, status);
-        
+#endif
+    
     return (__bridge NSData*)value;
 }
 
