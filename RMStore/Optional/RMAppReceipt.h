@@ -31,6 +31,11 @@ __attribute__((availability(ios,introduced=7.0)))
  */
 @property (nonatomic, strong, readonly) NSString *bundleIdentifier;
 
+/** The bundle identifier as data, as contained in the receipt. Used to verifiy the receipt's hash.
+ @see verifyReceiptHash
+ */
+@property (nonatomic, strong, readonly) NSData *bundleIdentifierData;
+
 /** The app’s version number. This corresponds to the value of CFBundleVersion (in iOS) or CFBundleShortVersionString (in OS X) in the Info.plist.
  */
 @property (nonatomic, strong, readonly) NSString *appVersion;
@@ -76,6 +81,11 @@ __attribute__((availability(ios,introduced=7.0)))
  @warning If this method fails Apple recommends to refresh the receipt and try again once.
  */
 - (BOOL)containsActiveAutoRenewableSubscriptionOfProductIdentifier:(NSString *)productIdentifier forDate:(NSDate *)date;
+
+/** Returns wheter the receipt hash corresponds to the device's GUID by calcuting the expected hash using the GUID, bundleIdentifierData and opaqueValue.
+ @return YES if the hash contained in the receipt corresponds to the device's GUID, NO otherwise.
+ */
+- (BOOL)verifyReceiptHash;
 
 /**
  Returns the app receipt contained in the bundle, if any and valid. Extracts the receipt in ASN1 from the PKCS #7 container and then parses the ASN1 data into a RMAppReceipt instance.

@@ -19,8 +19,10 @@
 //
 
 #import "RMAppReceipt.h"
-#include <openssl/pkcs7.h>
-#include <openssl/objects.h>
+#import <UIKit/UIKit.h>
+#import <openssl/pkcs7.h>
+#import <openssl/objects.h>
+#import <openssl/sha.h>
 
 // From https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ReceiptFields.html#//apple_ref/doc/uid/TP40010573-CH106-SW1
 NSInteger const RMAppReceiptASN1TypeBundleIdentifier = 2;
@@ -111,6 +113,7 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
             switch (type)
             {
                 case RMAppReceiptASN1TypeBundleIdentifier:
+                    _bundleIdentifierData = data;
                     _bundleIdentifier = RMASN1ReadUTF8String(&s, length);
                     break;
                 case RMAppReceiptASN1TypeAppVersion:
@@ -168,6 +171,25 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     }
     
     return [lastTransaction isActiveAutoRenewableSubscriptionForDate:date];
+}
+
+- (BOOL)verifyReceiptHash
+{
+    // TODO: Getting the uuid in Mac is different. See: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW5
+    NSUUID *uuid = [[UIDevice currentDevice] identifierForVendor];
+    unsigned char uuidBytes[16];
+    [uuid getUUIDBytes:uuidBytes];
+    
+    // Order taken from: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW5
+    NSMutableData *data = [NSMutableData data];
+    [data appendBytes:uuidBytes length:sizeof(uuidBytes)];
+    [data appendData:self.opaqueValue];
+    [data appendData:self.bundleIdentifierData];
+    
+    NSMutableData *expectedHash = [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
+    SHA1(data.bytes, data.length, expectedHash.mutableBytes);
+    
+    return [expectedHash isEqualToData:self.hash];
 }
 
 + (RMAppReceipt*)bundleReceipt

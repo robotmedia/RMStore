@@ -73,19 +73,14 @@ static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVer
 
 - (BOOL)verifyAppReceipt:(RMAppReceipt*)receipt
 {
-    if (!receipt)
-    {
-        return NO;
-    }
-    if (![receipt.bundleIdentifier isEqualToString:self.bundleIdentifier])
-    {
-        return NO;
-    }
-    if (![receipt.appVersion isEqualToString:self.bundleVersion])
-    {
-        return NO;
-    }
-    // TODO: verify hash
+    if (!receipt) return NO;
+    
+    if (![receipt.bundleIdentifier isEqualToString:self.bundleIdentifier]) return NO;
+    
+    if (![receipt.appVersion isEqualToString:self.bundleVersion]) return NO;
+    
+    if (![receipt verifyReceiptHash]) return NO;
+    
     return YES;
 }
 
