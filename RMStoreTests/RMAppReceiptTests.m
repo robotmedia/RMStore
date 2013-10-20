@@ -40,6 +40,14 @@
     STAssertFalse(result, @"");
 }
 
+- (void)testContainsActiveAutoRenewableSubscriptionOfProductIdentifierForDate_NO
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
+    NSData *data = [NSData data];
+    _receipt = [[RMAppReceipt alloc] initWithASN1Data:data];
+    BOOL result = [_receipt containsActiveAutoRenewableSubscriptionOfProductIdentifier:@"test" forDate:[NSDate date]];
+    STAssertFalse(result, @"");
+}
+
 - (void)testBundleReceipt_nil
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     RMAppReceipt *receipt = [RMAppReceipt bundleReceipt];
