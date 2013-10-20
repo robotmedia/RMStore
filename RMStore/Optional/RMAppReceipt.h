@@ -63,20 +63,20 @@ __attribute__((availability(ios,introduced=7.0)))
 
 /** Returns an initialized app receipt from the given data.
  @param asn1Data ASN1 data
- @returns An initialized app receipt from the given data.
+ @return An initialized app receipt from the given data.
  */
 - (id)initWithASN1Data:(NSData*)asn1Data;
 
 /** Returns whether there is an in-app purchase in the receipt for the given product.
  @param productIdentifier The identifier of the product.
- @returns YES if there is an in-app purchase for the given product, NO otherwise.
+ @return YES if there is an in-app purchase for the given product, NO otherwise.
  */
 - (BOOL)containsInAppPurchaseOfProductIdentifier:(NSString*)productIdentifier;
 
 /** Returns whether the receipt contains an active auto-renewable subscription for the given product identifier and for the given date.
  @param productIdentifier The identifier of the auto-renewable subscription.
  @param date The date in which the latest auto-renewable subscription should be active. If you are using the current date, you might not want to take it from the device in case the user has changed it.
- @returns YES if the latest auto-renewable subscription is active for the given date, NO otherwise.
+ @return YES if the latest auto-renewable subscription is active for the given date, NO otherwise.
  @warning Auto-renewable subscription lapses are possible. If you are checking against the current date, you might want to deduct some time as tolerance.
  @warning If this method fails Apple recommends to refresh the receipt and try again once.
  */
@@ -89,7 +89,7 @@ __attribute__((availability(ios,introduced=7.0)))
 
 /**
  Returns the app receipt contained in the bundle, if any and valid. Extracts the receipt in ASN1 from the PKCS #7 container and then parses the ASN1 data into a RMAppReceipt instance.
- @returns The app receipt contained in the bundle, or nil if there is no receipt or if it is invalid.
+ @return The app receipt contained in the bundle, or nil if there is no receipt or if it is invalid.
  @see refreshReceipt
  */
 + (RMAppReceipt*)bundleReceipt;
@@ -154,13 +154,13 @@ __attribute__((availability(ios,introduced=7.0)))
 
 /** Returns an initialized in-app purchase from the given data.
  @param asn1Data ASN1 data
- @returns An initialized in-app purchase from the given data.
+ @return An initialized in-app purchase from the given data.
  */
 - (id)initWithASN1Data:(NSData*)asn1Data;
 
 /** Returns whether the auto renewable subscription is active for the given date.
  @param date The date in which the auto-renewable subscription should be active. If you are using the current date, you might not want to take it from the device in case the user has changed it.
- @returns YES if the auto-renewable subscription is active for the given date, NO otherwise.
+@return YES if the auto-renewable subscription is active for the given date, NO otherwise.
  @warning Auto-renewable subscription lapses are possible. If you are checking against the current date, you might want to deduct some time as tolerance.
  @warning If this method fails Apple recommends to refresh the receipt and try again once.
  */

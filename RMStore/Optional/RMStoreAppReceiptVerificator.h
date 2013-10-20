@@ -29,13 +29,13 @@ __attribute__((availability(ios,introduced=7.0)))
 
 /**
  The value that will be used to validate the bundle identifier included in the app receipt. Given that it is possible to modify the app bundle in jailbroken devices, setting this value from a hardcoded string might provide better protection.
- @returns The given value, or the app's bundle identifier by defult.
+ @return The given value, or the app's bundle identifier by defult.
  */
 @property (nonatomic, strong) NSString *bundleIdentifier;
 
 /**
  The value that will be used to validate the bundle version included in the app receipt. Given that it is possible to modify the app bundle in jailbroken devices, setting this value from a hardcoded string might provide better protection.
- @returns The given value, or the app's bundle version by defult.
+ @return The given value, or the app's bundle version by defult.
  */
 @property (nonatomic, strong) NSString *bundleVersion;
 
