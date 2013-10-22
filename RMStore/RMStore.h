@@ -21,6 +21,62 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
+@protocol RMStoreTransactionPersistor<NSObject>
+    
+- (void)persistTransaction:(SKPaymentTransaction*)transaction;
+    
+/** Remove all persisted transactions from the keychain.
+*/
+- (void)removeTransactions;
+    
+/** Consume the given product if available. Intended for consumable products.
+@param productIdentifier Identifier of the product to be consumed.
+@return YES if the product was consumed, NO otherwise.
+*/
+- (BOOL)consumeProductOfIdentifier:(NSString*)productIdentifier;
+    
+/** Returns the number of persisted transactions for the given product that have not been consumed. Intended for consumable products.
+@param productIdentifier Identifier of the product to be counted.
+@return The number of persisted transactions for the given product that have not been consumed.
+*/
+- (NSInteger)countProductOfdentifier:(NSString*)productIdentifier;
+    
+/**
+Indicates wheter the given product has been purchased. Intended for non-consumables.
+@param productIdentifier Identifier of the product.
+@return YES if there is at least one transaction for the given product, NO otherwise. Note that if the product is consumable this method will still return YES even if all transactions have been consumed.
+*/
+- (BOOL)isPurchasedProductOfIdentifier:(NSString*)productIdentifier;
+    
+/** Returns the product identifiers of all products whose transactions have been persisted.
+*/
+- (NSSet*)purchasedProductIdentifiers;
+
+    
+@end
+
+@protocol RMStoreReceiptVerificator <NSObject>
+    
+- (void)verifyTransaction:(SKPaymentTransaction*)transaction
+                  success:(void (^)())successBlock
+                  failure:(void (^)(NSError *error))failureBlock;
+    
+@end
+
+@protocol RMStoreObserver<NSObject>
+@optional
+    
+- (void)storePaymentTransactionFailed:(NSNotification*)notification;
+- (void)storePaymentTransactionFinished:(NSNotification*)notification;
+- (void)storeProductsRequestFailed:(NSNotification*)notification;
+- (void)storeProductsRequestFinished:(NSNotification*)notification;
+- (void)storeRefreshReceiptFailed:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
+- (void)storeRefreshReceiptFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
+- (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
+- (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
+    
+@end
+
 @protocol RMStoreReceiptVerificator;
 @protocol RMStoreTransactionPersistor;
 @protocol RMStoreObserver;
@@ -140,11 +196,11 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
  @see RMStoreAppReceiptVerificator
  @see RMStoreTransactionReceiptVerificator
  */
-@property (nonatomic, weak) id<RMStoreReceiptVerificator> receiptVerificator;
+@property (nonatomic, strong) id<RMStoreReceiptVerificator> receiptVerificator;
 
 /** The transaction persistor. It is recommended to provide your own obfuscator if piracy is a concern. The store will use weak obfuscation via `NSKeyedArchiver` by default.
  */
-@property (nonatomic, weak) id<RMStoreTransactionPersistor> transactionPersistor;
+@property (nonatomic, strong) id<RMStoreTransactionPersistor> transactionPersistor;
 
 #pragma mark Product management
 ///---------------------------------------------
@@ -173,33 +229,6 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 @end
 
-@protocol RMStoreTransactionPersistor<NSObject>
-
-- (void)persistTransaction:(SKPaymentTransaction*)transaction;
-
-@end
-
-@protocol RMStoreReceiptVerificator <NSObject>
-
-- (void)verifyTransaction:(SKPaymentTransaction*)transaction
-                           success:(void (^)())successBlock
-                           failure:(void (^)(NSError *error))failureBlock;
-
-@end
-
-@protocol RMStoreObserver<NSObject>
-@optional
-
-- (void)storePaymentTransactionFailed:(NSNotification*)notification;
-- (void)storePaymentTransactionFinished:(NSNotification*)notification;
-- (void)storeProductsRequestFailed:(NSNotification*)notification;
-- (void)storeProductsRequestFinished:(NSNotification*)notification;
-- (void)storeRefreshReceiptFailed:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
-- (void)storeRefreshReceiptFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
-- (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
-- (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
-
-@end
 
 /**
  Category on NSNotification to recover store data from userInfo without requiring to know the keys.

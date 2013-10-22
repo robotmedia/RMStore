@@ -28,7 +28,6 @@
 
 @implementation RMAppDelegate {
     id<RMStoreReceiptVerificator> _receiptVerificator;
-    RMStoreKeychainPersistence *_persistence;
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -54,9 +53,6 @@
     const BOOL iOS7OrHigher = floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1;
     _receiptVerificator = iOS7OrHigher ? [[RMStoreAppReceiptVerificator alloc] init] : [[RMStoreTransactionReceiptVerificator alloc] init];
     [RMStore defaultStore].receiptVerificator = _receiptVerificator;
-    
-    _persistence = [[RMStoreKeychainPersistence alloc] init];
-    [RMStore defaultStore].transactionPersistor = _persistence;
 }
 
 @end

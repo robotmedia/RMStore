@@ -19,6 +19,8 @@
 //
 
 #import "RMStore.h"
+#import "RMStoreUserDefaultsPersistence.h"
+#import "RMStoreKeychainPersistence.h"
 
 NSString *const RMStoreErrorDomain = @"net.robotmedia.store";
 NSInteger const RMStoreErrorCodeUnknownProductIdentifier = 100;
@@ -128,6 +130,9 @@ typedef void (^RMStoreSuccessBlock)();
         _products = [NSMutableDictionary dictionary];
         _productsRequestDelegates = [NSMutableSet set];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
+        
+        _transactionPersistor = [[RMStoreKeychainPersistence alloc] init];
+        
     }
     return self;
 }
