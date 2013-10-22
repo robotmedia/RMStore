@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		53A91A381816B3E0004C16B5 /* RMStoreUserDefaultsPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A3A8180E82BB00376773 /* RMStoreUserDefaultsPersistence.m */; };
+		53A91A391816B439004C16B5 /* RMStoreTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 876631F8180EEBF40049B368 /* RMStoreTransaction.m */; };
 		8700D1C117DCA548005C8F5D /* NSNotification+RMStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */; };
 		8700D1D717DCB011005C8F5D /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8700D1D617DCB011005C8F5D /* libOCMock.a */; };
 		8745CCA5180558990014A274 /* RMTestObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8745CCA4180558990014A274 /* RMTestObserver.m */; };
@@ -236,12 +238,12 @@
 				8793E803180D512E005D7A66 /* RMStoreAppReceiptVerificator.m */,
 				876046471812FB7500C9B78C /* RMStoreKeychainPersistence.h */,
 				876046481812FB7500C9B78C /* RMStoreKeychainPersistence.m */,
+				87A2A3A7180E82BB00376773 /* RMStoreUserDefaultsPersistence.h */,
+				87A2A3A8180E82BB00376773 /* RMStoreUserDefaultsPersistence.m */,
 				876631F7180EEBF40049B368 /* RMStoreTransaction.h */,
 				876631F8180EEBF40049B368 /* RMStoreTransaction.m */,
 				8793E804180D512E005D7A66 /* RMStoreTransactionReceiptVerificator.h */,
 				8793E805180D512E005D7A66 /* RMStoreTransactionReceiptVerificator.m */,
-				87A2A3A7180E82BB00376773 /* RMStoreUserDefaultsPersistence.h */,
-				87A2A3A8180E82BB00376773 /* RMStoreUserDefaultsPersistence.m */,
 			);
 			path = Optional;
 			sourceTree = "<group>";
@@ -518,10 +520,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53A91A381816B3E0004C16B5 /* RMStoreUserDefaultsPersistence.m in Sources */,
 				8760465018131B2600C9B78C /* RMStoreKeychainPersistence.m in Sources */,
 				A0AF3D7D17A8085900D2E836 /* main.m in Sources */,
 				A0AF3D8117A8085900D2E836 /* RMAppDelegate.m in Sources */,
 				A0AF3DA217A8094600D2E836 /* RMStoreViewController.m in Sources */,
+				53A91A391816B439004C16B5 /* RMStoreTransaction.m in Sources */,
 				8793E80C180D5136005D7A66 /* RMStoreAppReceiptVerificator.m in Sources */,
 				A0AF3DA717A8095F00D2E836 /* RMPurchasesViewController.m in Sources */,
 				8760465118131B4800C9B78C /* RMStoreTransactionReceiptVerificator.m in Sources */,
