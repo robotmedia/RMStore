@@ -13,6 +13,13 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-retain-cycles" // To use ST macros in blocks
 
+extern NSString* const RMSKProductsRequestFailed;
+extern NSString* const RMSKProductsRequestFinished;
+
+extern NSString* const RMStoreNotificationProducts;
+extern NSString* const RMStoreNotificationInvalidProductIdentifiers;
+extern NSString* const RMStoreNotificationStoreError;
+
 typedef void (^RMSKProductsRequestFailureBlock)(NSError *error);
 typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *invalidIdentifiers);
 
@@ -53,7 +60,20 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
     _object.failureBlock = ^(NSError *error) {
         STFail(@"");
     };
+    OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSArray *products = [userInfo objectForKey:RMStoreNotificationProducts];
+        NSArray *invalidIdentifiers = [userInfo objectForKey:RMStoreNotificationInvalidProductIdentifiers];
+        
+        STAssertNotNil(products, @"");
+        STAssertNotNil(invalidIdentifiers, @"");
+        STAssertTrue(products.count == 0, @"");
+        STAssertTrue(invalidIdentifiers.count == 0, @"");
+    }];
+    
     [_object productsRequest:request didReceiveResponse:response];
+
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
 - (void)testProductsRequestDidReceiveResponse_OneProduct
@@ -76,7 +96,21 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
     _object.failureBlock = ^(NSError *error) {
         STFail(@"");
     };
+    OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSArray *products = [userInfo objectForKey:RMStoreNotificationProducts];
+        NSArray *invalidIdentifiers = [userInfo objectForKey:RMStoreNotificationInvalidProductIdentifiers];
+        
+        STAssertNotNil(products, @"");
+        STAssertNotNil(invalidIdentifiers, @"");
+        STAssertTrue(products.count == 1, @"");
+        STAssertTrue(invalidIdentifiers.count == 0, @"");
+        STAssertTrue([products containsObject:product], @"");
+    }];
+    
     [_object productsRequest:request didReceiveResponse:response];
+    
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
 - (void)testProductsRequestDidReceiveResponse_OneInvalidIdentifier
@@ -95,7 +129,21 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
     _object.failureBlock = ^(NSError *error) {
         STFail(@"");
     };
+    OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSArray *products = [userInfo objectForKey:RMStoreNotificationProducts];
+        NSArray *invalidIdentifiers = [userInfo objectForKey:RMStoreNotificationInvalidProductIdentifiers];
+        
+        STAssertNotNil(products, @"");
+        STAssertNotNil(invalidIdentifiers, @"");
+        STAssertTrue(products.count == 0, @"");
+        STAssertTrue(invalidIdentifiers.count == 1, @"");
+        STAssertTrue([invalidIdentifiers containsObject:@"test"], @"");
+    }];
+    
     [_object productsRequest:request didReceiveResponse:response];
+    
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
 - (void)testRequestDidFinish
@@ -113,7 +161,12 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
     _object.failureBlock = ^(NSError *error) {
         STAssertNil(error, @"");
     };
+    OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFailed];
+
     [_object request:request didFailWithError:nil];
+    
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
 - (void)testRequestDidFailWithError_Error
@@ -126,7 +179,35 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
     _object.failureBlock = ^(NSError *error) {
         STAssertEqualObjects(originalError, error, @"");
     };
+    OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
+        STAssertEqualObjects(originalError, error, @"");
+    }];
+    
     [_object request:request didFailWithError:originalError];
+    
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+#pragma mark - Utils
+
+- (id)observerMockForNotification:(NSString*)name
+{
+    RMStore *store = [RMStore defaultStore];
+    id mock = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:mock name:name object:store];
+    [[mock expect] notificationWithName:name object:store];
+    return mock;
+}
+
+- (id)observerMockForNotification:(NSString*)name checkUserInfoWithBlock:(BOOL(^)(id obj))block
+{
+    RMStore *store = [RMStore defaultStore];
+    id mock = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:mock name:name object:store];
+    [[mock expect] notificationWithName:name object:store userInfo:[OCMArg checkWithBlock:block]];
+    return mock;
 }
 
 @end

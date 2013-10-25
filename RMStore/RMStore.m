@@ -542,7 +542,7 @@ typedef void (^RMStoreSuccessBlock)();
         self.successBlock(products, invalidProductIdentifiers);
     }
     NSDictionary *userInfo = @{RMStoreNotificationProducts: products, RMStoreNotificationInvalidProductIdentifiers: invalidProductIdentifiers};
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFinished object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFinished object:self.store userInfo:userInfo];
 }
 
 - (void)requestDidFinish:(SKRequest *)request
@@ -562,7 +562,7 @@ typedef void (^RMStoreSuccessBlock)();
     { // error might be nil (e.g., on airplane mode)
         userInfo = @{RMStoreNotificationStoreError: error};
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFailed object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFailed object:self.store userInfo:userInfo];
     [self.store removeProductsRequestDelegate:self];
 }
 
