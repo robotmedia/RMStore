@@ -84,7 +84,9 @@ NSData* RMKeychainGetValue(NSString *key)
     return (__bridge NSData*)value;
 }
 
-@implementation RMStoreKeychainPersistence
+@implementation RMStoreKeychainPersistence {
+    NSDictionary *_transactionsDictionary;
+}
 
 #pragma mark - RMStoreTransactionPersistor
 
@@ -92,31 +94,31 @@ NSData* RMKeychainGetValue(NSString *key)
 {
     SKPayment *payment = paymentTransaction.payment;
     NSString *productIdentifier = payment.productIdentifier;
-    NSDictionary *transactions = [RMStoreKeychainPersistence transactionsDictionary];
+    NSDictionary *transactions = [self transactionsDictionary];
     NSInteger count = [[transactions objectForKey:productIdentifier] integerValue];
     count++;
     NSMutableDictionary *updatedTransactions = [NSMutableDictionary dictionaryWithDictionary:transactions];
     [updatedTransactions setObject:@(count) forKey:productIdentifier];
-    [RMStoreKeychainPersistence setTransactionsDictionary:updatedTransactions];
+    [self setTransactionsDictionary:updatedTransactions];
 }
 
 #pragma mark - Public
 
 - (void)removeTransactions
 {
-    [RMStoreKeychainPersistence setTransactionsDictionary:nil];
+    [self setTransactionsDictionary:nil];
 }
 
 - (BOOL)consumeProductOfIdentifier:(NSString*)productIdentifier
 {
-    NSDictionary *transactions = [RMStoreKeychainPersistence transactionsDictionary];
+    NSDictionary *transactions = [self transactionsDictionary];
     NSInteger count = [[transactions objectForKey:productIdentifier] integerValue];
     if (count > 0)
     {
         count--;
         NSMutableDictionary *updatedTransactions = [NSMutableDictionary dictionaryWithDictionary:transactions];
         [updatedTransactions setObject:@(count) forKey:productIdentifier];
-        [RMStoreKeychainPersistence setTransactionsDictionary:updatedTransactions];
+        [self setTransactionsDictionary:updatedTransactions];
         return YES;
     } else {
         return NO;
@@ -125,43 +127,49 @@ NSData* RMKeychainGetValue(NSString *key)
 
 - (NSInteger)countProductOfdentifier:(NSString*)productIdentifier
 {
-    NSDictionary *transactions = [RMStoreKeychainPersistence transactionsDictionary];
+    NSDictionary *transactions = [self transactionsDictionary];
     NSInteger count = [[transactions objectForKey:productIdentifier] integerValue];
     return count;
 }
 
 - (BOOL)isPurchasedProductOfIdentifier:(NSString*)productIdentifier
 {
-    NSDictionary *transactions = [RMStoreKeychainPersistence transactionsDictionary];
+    NSDictionary *transactions = [self transactionsDictionary];
     return [transactions objectForKey:productIdentifier] != nil;
 }
 
 - (NSSet*)purchasedProductIdentifiers
 {
-    NSDictionary *transactions = [RMStoreKeychainPersistence transactionsDictionary];
+    NSDictionary *transactions = [self transactionsDictionary];
     NSArray *productIdentifiers = [transactions allKeys];
     return [NSSet setWithArray:productIdentifiers];
 }
 
 #pragma mark - Private
 
-+ (NSDictionary*)transactionsDictionary
+- (NSDictionary*)transactionsDictionary
 {
-    NSData *data = RMKeychainGetValue(RMStoreTransactionsKeychainKey);
-    NSDictionary *transactions;
-    if (data)
-    {
-        NSError *error;
-        transactions = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-        NSAssert(!error, [error localizedDescription]);
-    } else {
-        transactions = [NSDictionary dictionary];
+    if (_transactionsDictionary)
+    { // Reading the keychain is slow so we cache its values in memory
+        NSData *data = RMKeychainGetValue(RMStoreTransactionsKeychainKey);
+        NSDictionary *transactions;
+        if (data)
+        {
+            NSError *error;
+            transactions = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+            NSAssert(!error, [error localizedDescription]);
+        } else {
+            transactions = [NSDictionary dictionary];
+        }
+        _transactionsDictionary = transactions;
     }
-    return transactions;
+    return _transactionsDictionary;
+    
 }
 
-+ (void)setTransactionsDictionary:(NSDictionary*)dictionary
+- (void)setTransactionsDictionary:(NSDictionary*)dictionary
 {
+    _transactionsDictionary = dictionary;
     NSData *data = nil;
     if (dictionary)
     {
