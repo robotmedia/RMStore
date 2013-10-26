@@ -44,7 +44,7 @@ NSMutableDictionary* RMKeychainGetSearchDictionary(NSString *key)
 void RMKeychainSetValue(NSData *value, NSString *key)
 {
     NSMutableDictionary *searchDictionary = RMKeychainGetSearchDictionary(key);
-    OSStatus status;
+    OSStatus status = errSecSuccess;
     CFTypeRef ignore;
     if (SecItemCopyMatching((__bridge CFDictionaryRef)searchDictionary, &ignore) == errSecSuccess)
     { // Update
@@ -56,14 +56,15 @@ void RMKeychainSetValue(NSData *value, NSString *key)
             [updateDictionary setObject:value forKey:(__bridge id)kSecValueData];
             status = SecItemUpdate((__bridge CFDictionaryRef)searchDictionary, (__bridge CFDictionaryRef)updateDictionary);
         }
-        NSCAssert(status == errSecSuccess, @"failed to update key %@ with error %ld.", key, status);
     }
     else if (value)
     { // Add
         [searchDictionary setObject:value forKey:(__bridge id)kSecValueData];
         status = SecItemAdd((__bridge CFDictionaryRef)searchDictionary, NULL);
-        
-        NSCAssert(status == errSecSuccess, @"failed to add key %@ with error %ld.", key, status);
+    }
+    if (status != errSecSuccess)
+    {
+        NSLog(@"RMStoreKeychainPersistence: failed to set key %@ with error %ld.", key, status);
     }
 }
 
@@ -74,13 +75,11 @@ NSData* RMKeychainGetValue(NSString *key)
     [searchDictionary setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
     
     CFDataRef value = nil;
-#if defined(NS_BLOCK_ASSERTIONS)
-    SecItemCopyMatching((__bridge CFDictionaryRef)searchDictionary, (CFTypeRef *)&value);
-#else
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)searchDictionary, (CFTypeRef *)&value);
-    NSCAssert(status == errSecSuccess || status == errSecItemNotFound, @"failed to add key %@ with error %ld.", key, status);
-#endif
-    
+    if (status != errSecSuccess && status != errSecItemNotFound)
+    {
+        NSLog(@"RMStoreKeychainPersistence: failed to get key %@ with error %ld.", key, status);
+    }
     return (__bridge NSData*)value;
 }
 
