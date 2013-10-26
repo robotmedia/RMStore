@@ -20,6 +20,13 @@ Pod::Spec.new do |s|
     kp.frameworks = 'Security'
   end
 
+  s.subspec 'OpenSSL' do |openssl|
+    openssl.preserve_paths = 'RMStore/Optional/openssl-1.0.1e/include/openssl/*.h'
+    openssl.vendored_libraries = 'RMStore/Optional/openssl-1.0.1e/lib/libcrypto.a', 'RMStore/Optional/openssl-1.0.1e/lib/libssl.a'
+    openssl.libraries = 'ssl', 'crypto'
+    openssl.xcconfig = { 'HEADER_SEARCH_PATHS' => "${PODS_ROOT}/RMStore/RMStore/Optional/openssl-1.0.1e/include/**" }
+  end
+
   s.subspec 'NSUserDefaultsPersistence' do |nsudp|
     nsudp.dependency 'RMStore/Core'
     nsudp.source_files = 'RMStore/Optional/RMStoreUserDefaultsPersistence.{h,m}', 'RMStore/Optional/RMStoreTransaction.{h,m}'
