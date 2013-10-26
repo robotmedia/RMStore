@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
-  s.name = "RMStore"
-  s.version = "0.4"
-  s.license = "Apache 2.0"
-  s.summary = "A lightweight iOS framework for In-App Purchases."
-  s.homepage = "https://github.com/robotmedia/RMStore"
+  s.name = 'RMStore'
+  s.version = '0.4'
+  s.license = 'Apache 2.0'
+  s.summary = 'A lightweight iOS framework for In-App Purchases.'
+  s.homepage = 'https://github.com/robotmedia/RMStore'
   s.author = 'Hermes Pique'
-  s.source = { :git => "https://github.com/robotmedia/RMStore.git", :tag => "#{s.version}" }
+  s.source = { :git => 'https://github.com/robotmedia/RMStore.git', :tag => "#{s.version}" }
   s.platform = :ios, '5.0'
   s.frameworks = 'StoreKit'
   s.requires_arc = true
@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
     openssl.preserve_paths = 'RMStore/Optional/openssl-1.0.1e/include/openssl/*.h'
     openssl.vendored_libraries = 'RMStore/Optional/openssl-1.0.1e/lib/libcrypto.a', 'RMStore/Optional/openssl-1.0.1e/lib/libssl.a'
     openssl.libraries = 'ssl', 'crypto'
-    openssl.xcconfig = { 'HEADER_SEARCH_PATHS' => "${PODS_ROOT}/RMStore/RMStore/Optional/openssl-1.0.1e/include/**" }
+    openssl.xcconfig = { 'HEADER_SEARCH_PATHS' => '${PODS_ROOT}/RMStore/RMStore/Optional/openssl-1.0.1e/include/**' }
   end
 
   s.subspec 'NSUserDefaultsPersistence' do |nsudp|
