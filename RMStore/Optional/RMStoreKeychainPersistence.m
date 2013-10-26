@@ -151,7 +151,7 @@ NSData* RMKeychainGetValue(NSString *key)
     if (_transactionsDictionary)
     { // Reading the keychain is slow so we cache its values in memory
         NSData *data = RMKeychainGetValue(RMStoreTransactionsKeychainKey);
-        NSDictionary *transactions;
+        NSDictionary *transactions = [NSDictionary dictionary];
         if (data)
         {
             NSError *error;
@@ -160,8 +160,6 @@ NSData* RMKeychainGetValue(NSString *key)
             {
                 NSLog(@"RMStoreKeychainPersistence: failed to read JSON data with error %@", error);
             }
-        } else {
-            transactions = [NSDictionary dictionary];
         }
         _transactionsDictionary = transactions;
     }
