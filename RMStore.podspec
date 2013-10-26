@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'OpenSSL' do |openssl|
-    openssl.preserve_paths = 'RMStore/Optional/openssl-1.0.1e/include/openssl/*.h'
+    openssl.preserve_paths = 'RMStore/Optional/openssl-1.0.1e/include/openssl/*.h', 'RMStore/Optional/openssl-1.0.1e/include/LICENSE'
     openssl.vendored_libraries = 'RMStore/Optional/openssl-1.0.1e/lib/libcrypto.a', 'RMStore/Optional/openssl-1.0.1e/lib/libssl.a'
     openssl.libraries = 'ssl', 'crypto'
     openssl.xcconfig = { 'HEADER_SEARCH_PATHS' => '${PODS_ROOT}/RMStore/RMStore/Optional/openssl-1.0.1e/include/**' }
