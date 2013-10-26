@@ -156,7 +156,10 @@ NSData* RMKeychainGetValue(NSString *key)
         {
             NSError *error;
             transactions = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-            NSAssert(!error, [error localizedDescription]);
+            if (error)
+            {
+                NSLog(@"RMStoreKeychainPersistence: failed to read JSON data with error %@", error);
+            }
         } else {
             transactions = [NSDictionary dictionary];
         }
@@ -174,7 +177,10 @@ NSData* RMKeychainGetValue(NSString *key)
     {
         NSError *error;
         data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:&error];
-        NSAssert(!error, [error localizedDescription]);
+        if (error)
+        {
+            NSLog(@"RMStoreKeychainPersistence: failed to write JSON data with error %@", error);
+        }
     }
     RMKeychainSetValue(data, RMStoreTransactionsKeychainKey);
 }
