@@ -33,4 +33,12 @@
     STAssertTrue(_purchase.webOrderLineItemID == 0, @"");
 }
 
+- (void)testIsActiveAutoRenewableSubscriptionForDate_throws
+{
+    _purchase = [[RMAppReceiptIAP alloc] initWithASN1Data:[NSData data]];
+#if !defined(NS_BLOCK_ASSERTIONS)
+    STAssertThrowsSpecificNamed([_purchase isActiveAutoRenewableSubscriptionForDate:[NSDate date]], NSException, NSInternalInconsistencyException, @"");
+#endif
+}
+
 @end
