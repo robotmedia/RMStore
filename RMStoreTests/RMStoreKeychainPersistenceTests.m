@@ -15,6 +15,9 @@
 
 @end
 
+extern void RMKeychainSetValue(NSData *value, NSString *key);
+extern NSString* const RMStoreTransactionsKeychainKey;
+
 /**
  [NSBundle bundleIdentifier] returns nil during unit tests. Since RMStoreKeychainPersistence uses it as the keychain service value we have to swizzle it to return a value.
  */
@@ -61,14 +64,17 @@
 
 - (void)testPersistTransaction
 {
-    [self persistMockTransactionOfProductIdentifer:@"test"];
+    SKPaymentTransaction *transaction = [self mockTransactionOfProductIdentifer:@"test"];
+
+    [_persistor persistTransaction:transaction];
     
     STAssertTrue([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
 }
 
 - (void)testRemoveTransactions
 {
-    [self persistMockTransactionOfProductIdentifer:@"test"];
+    SKPaymentTransaction *transaction = [self mockTransactionOfProductIdentifer:@"test"];
+    [self keychainPersistTransaction:transaction];
     
     [_persistor removeTransactions];
     
@@ -77,7 +83,8 @@
 
 - (void)testConsumeProductOfIdentifier_YES
 {
-    [self persistMockTransactionOfProductIdentifer:@"test"];
+    SKPaymentTransaction *transaction = [self mockTransactionOfProductIdentifer:@"test"];
+    [self keychainPersistTransaction:transaction];
     
     BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
     
@@ -92,7 +99,9 @@
 
 - (void)testConsumeProductOfIdentifier_NO_alreadyConsumedProduct
 {
-    [self persistMockTransactionOfProductIdentifer:@"test"];
+    SKPaymentTransaction *transaction = [self mockTransactionOfProductIdentifer:@"test"];
+    [self keychainPersistTransaction:transaction];
+    
     [_persistor consumeProductOfIdentifier:@"test"];
     
     BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
@@ -106,21 +115,26 @@
 
 - (void)testcountProductOfdentifier_one
 {
-    [self persistMockTransactionOfProductIdentifer:@"test"];
+    SKPaymentTransaction *transaction = [self mockTransactionOfProductIdentifer:@"test"];
+    [self keychainPersistTransaction:transaction];
+    
     STAssertEquals([_persistor countProductOfdentifier:@"test"], 1, @"");
 }
 
 - (void)testcountProductOfdentifier_many
 {
-    [self persistMockTransactionOfProductIdentifer:@"test"];
-    [self persistMockTransactionOfProductIdentifer:@"test"];
-    [self persistMockTransactionOfProductIdentifer:@"test"];
+    SKPaymentTransaction *transaction = [self mockTransactionOfProductIdentifer:@"test"];
+    [_persistor persistTransaction:transaction];
+    [_persistor persistTransaction:transaction];
+    [_persistor persistTransaction:transaction];
+    
     STAssertEquals([_persistor countProductOfdentifier:@"test"], 3, @"");
 }
 
 - (void)testIsPurchasedProductOfIdentifier_YES
 {
-    [self persistMockTransactionOfProductIdentifer:@"test"];
+    SKPaymentTransaction *transaction = [self mockTransactionOfProductIdentifer:@"test"];
+    [self keychainPersistTransaction:transaction];
     
     BOOL result = [_persistor isPurchasedProductOfIdentifier:@"test"];
     STAssertTrue(result, @"");
@@ -140,7 +154,9 @@
 
 - (void)testPurchasedProductIdentifiers_one
 {
-    [self persistMockTransactionOfProductIdentifer:@"test"];
+    SKPaymentTransaction *transaction = [self mockTransactionOfProductIdentifer:@"test"];
+    [self keychainPersistTransaction:transaction];
+    
     NSSet *result = [_persistor purchasedProductIdentifiers];
     STAssertTrue(result.count == 1, @"");
     STAssertEqualObjects([result anyObject], @"test", nil);
@@ -148,21 +164,32 @@
 
 - (void)testPurchasedProductIdentifiers_many
 {
-    [self persistMockTransactionOfProductIdentifer:@"test1"];
-    [self persistMockTransactionOfProductIdentifer:@"test2"];
+    SKPaymentTransaction *transaction1 = [self mockTransactionOfProductIdentifer:@"test1"];
+    [_persistor persistTransaction:transaction1];
+    SKPaymentTransaction *transaction2 = [self mockTransactionOfProductIdentifer:@"test2"];
+    [_persistor persistTransaction:transaction2];
+
     NSSet *result = [_persistor purchasedProductIdentifiers];
+
     STAssertTrue(result.count == 2, @"");
 }
 
 #pragma mark - Private
 
-- (SKPaymentTransaction*)persistMockTransactionOfProductIdentifer:(NSString*)productIdentifier
+- (void)keychainPersistTransaction:(SKPaymentTransaction*)transaction
+{
+    NSDictionary *dictionary = @{transaction.payment.productIdentifier : @1};
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:nil];
+    RMKeychainSetValue(data, RMStoreTransactionsKeychainKey);
+}
+
+- (SKPaymentTransaction*)mockTransactionOfProductIdentifer:(NSString*)productIdentifier
 {
     id transaction = [OCMockObject mockForClass:[SKPaymentTransaction class]];
     id payment = [OCMockObject mockForClass:[SKPayment class]];
     [[[payment stub] andReturn:productIdentifier] productIdentifier];
     [[[transaction stub] andReturn:payment] payment];
-    [_persistor persistTransaction:transaction];
+
     return transaction;
 }
 
