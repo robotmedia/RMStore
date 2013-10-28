@@ -148,7 +148,7 @@ NSData* RMKeychainGetValue(NSString *key)
 
 - (NSDictionary*)transactionsDictionary
 {
-    if (_transactionsDictionary)
+    if (!_transactionsDictionary)
     { // Reading the keychain is slow so we cache its values in memory
         NSData *data = RMKeychainGetValue(RMStoreTransactionsKeychainKey);
         NSDictionary *transactions = [NSDictionary dictionary];
