@@ -166,7 +166,7 @@ RMStore delegates receipt verification, enabling you to provide your own impleme
                            failure:(void (^)(NSError *error))failureBlock;
 ```
 
-Call `successBlock` if the receipt passes verification, and `failureBlock` in any other case.
+Call `successBlock` if the receipt passes verification, and `failureBlock` if it doesn't.
 
 You will also need to set the `receiptVerificator` delegate at startup, as indicated above.
 
