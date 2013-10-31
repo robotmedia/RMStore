@@ -21,8 +21,6 @@
 #import "RMStoreAppReceiptVerificator.h"
 #import "RMAppReceipt.h"
 
-static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVerificator";
-
 @implementation RMStoreAppReceiptVerificator
 
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
@@ -111,7 +109,7 @@ static NSString *RMErroDomainStoreAppReceiptVerificator = @"RMStoreAppReceiptVer
 
 - (void)failWithBlock:(void (^)(NSError *error))failureBlock message:(NSString*)message
 {
-    NSError *error = [NSError errorWithDomain:RMErroDomainStoreAppReceiptVerificator code:0 userInfo:@{NSLocalizedDescriptionKey : message}];
+    NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey : message}];
     [self failWithBlock:failureBlock error:error];
 }
 
