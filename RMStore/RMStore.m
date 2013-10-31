@@ -22,6 +22,7 @@
 
 NSString *const RMStoreErrorDomain = @"net.robotmedia.store";
 NSInteger const RMStoreErrorCodeUnknownProductIdentifier = 100;
+NSInteger const RMStoreErrorCodeUnableToCompleteVerification = 200;
 
 NSString* const RMSKPaymentTransactionFailed = @"RMSKPaymentTransactionFailed";
 NSString* const RMSKPaymentTransactionFinished = @"RMSKPaymentTransactionFinished";
@@ -407,7 +408,10 @@ typedef void (^RMStoreSuccessBlock)();
 	NSString* productIdentifier = payment.productIdentifier;
     RMStoreLog(@"transaction failed with product %@ and error %@", productIdentifier, error.debugDescription);
     
-    [queue finishTransaction:transaction];
+    if (error.code != RMStoreErrorCodeUnableToCompleteVerification)
+    { // If we were unable to complete the verification we want StoreKit to keep reminding us of the transaction
+        [queue finishTransaction:transaction];
+    }
 
     RMAddPaymentParameters *parameters = [self popAddPaymentParametersForIdentifier:productIdentifier];
     if (parameters.failureBlock != nil)

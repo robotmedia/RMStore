@@ -27,6 +27,7 @@
 
 extern NSString *const RMStoreErrorDomain;
 extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
+extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 
 /** A StoreKit wrapper that adds blocks and notifications, plus optional receipt verification and purchase management.
  */
@@ -181,6 +182,11 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 
 @protocol RMStoreReceiptVerificator <NSObject>
 
+/** Verifies the given transaction and calls the given success or failure block accordingly.
+ @param transaction The transaction to be verified.
+ @param successBlock Called if the transaction passed verification.
+ @param failureBlock Called if the transaction failed verification. If verification could not be completed (e.g., due to connection issues), then error must be of code RMStoreErrorCodeUnableToCompleteVerification to prevent RMStore to finish the transaction.
+ */
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
                            success:(void (^)())successBlock
                            failure:(void (^)(NSError *error))failureBlock;

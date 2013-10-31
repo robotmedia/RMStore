@@ -44,6 +44,9 @@ extern NSString* const RMStoreNotificationStoreError;
 @interface RMStoreReceiptVerificatorFailure : NSObject<RMStoreReceiptVerificator>
 @end
 
+@interface RMStoreReceiptVerificatorUnableToComplete : NSObject<RMStoreReceiptVerificator>
+@end
+
 @interface RMStore(Private)
 
 @property (nonatomic, readonly) NSMutableDictionary *products;
@@ -285,9 +288,11 @@ extern NSString* const RMStoreNotificationStoreError;
     _store.receiptVerificator = verificator;
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    [[queue stub] finishTransaction:[OCMArg any]];
+    [[queue expect] finishTransaction:transaction];
     
     [_store paymentQueue:queue updatedTransactions:@[transaction]];
+    
+    [queue verify];
 }
 
 - (void)testPaymentQueueUpdatedTransactions_Purchased__VerificatorFailure
@@ -296,7 +301,19 @@ extern NSString* const RMStoreNotificationStoreError;
     _store.receiptVerificator = verificator;
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    [[queue stub] finishTransaction:[OCMArg any]];
+    [[queue expect] finishTransaction:transaction];
+    
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+    
+    [queue verify];
+}
+
+- (void)testPaymentQueueUpdatedTransactions_Purchased__VerificatorUnableToComplete
+{
+    id verificator = [[RMStoreReceiptVerificatorUnableToComplete alloc] init];
+    _store.receiptVerificator = verificator;
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
     
     [_store paymentQueue:queue updatedTransactions:@[transaction]];
 }
@@ -592,6 +609,16 @@ extern NSString* const RMStoreNotificationStoreError;
 - (void)verifyTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
 {
     if (failureBlock) failureBlock(nil);
+}
+
+@end
+
+@implementation RMStoreReceiptVerificatorUnableToComplete
+
+- (void)verifyTransaction:(SKPaymentTransaction *)transaction success:(void (^)())successBlock failure:(void (^)(NSError *))failureBlock
+{
+    NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnableToCompleteVerification userInfo:nil];
+    if (failureBlock) failureBlock(error);
 }
 
 @end

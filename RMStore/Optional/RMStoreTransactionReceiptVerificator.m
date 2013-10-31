@@ -26,8 +26,6 @@
 #define RMStoreLog(...)
 #endif
 
-static NSString *RMErroDomainStoreLocalReceiptVerificator = @"RMStoreLocalReceiptVerificator";
-
 @interface NSData(rm_base64)
 
 - (NSString *)rm_stringByBase64Encoding;
@@ -122,7 +120,7 @@ static const short _base64DecodingTable[256] = {
     {
         if (failureBlock != nil)
         {
-            NSError *error = [NSError errorWithDomain:RMErroDomainStoreLocalReceiptVerificator code:0 userInfo:nil];
+            NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:0 userInfo:nil];
             failureBlock(error);
         }
         return;
@@ -165,9 +163,10 @@ static const short _base64DecodingTable[256] = {
             if (error != nil)
             {
                 RMStoreLog(@"Server Connection Failed");
+                NSError *wrapperError = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnableToCompleteVerification userInfo:@{NSUnderlyingErrorKey : error, NSLocalizedDescriptionKey : NSLocalizedString(@"Connection to Apple failed. Check the underlying error for more info.", @"Error description")}];
                 if (failureBlock != nil)
                 {
-                    failureBlock(error);
+                    failureBlock(wrapperError);
                 }
                 return;
             }
@@ -207,7 +206,7 @@ static const short _base64DecodingTable[256] = {
             else
             {
                 RMStoreLog(@"Verification Failed With Code %d", statusCode);
-                NSError *serverError = [NSError errorWithDomain:RMErroDomainStoreLocalReceiptVerificator code:statusCode userInfo:nil];
+                NSError *serverError = [NSError errorWithDomain:RMStoreErrorDomain code:statusCode userInfo:nil];
                 if (failureBlock != nil)
                 {
                     failureBlock(serverError);
