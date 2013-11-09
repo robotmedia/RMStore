@@ -226,6 +226,7 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)restoreTransactionsOnSuccess:(RMStoreSuccessBlock)successBlock
                              failure:(RMStoreFailureBlock)failureBlock
 {
+    _restoredCompletedTransactionsFinished = NO;
     _pendingRestoredTransactionsCount = 0;
     _restoreTransactionsSuccessBlock = successBlock;
     _restoreTransactionsFailureBlock = failureBlock;
@@ -237,6 +238,7 @@ typedef void (^RMStoreSuccessBlock)();
                           failure:(void (^)(NSError *error))failureBlock
 {
     NSAssert([[SKPaymentQueue defaultQueue] respondsToSelector:@selector(restoreCompletedTransactionsWithApplicationUsername:)], @"restoreCompletedTransactionsWithApplicationUsername: not supported in this iOS version. Use restoreTransactionsOnSuccess:failure: instead.");
+    _restoredCompletedTransactionsFinished = NO;
     _pendingRestoredTransactionsCount = 0;
     _restoreTransactionsSuccessBlock = successBlock;
     _restoreTransactionsFailureBlock = failureBlock;
