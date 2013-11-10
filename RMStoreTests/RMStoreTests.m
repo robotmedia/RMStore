@@ -326,7 +326,49 @@ extern NSString* const RMStoreNotificationStoreError;
     [[[transaction stub] andReturn:originalTransaction] originalTransaction];
     [[queue stub] finishTransaction:[OCMArg any]];
     
+    id observerMock = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:observerMock name:RMSKRestoreTransactionsFinished object:_store];
+    
     [_store paymentQueue:queue updatedTransactions:@[transaction]];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+- (void)testPaymentQueueUpdatedTransactions_Restored__ExpectRMSKRestoreTransactionsFinished
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
+    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
+    [[[transaction stub] andReturn:originalTransaction] originalTransaction];
+    [[queue stub] finishTransaction:[OCMArg any]];
+    [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
+    id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFinished];
+    
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+- (void)testPaymentQueueUpdatedTransactions_Restored__Twice
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
+    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
+    [[[transaction stub] andReturn:originalTransaction] originalTransaction];
+    [[queue stub] finishTransaction:[OCMArg any]];
+    [_store restoreTransactions];
+    [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+    [_store restoreTransactions];
+    
+    id observerMock = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:observerMock name:RMSKRestoreTransactionsFinished object:_store];
+    
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+    
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
 - (void)testPaymentQueueUpdatedTransactions_Restored__VerificatorSuccess
@@ -339,7 +381,12 @@ extern NSString* const RMStoreNotificationStoreError;
     [[[transaction stub] andReturn:originalTransaction] originalTransaction];
     [[queue stub] finishTransaction:[OCMArg any]];
     
+    id observerMock = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:observerMock name:RMSKRestoreTransactionsFinished object:_store];
+    
     [_store paymentQueue:queue updatedTransactions:@[transaction]];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
 - (void)testPaymentQueueUpdatedTransactions_Restored__VerificatorFailure
@@ -352,7 +399,12 @@ extern NSString* const RMStoreNotificationStoreError;
     [[[transaction stub] andReturn:originalTransaction] originalTransaction];
     [[queue stub] finishTransaction:[OCMArg any]];
     
+    id observerMock = [OCMockObject observerMock];
+    [[NSNotificationCenter defaultCenter] addMockObserver:observerMock name:RMSKRestoreTransactionsFinished object:_store];
+    
     [_store paymentQueue:queue updatedTransactions:@[transaction]];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
 - (void)testPaymentQueueUpdatedTransactions_Failed
