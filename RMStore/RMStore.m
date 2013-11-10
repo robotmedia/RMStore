@@ -115,6 +115,7 @@ typedef void (^RMStoreSuccessBlock)();
     NSMutableSet *_productsRequestDelegates;
     
     NSInteger _pendingRestoredTransactionsCount;
+    NSMutableSet *_pendingRestoredTransactionsDownloadingContent; // HACK: We track downloading content transactions because non-consumable products with downloadable content are some times restored twice when calling restoreCompletedTransactions
     BOOL _restoredCompletedTransactionsFinished;
     
     SKReceiptRefreshRequest *_refreshReceiptRequest;
@@ -132,6 +133,7 @@ typedef void (^RMStoreSuccessBlock)();
         _addPaymentParameters = [NSMutableDictionary dictionary];
         _products = [NSMutableDictionary dictionary];
         _productsRequestDelegates = [NSMutableSet set];
+        _pendingRestoredTransactionsDownloadingContent = [NSMutableSet set];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
     }
     return self;
@@ -383,6 +385,7 @@ typedef void (^RMStoreSuccessBlock)();
         if (download.downloadState == SKDownloadStateFinished)
         {
             RMStoreLog(@"download for product %@ finished", download.transaction.payment.productIdentifier);
+            [_pendingRestoredTransactionsDownloadingContent removeObject:download.transaction.transactionIdentifier];
             NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
             [userInfo setObject:download forKey:RMStoreNotificationDownload];
             [userInfo setObject:download.transaction.payment.productIdentifier forKey:RMStoreNotificationProductIdentifier];
@@ -402,6 +405,7 @@ typedef void (^RMStoreSuccessBlock)();
         else if (download.downloadState == SKDownloadStateCancelled || download.downloadState == SKDownloadStateFailed)
         {
             RMStoreLog(@"download for product %@ failed", download.transaction.payment.productIdentifier);
+            [_pendingRestoredTransactionsDownloadingContent removeObject:download.transaction.transactionIdentifier];
             NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
             [userInfo setObject:download forKey:RMStoreNotificationDownload];
             [userInfo setObject:download.transaction.payment.productIdentifier forKey:RMStoreNotificationProductIdentifier];
@@ -455,6 +459,7 @@ typedef void (^RMStoreSuccessBlock)();
     if (transaction.downloads)
     {
         RMStoreLog(@"download for product %@ started", transaction.payment.productIdentifier);
+        [_pendingRestoredTransactionsDownloadingContent addObject:transaction.transactionIdentifier];
         [queue startDownloads:transaction.downloads];
     }
     else
@@ -495,7 +500,10 @@ typedef void (^RMStoreSuccessBlock)();
 {
     RMStoreLog(@"transaction restored with product %@", transaction.originalTransaction.payment.productIdentifier);
     
-    _pendingRestoredTransactionsCount++;
+    if (![_pendingRestoredTransactionsDownloadingContent containsObject:transaction.transactionIdentifier])
+    {
+        _pendingRestoredTransactionsCount++;
+    }
     if (self.receiptVerificator != nil)
     {
         [self.receiptVerificator verifyTransaction:transaction success:^{
@@ -518,7 +526,7 @@ typedef void (^RMStoreSuccessBlock)();
 {
     if (transaction != nil && transaction.transactionState == SKPaymentTransactionStateRestored)
     {
-        if (![self isTransactionDownloadInProgress:transaction])
+        if (![_pendingRestoredTransactionsDownloadingContent containsObject:transaction.transactionIdentifier])
         { // Wait until the transaction's downloadable content is downloaded
             _pendingRestoredTransactionsCount--;
         }
@@ -582,17 +590,6 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)removeProductsRequestDelegate:(RMProductsRequestDelegate*)delegate
 {
     [_productsRequestDelegates removeObject:delegate];
-}
-
-- (BOOL)isTransactionDownloadInProgress:(SKPaymentTransaction*)transaction
-{
-    for (SKDownload *download in transaction.downloads)
-    {
-        SKDownloadState state = download.downloadState;
-        if (state == SKDownloadStateCancelled || state == SKDownloadStateFailed || state == SKDownloadStateFinished) continue;
-        return YES;
-    }
-    return NO;
 }
 
 @end
