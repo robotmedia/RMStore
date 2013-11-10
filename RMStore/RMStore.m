@@ -518,16 +518,7 @@ typedef void (^RMStoreSuccessBlock)();
 {
     if (transaction != nil && transaction.transactionState == SKPaymentTransactionStateRestored)
     {
-        BOOL isDownloadingContent = NO;
-        for (SKDownload *download in transaction.downloads)
-        {
-            SKDownloadState state = download.downloadState;
-            if (state == SKDownloadStateCancelled || state == SKDownloadStateFailed || state == SKDownloadStateFinished) continue;
-            
-            isDownloadingContent = YES;
-            break;
-        }
-        if (!isDownloadingContent)
+        if (![self isTransactionDownloadInProgress:transaction])
         { // Wait until the transaction's downloadable content is downloaded
             _pendingRestoredTransactionsCount--;
         }
@@ -591,6 +582,17 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)removeProductsRequestDelegate:(RMProductsRequestDelegate*)delegate
 {
     [_productsRequestDelegates removeObject:delegate];
+}
+
+- (BOOL)isTransactionDownloadInProgress:(SKPaymentTransaction*)transaction
+{
+    for (SKDownload *download in transaction.downloads)
+    {
+        SKDownloadState state = download.downloadState;
+        if (state == SKDownloadStateCancelled || state == SKDownloadStateFailed || state == SKDownloadStateFinished) continue;
+        return YES;
+    }
+    return NO;
 }
 
 @end
