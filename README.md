@@ -184,7 +184,7 @@ If you are using RMStore in your non-ARC project, you will need to set a `-fobjc
 
 ##Roadmap
 
-RMStore is in early stage and currently supports consumables and non-consumables only. Future enhancements will include:
+RMStore is in initial development and its public API should not be considered stable. Future enhancements will include:
 
 * [Content download support](https://github.com/robotmedia/RMStore/issues/2)
 * [Better subcriptions support](https://github.com/robotmedia/RMStore/issues/3)
