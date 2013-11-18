@@ -130,7 +130,7 @@ static const short _base64DecodingTable[256] = {
     
     NSError *error;
     NSData *requestData = [NSJSONSerialization dataWithJSONObject:jsonReceipt options:0 error:&error];
-    if (error != nil)
+    if (!requestData)
     {
         RMStoreLog(@"Failed to serialize receipt into JSON");
         if (failureBlock != nil)
@@ -160,7 +160,7 @@ static const short _base64DecodingTable[256] = {
         NSError *error;
         NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:&error];
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (error != nil)
+            if (!data)
             {
                 RMStoreLog(@"Server Connection Failed");
                 NSError *wrapperError = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnableToCompleteVerification userInfo:@{NSUnderlyingErrorKey : error, NSLocalizedDescriptionKey : NSLocalizedString(@"Connection to Apple failed. Check the underlying error for more info.", @"Error description")}];
@@ -172,12 +172,12 @@ static const short _base64DecodingTable[256] = {
             }
             NSError *jsonError;
             NSDictionary *responseJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
-            if (jsonError != nil)
+            if (!responseJSON)
             {
                 RMStoreLog(@"Failed To Parse Server Response");
                 if (failureBlock != nil)
                 {
-                    failureBlock(error);
+                    failureBlock(jsonError);
                 }
             }
             
