@@ -42,7 +42,7 @@ NSString* const RMStoreNotificationProducts = @"products";
 NSString* const RMStoreNotificationStoreError = @"storeError";
 NSString* const RMStoreNotificationStoreReceipt = @"storeReceipt";
 NSString* const RMStoreNotificationTransaction = @"transaction";
-NSString* const RMStoreNotificationDownload = @"download";
+NSString* const RMStoreNotificationStoreDownload = @"storeDownload";
 
 #ifdef DEBUG
 #define RMStoreLog(...) NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]);
@@ -82,6 +82,11 @@ typedef void (^RMStoreSuccessBlock)();
 - (SKPaymentTransaction*)transaction
 {
     return [self.userInfo objectForKey:RMStoreNotificationTransaction];
+}
+
+- (SKDownload*)storeDownload
+{
+    return [self.userInfo objectForKey:RMStoreNotificationStoreDownload];
 }
 
 @end
@@ -382,40 +387,57 @@ typedef void (^RMStoreSuccessBlock)();
 {
     for (SKDownload *download in downloads)
     {
-        if (download.downloadState == SKDownloadStateFinished)
+        switch (download.downloadState)
         {
-            RMStoreLog(@"download for product %@ finished", download.transaction.payment.productIdentifier);
-            [_pendingRestoredTransactionsDownloadingContent removeObject:download.transaction.transactionIdentifier];
-            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-            [userInfo setObject:download forKey:RMStoreNotificationDownload];
-            [userInfo setObject:download.transaction.payment.productIdentifier forKey:RMStoreNotificationProductIdentifier];
-            [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadUpdate object:self userInfo:userInfo]; // To monitor progress = 1.0
-            [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadFinished object:self userInfo:userInfo];
-            
-            [self paymentQueue:queue finishedTransaction:download.transaction];
-            [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:download.transaction];
-        }
-        else if (download.downloadState == SKDownloadStateActive)
-        {
-            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-            [userInfo setObject:download forKey:RMStoreNotificationDownload];
-            [userInfo setObject:download.transaction.payment.productIdentifier forKey:RMStoreNotificationProductIdentifier];
-            [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadUpdate object:self userInfo:userInfo];
-        }
-        else if (download.downloadState == SKDownloadStateCancelled || download.downloadState == SKDownloadStateFailed)
-        {
-            RMStoreLog(@"download for product %@ failed", download.transaction.payment.productIdentifier);
-            [_pendingRestoredTransactionsDownloadingContent removeObject:download.transaction.transactionIdentifier];
-            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-            [userInfo setObject:download forKey:RMStoreNotificationDownload];
-            [userInfo setObject:download.transaction.payment.productIdentifier forKey:RMStoreNotificationProductIdentifier];
-            if (download.error)
-            {
-                [userInfo setObject:download.error forKey:RMStoreNotificationStoreError];
-            }
-            [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadFailed object:self userInfo:userInfo];
+            case SKDownloadStateFinished:
+                [self paymentQueue:queue completedDownload:download];
+                break;
+            case SKDownloadStateActive:
+                [self paymentQueue:queue activeDownload:download];
+                break;
+            case SKDownloadStateCancelled:
+            case SKDownloadStateFailed:
+                [self paymentQueue:queue failedDownload:download error:download.error];
+            default:
+                break;
         }
     }
+}
+
+- (void)paymentQueue:(SKPaymentQueue*)queue completedDownload:(SKDownload *)download
+{
+    RMStoreLog(@"download for product %@ finished", download.transaction.payment.productIdentifier);
+    [_pendingRestoredTransactionsDownloadingContent removeObject:download.transaction.transactionIdentifier];
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setObject:download forKey:RMStoreNotificationStoreDownload];
+    [userInfo setObject:download.transaction.payment.productIdentifier forKey:RMStoreNotificationProductIdentifier];
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadUpdate object:self userInfo:userInfo]; // To monitor progress = 1.0
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadFinished object:self userInfo:userInfo];
+    
+    [self paymentQueue:queue finishedTransaction:download.transaction];
+    [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:download.transaction];
+}
+
+- (void)paymentQueue:(SKPaymentQueue*)queue activeDownload:(SKDownload *)download
+{
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setObject:download forKey:RMStoreNotificationStoreDownload];
+    [userInfo setObject:download.transaction.payment.productIdentifier forKey:RMStoreNotificationProductIdentifier];
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadUpdate object:self userInfo:userInfo];
+}
+
+- (void)paymentQueue:(SKPaymentQueue*)queue failedDownload:(SKDownload *)download error:(NSError *)error
+{
+    RMStoreLog(@"download for product %@ failed with error %@", download.transaction.payment.productIdentifier, download.error.debugDescription);
+    [_pendingRestoredTransactionsDownloadingContent removeObject:download.transaction.transactionIdentifier];
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setObject:download forKey:RMStoreNotificationStoreDownload];
+    [userInfo setObject:download.transaction.payment.productIdentifier forKey:RMStoreNotificationProductIdentifier];
+    if (download.error)
+    {
+        [userInfo setObject:download.error forKey:RMStoreNotificationStoreError];
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadFailed object:self userInfo:userInfo];
 }
 
 - (void)paymentQueue:(SKPaymentQueue*)queue completedTransaction:(SKPaymentTransaction *)transaction

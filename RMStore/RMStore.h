@@ -235,4 +235,8 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  */
 @property (nonatomic, readonly) SKPaymentTransaction *transaction;
 
+/** Used in `storeDownloadFailed`, `storeDownloadUpdate` and `storeDownloadFinished`.
+ */
+@property (nonatomic, readonly) SKDownload *storeDownload;
+
 @end
