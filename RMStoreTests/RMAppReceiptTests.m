@@ -55,7 +55,7 @@
 }
 
 - (void)testVerifyReceiptHash_NO
-{
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     _receipt = [[RMAppReceipt alloc] initWithASN1Data:[NSData data]];
     BOOL result = [_receipt verifyReceiptHash];
     STAssertFalse(result, @"");
