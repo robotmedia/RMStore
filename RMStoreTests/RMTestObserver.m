@@ -22,6 +22,8 @@ static id mainSuite = nil;
 
 @implementation RMTestObserver
 
+// __gcov_flush might be undefined in Release configurations (e.g., Travis CI)
+#ifdef DEBUG
 + (void)initialize
 {
     [[NSUserDefaults standardUserDefaults] setValue:NSStringFromClass(self) forKey:SenTestObserverClassKey];
@@ -54,5 +56,6 @@ extern void __gcov_flush(void);
         __gcov_flush();
     }
 }
+#endif
 
 @end
