@@ -68,6 +68,7 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
         STAssertNotNil(invalidIdentifiers, @"");
         STAssertTrue(products.count == 0, @"");
         STAssertTrue(invalidIdentifiers.count == 0, @"");
+        return YES;
     }];
     
     [_object productsRequest:request didReceiveResponse:response];
@@ -105,6 +106,7 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
         STAssertTrue(products.count == 1, @"");
         STAssertTrue(invalidIdentifiers.count == 0, @"");
         STAssertTrue([products containsObject:product], @"");
+        return YES;
     }];
     
     [_object productsRequest:request didReceiveResponse:response];
@@ -138,6 +140,7 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
         STAssertTrue(products.count == 0, @"");
         STAssertTrue(invalidIdentifiers.count == 1, @"");
         STAssertTrue([invalidIdentifiers containsObject:@"test"], @"");
+        return YES;
     }];
     
     [_object productsRequest:request didReceiveResponse:response];
@@ -182,6 +185,7 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
     OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
         NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
         STAssertEqualObjects(originalError, error, @"");
+        return YES;
     }];
     
     [_object request:request didFailWithError:originalError];
