@@ -1,6 +1,11 @@
 language: objective-c
 script: 
-  - xctool -project RMStore.xcodeproj -scheme 'RMStoreExcludeKeychainTests' -configuration Release -sdk iphonesimulator test
+  - xctool -project RMStore.xcodeproj -scheme 'RMStoreExcludeKeychainTests' -configuration Release -sdk iphonesimulator build-tests
+  - xctool -project RMStore.xcodeproj -scheme 'RMStoreExcludeKeychainTests' -configuration Release run-tests -test-sdk iphonesimulator5.0
+  - xctool -project RMStore.xcodeproj -scheme 'RMStoreExcludeKeychainTests' -configuration Release run-tests -test-sdk iphonesimulator5.1
+  - xctool -project RMStore.xcodeproj -scheme 'RMStoreExcludeKeychainTests' -configuration Release run-tests -test-sdk iphonesimulator6.0
+  - xctool -project RMStore.xcodeproj -scheme 'RMStoreExcludeKeychainTests' -configuration Release run-tests -test-sdk iphonesimulator6.1
+  - xctool -project RMStore.xcodeproj -scheme 'RMStoreExcludeKeychainTests' -configuration Release run-tests -test-sdk iphonesimulator7.0
   - xctool -project RMStore.xcodeproj -scheme 'RMStoreDemo' -configuration Release -sdk iphonesimulator
 branches:
   only:
