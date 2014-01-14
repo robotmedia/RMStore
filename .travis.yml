@@ -1,6 +1,6 @@
 language: objective-c
 script: 
-  - xctool -project RMStore.xcodeproj -scheme 'RMStore' -configuration Release -sdk iphonesimulator test
+  - xctool -project RMStore.xcodeproj -scheme 'RMStoreExcludeKeychainTests' -configuration Release -sdk iphonesimulator test
   - xctool -project RMStore.xcodeproj -scheme 'RMStoreDemo' -configuration Release -sdk iphonesimulator
 branches:
   only:
