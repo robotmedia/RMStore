@@ -1,5 +1,5 @@
 #RMStore
-<!--- [![Build Status](https://travis-ci.org/robotmedia/RMStore.png)](https://travis-ci.org/robotmedia/RMStore) -->
+[![Build Status](https://travis-ci.org/robotmedia/RMStore.png)](https://travis-ci.org/robotmedia/RMStore)
 
 
 A lightweight iOS library for In-App Purchases.
