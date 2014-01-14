@@ -110,7 +110,7 @@ extern NSString* const RMStoreTransactionsKeychainKey;
 
 - (void)testcountProductOfdentifier_zero
 {
-    STAssertEquals([_persistor countProductOfdentifier:@"test"], 0, @"");
+    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 0, @"");
 }
 
 - (void)testcountProductOfdentifier_one
@@ -118,7 +118,7 @@ extern NSString* const RMStoreTransactionsKeychainKey;
     SKPaymentTransaction *transaction = [self mockTransactionOfProductIdentifer:@"test"];
     [self keychainPersistTransaction:transaction];
     
-    STAssertEquals([_persistor countProductOfdentifier:@"test"], 1, @"");
+    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 1, @"");
 }
 
 - (void)testcountProductOfdentifier_many
@@ -128,7 +128,7 @@ extern NSString* const RMStoreTransactionsKeychainKey;
     [_persistor persistTransaction:transaction];
     [_persistor persistTransaction:transaction];
     
-    STAssertEquals([_persistor countProductOfdentifier:@"test"], 3, @"");
+    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 3, @"");
 }
 
 - (void)testIsPurchasedProductOfIdentifier_YES

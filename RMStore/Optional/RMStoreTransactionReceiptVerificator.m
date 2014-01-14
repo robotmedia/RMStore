@@ -61,7 +61,7 @@ static const short _base64DecodingTable[256] = {
     char * strResult;
     
     // Get the Raw Data length and ensure we actually have data
-    int intLength = self.length;
+    NSInteger intLength = self.length;
     if (intLength == 0) return nil;
     
     // Setup the String-based Result placeholder and pointer within that placeholder
@@ -205,7 +205,7 @@ static const short _base64DecodingTable[256] = {
             }
             else
             {
-                RMStoreLog(@"Verification Failed With Code %d", statusCode);
+                RMStoreLog(@"Verification Failed With Code %ld", (long)statusCode);
                 NSError *serverError = [NSError errorWithDomain:RMStoreErrorDomain code:statusCode userInfo:nil];
                 if (failureBlock != nil)
                 {

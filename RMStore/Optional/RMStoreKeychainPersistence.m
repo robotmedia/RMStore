@@ -64,7 +64,7 @@ void RMKeychainSetValue(NSData *value, NSString *key)
     }
     if (status != errSecSuccess)
     {
-        NSLog(@"RMStoreKeychainPersistence: failed to set key %@ with error %ld.", key, status);
+        NSLog(@"RMStoreKeychainPersistence: failed to set key %@ with error %ld.", key, (long)status);
     }
 }
 
@@ -78,7 +78,7 @@ NSData* RMKeychainGetValue(NSString *key)
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)searchDictionary, (CFTypeRef *)&value);
     if (status != errSecSuccess && status != errSecItemNotFound)
     {
-        NSLog(@"RMStoreKeychainPersistence: failed to get key %@ with error %ld.", key, status);
+        NSLog(@"RMStoreKeychainPersistence: failed to get key %@ with error %ld.", key, (long)status);
     }
     return (__bridge NSData*)value;
 }

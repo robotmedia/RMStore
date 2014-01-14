@@ -82,13 +82,13 @@
 
 - (void)testcountProductOfdentifier_zero
 {
-    STAssertEquals([_persistor countProductOfdentifier:@"test"], 0, @"");
+    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 0, @"");
 }
 
 - (void)testcountProductOfdentifier_one
 {
     [self persistMockTransactionOfProductIdentifer:@"test"];
-    STAssertEquals([_persistor countProductOfdentifier:@"test"], 1, @"");
+    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 1, @"");
 }
 
 - (void)testcountProductOfdentifier_many
@@ -96,7 +96,7 @@
     [self persistMockTransactionOfProductIdentifer:@"test"];
     [self persistMockTransactionOfProductIdentifer:@"test"];
     [self persistMockTransactionOfProductIdentifer:@"test"];
-    STAssertEquals([_persistor countProductOfdentifier:@"test"], 3, @"");
+    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 3, @"");
 }
 
 - (void)testIsPurchasedProductOfIdentifier_YES
