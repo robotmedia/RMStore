@@ -56,12 +56,12 @@ static const short _base64DecodingTable[256] = {
 
 - (NSString *)rm_stringByBase64Encoding
 { // From: http://stackoverflow.com/a/4727124/143378
-    const unsigned char * objRawData = [self bytes];
+    const unsigned char * objRawData = self.bytes;
     char * objPointer;
     char * strResult;
     
     // Get the Raw Data length and ensure we actually have data
-    int intLength = [self length];
+    int intLength = self.length;
     if (intLength == 0) return nil;
     
     // Setup the String-based Result placeholder and pointer within that placeholder
