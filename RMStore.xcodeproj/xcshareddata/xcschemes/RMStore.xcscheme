@@ -27,6 +27,15 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
+      <PreActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "# See: http://stackoverflow.com/questions/9996578/ocunit-tests-fail-from-the-command-line-but-work-in-xcode-when-using-keychain-se&#10;killall -9 &apos;iPhone Simulator&apos;">
+            </ActionContent>
+         </ExecutionAction>
+      </PreActions>
       <Testables>
          <TestableReference
             skipped = "NO">
