@@ -61,4 +61,9 @@
     STAssertFalse(result, @"");
 }
 
+- (void)testSetAppleRootCertificateURL
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
+    [RMAppReceipt setAppleRootCertificateURL:nil];
+}
+
 @end

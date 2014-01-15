@@ -42,7 +42,6 @@
 
 - (BOOL)verifyAppReceipt
 {
-    // TODO: verify signature
     RMAppReceipt *receipt = [RMAppReceipt bundleReceipt];
     return [self verifyAppReceipt:receipt];
 }

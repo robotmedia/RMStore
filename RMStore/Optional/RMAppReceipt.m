@@ -23,6 +23,7 @@
 #import <openssl/pkcs7.h>
 #import <openssl/objects.h>
 #import <openssl/sha.h>
+#import <openssl/x509.h>
 
 // From https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ReceiptFields.html#//apple_ref/doc/uid/TP40010573-CH106-SW1
 NSInteger const RMAppReceiptASN1TypeBundleIdentifier = 2;
@@ -99,6 +100,8 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
 {
     return RMASN1ReadString(pp, omax, V_ASN1_IA5STRING, NSASCIIStringEncoding);
 }
+
+static NSURL *_appleRootCertificateURL = nil;
 
 @implementation RMAppReceipt
 
@@ -206,6 +209,11 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     return receipt;
 }
 
++ (void)setAppleRootCertificateURL:(NSURL*)url
+{
+    _appleRootCertificateURL = url;
+}
+
 #pragma mark - Utils
 
 + (NSData*)dataFromPCKS7Path:(NSString*)path
@@ -219,12 +227,47 @@ NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     
     if (!p7) return nil;
     
-    ASN1_OCTET_STRING *octets = p7->d.sign->contents->d.data;
-
-    NSData *data = [NSData dataWithBytes:octets->data length:octets->length];
-
+    NSData *data;
+    NSURL *certificateURL = _appleRootCertificateURL ? : [[NSBundle mainBundle] URLForResource:@"AppleIncRootCertificate" withExtension:@"cer"];
+    NSData *certificateData = [NSData dataWithContentsOfURL:certificateURL];
+    if (!certificateData || [self verifyPCKS7:p7 withCertificateData:certificateData])
+    {
+        struct pkcs7_st *contents = p7->d.sign->contents;
+        if (PKCS7_type_is_data(contents))
+        {
+            ASN1_OCTET_STRING *octets = contents->d.data;
+            data = [NSData dataWithBytes:octets->data length:octets->length];
+        }
+    }
     PKCS7_free(p7);
     return data;
+}
+
++ (BOOL)verifyPCKS7:(PKCS7*)container withCertificateData:(NSData*)certificateData
+{ // Based on: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW17
+    static int verified = 1;
+    int result = 0;
+    OpenSSL_add_all_digests(); // Required for PKCS7_verify to work
+    X509_STORE *store = X509_STORE_new();
+    if (store)
+    {
+        const uint8_t *certificateBytes = (uint8_t *)(certificateData.bytes);
+        X509 *certificate = d2i_X509(NULL, &certificateBytes, (long)certificateData.length);
+        if (certificate)
+        {
+            X509_STORE_add_cert(store, certificate);
+            
+            BIO *payload = BIO_new(BIO_s_mem());
+            result = PKCS7_verify(container, NULL, store, NULL, payload, 0);
+            BIO_free(payload);
+            
+            X509_free(certificate);
+        }
+    }
+    X509_STORE_free(store);
+    EVP_cleanup(); // Balances OpenSSL_add_all_digests (), perhttp://www.openssl.org/docs/crypto/OpenSSL_add_all_algorithms.html
+    
+    return result == verified;
 }
 
 /*

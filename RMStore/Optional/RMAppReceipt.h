@@ -88,11 +88,18 @@ __attribute__((availability(ios,introduced=7.0)))
 - (BOOL)verifyReceiptHash;
 
 /**
- Returns the app receipt contained in the bundle, if any and valid. Extracts the receipt in ASN1 from the PKCS #7 container and then parses the ASN1 data into a RMAppReceipt instance.
+ Returns the app receipt contained in the bundle, if any and valid. Extracts the receipt in ASN1 from the PKCS #7 container, and then parses the ASN1 data into a RMAppReceipt instance. If an Apple Root certificate is available, it will also verify that the signature of the receipt is valid.
  @return The app receipt contained in the bundle, or nil if there is no receipt or if it is invalid.
  @see refreshReceipt
+ @see setAppleRootCertificateURL:
  */
 + (RMAppReceipt*)bundleReceipt;
+
+/**
+ Sets the url of the Apple Root certificate that will be used to verifiy the signature of the bundle receipt. If none is provided, the resource AppleIncRootCertificate.cer will be used. If no certificate is available, no signature verification will be performed.
+ @param url The url of the Apple Root certificate.
+ */
++ (void)setAppleRootCertificateURL:(NSURL*)url;
 
 @end
 

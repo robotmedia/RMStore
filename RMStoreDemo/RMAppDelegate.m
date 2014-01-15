@@ -25,6 +25,7 @@
 #import "RMStoreTransactionReceiptVerificator.h"
 #import "RMStoreAppReceiptVerificator.h"
 #import "RMStoreKeychainPersistence.h"
+#import "RMAppReceipt.h"
 
 @implementation RMAppDelegate {
     id<RMStoreReceiptVerificator> _receiptVerificator;
@@ -45,6 +46,12 @@
     self.tabBarController = [[UITabBarController alloc] init];
     self.tabBarController.viewControllers = @[vc1, vc2];
     self.window.rootViewController = self.tabBarController;
+    
+    [[RMStore defaultStore] refreshReceiptOnSuccess:^{
+        [RMAppReceipt bundleReceipt];
+    } failure:^(NSError *error) {
+    }];
+    
     [self.window makeKeyAndVisible];
     return YES;
 }
