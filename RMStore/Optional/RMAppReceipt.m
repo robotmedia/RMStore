@@ -313,6 +313,7 @@ static NSURL *_appleRootCertificateURL = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         formatter = [[NSDateFormatter alloc] init];
+        [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
         formatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ssZ";
     });
     NSDate *date = [formatter dateFromString:string];
