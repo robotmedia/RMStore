@@ -20,9 +20,13 @@
 
 #import "RMStore.h"
 
+NSTimeInterval const RMStoreWatchdogMinimalAllowedTimeout = 5.0; // Average Internet latency for mobile users according to reports from http://www.akamai.com/stateoftheinternet/
+NSTimeInterval const RMStoreRequestProductWatchdogDefaultTimeout = 10.0; // According to Jakob Nielsen it's about the limit for keeping the user's attention focused on the dialogue. http://www.nngroup.com/articles/response-times-3-important-limits/
+
 NSString *const RMStoreErrorDomain = @"net.robotmedia.store";
 NSInteger const RMStoreErrorCodeUnknownProductIdentifier = 100;
 NSInteger const RMStoreErrorCodeUnableToCompleteVerification = 200;
+NSInteger const RMStoreErrorCodeWatchdogTimerFired = 300;
 
 NSString* const RMSKPaymentTransactionFailed = @"RMSKPaymentTransactionFailed";
 NSString* const RMSKPaymentTransactionFinished = @"RMSKPaymentTransactionFinished";
@@ -82,11 +86,12 @@ typedef void (^RMStoreSuccessBlock)();
 
 @end
 
-@interface RMProductsRequestDelegate : NSObject<SKProductsRequestDelegate>
+@interface RMProductsRequestDelegate : RMStoreWatchdoggedObject<SKProductsRequestDelegate>
 
 @property (nonatomic, strong) RMSKProductsRequestSuccessBlock successBlock;
 @property (nonatomic, strong) RMSKProductsRequestFailureBlock failureBlock;
 @property (nonatomic, weak) RMStore *store;
+@property (nonatomic, weak) SKProductsRequest * request;
 
 @end
 
@@ -125,6 +130,9 @@ typedef void (^RMStoreSuccessBlock)();
 {
     if (self = [super init])
     {
+        _useRequestProductsWatchdogTimer = NO;
+        _requestProductTimeout = RMStoreRequestProductWatchdogDefaultTimeout;
+        
         _addPaymentParameters = [NSMutableDictionary dictionary];
         _products = [NSMutableDictionary dictionary];
         _productsRequestDelegates = [NSMutableSet set];
@@ -146,6 +154,17 @@ typedef void (^RMStoreSuccessBlock)();
         sharedInstance = [[[self class] alloc] init];
     });
     return sharedInstance;
+}
+
+#pragma mark Watchdog timers
+
+- (void)setRequestProductTimeout:(NSTimeInterval)requestProductTimeout
+{
+    if (requestProductTimeout > RMStoreWatchdogMinimalAllowedTimeout) {
+        _requestProductTimeout = requestProductTimeout;
+    } else {
+        _requestProductTimeout = RMStoreWatchdogMinimalAllowedTimeout;
+    }
 }
 
 #pragma mark StoreKit wrapper
@@ -192,7 +211,7 @@ typedef void (^RMStoreSuccessBlock)();
     RMAddPaymentParameters *parameters = [[RMAddPaymentParameters alloc] init];
     parameters.successBlock = successBlock;
     parameters.failureBlock = failureBlock;
-    [_addPaymentParameters setObject:parameters forKey:productIdentifier];
+    [_addPaymentParameters setValue:parameters forKey:productIdentifier];
     
     [[SKPaymentQueue defaultQueue] addPayment:payment];
 }
@@ -216,6 +235,8 @@ typedef void (^RMStoreSuccessBlock)();
 	productsRequest.delegate = delegate;
     
     [productsRequest start];
+    delegate.request = productsRequest;
+    [delegate activateWatchdogTimerWithStore:self timeout:self.requestProductTimeout];
 }
 
 - (void)restoreTransactions
@@ -422,11 +443,11 @@ typedef void (^RMStoreSuccessBlock)();
     }
     
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setObject:transaction forKey:RMStoreNotificationTransaction];
-    [userInfo setObject:productIdentifier forKey:RMStoreNotificationProductIdentifier];
+    [userInfo setValue:transaction forKey:RMStoreNotificationTransaction];
+    [userInfo setValue:productIdentifier forKey:RMStoreNotificationProductIdentifier];
     if (error)
     {
-        [userInfo setObject:error forKey:RMStoreNotificationStoreError];
+        [userInfo setValue:error forKey:RMStoreNotificationStoreError];
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionFailed object:self userInfo:userInfo];
@@ -474,6 +495,9 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (RMAddPaymentParameters*)popAddPaymentParametersForIdentifier:(NSString*)identifier
 {
+    if (!identifier) {
+        return nil;
+    }
     RMAddPaymentParameters *parameters = [_addPaymentParameters objectForKey:identifier];
     [_addPaymentParameters removeObjectForKey:identifier];
     return parameters;
@@ -514,7 +538,9 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)addProduct:(SKProduct*)product
 {
-    [_products setObject:product forKey:product.productIdentifier];    
+    if (product) {
+        [_products setObject:product forKey:product.productIdentifier];
+    }
 }
 
 - (void)removeProductsRequestDelegate:(RMProductsRequestDelegate*)delegate
@@ -526,50 +552,187 @@ typedef void (^RMStoreSuccessBlock)();
 
 @implementation RMProductsRequestDelegate
 
+- (void)watchdogTimerFiredAction
+{
+    [self.request cancel];
+    [self request:self.request didFailWithError:[RMStoreWatchdoggedObject watchdogTimeoutError]];
+}
+
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response
 {
-    RMStoreLog(@"products request received response");
-    NSArray *products = [NSArray arrayWithArray:response.products];
-    NSArray *invalidProductIdentifiers = [NSArray arrayWithArray:response.invalidProductIdentifiers];
-    
-    for (SKProduct *product in products)
-    {
-        RMStoreLog(@"received product with id %@", product.productIdentifier);
-        [self.store addProduct:product];
-    }
-    
-    for (NSString *invalid in invalidProductIdentifiers)
-    {
-        RMStoreLog(@"invalid product with id %@", invalid);
-    }
-    
-    if (self.successBlock)
-    {
-        self.successBlock(products, invalidProductIdentifiers);
-    }
-    NSDictionary *userInfo = @{RMStoreNotificationProducts: products, RMStoreNotificationInvalidProductIdentifiers: invalidProductIdentifiers};
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFinished object:self.store userInfo:userInfo];
+    [self ifNotWatchdogTimerIsFiredResetItAndRun:^{
+        RMStoreLog(@"products request received response");
+        NSArray *products = [NSArray arrayWithArray:response.products];
+        NSArray *invalidProductIdentifiers = [NSArray arrayWithArray:response.invalidProductIdentifiers];
+        
+        for (SKProduct *product in products)
+        {
+            RMStoreLog(@"received product with id %@", product.productIdentifier);
+            [self.store addProduct:product];
+        }
+        
+        for (NSString *invalid in invalidProductIdentifiers)
+        {
+            RMStoreLog(@"invalid product with id %@", invalid);
+        }
+        
+        if (self.successBlock)
+        {
+            self.successBlock(products, invalidProductIdentifiers);
+        }
+        NSDictionary *userInfo = @{RMStoreNotificationProducts: products, RMStoreNotificationInvalidProductIdentifiers: invalidProductIdentifiers};
+        [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFinished object:self.store userInfo:userInfo];
+    }];
 }
 
 - (void)requestDidFinish:(SKRequest *)request
 {
-    [self.store removeProductsRequestDelegate:self];
+    [self disableWatchdogTimerAndComplete:^{
+        [self.store removeProductsRequestDelegate:self];
+    }];
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error
 {
-    RMStoreLog(@"products request failed with error %@", error.debugDescription);
-    if (self.failureBlock)
-    {
-        self.failureBlock(error);
+    [self disableWatchdogTimerAndComplete:^{
+        RMStoreLog(@"products request failed with error %@", error.debugDescription);
+        if (self.failureBlock)
+        {
+            self.failureBlock(error);
+        }
+        NSDictionary *userInfo = nil;
+        if (error)
+        { // error might be nil (e.g., on airplane mode)
+            userInfo = @{RMStoreNotificationStoreError: error};
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFailed object:self.store userInfo:userInfo];
+        [self.store removeProductsRequestDelegate:self];
+    }];
+}
+
+@end
+
+// Don't know how to implement network lags for unit testing of RMStoreWatchdoggedObject. Was tested manually by blocking access to Apple's itunes CDN on router (target host names contains keywords 'itunes' and 'akamaiedge').
+@interface RMStoreWatchdoggedObject () {
+    BOOL _isWatchdogTimerFired;
+    NSTimer * _watchdogTimer;
+    NSTimeInterval _timeout;
+}
+@property (nonatomic, weak) RMStore * storeUsingWatchedTimers;
+@property (nonatomic, assign) BOOL isWatchdogTimerDisabled;
+@end
+#define RMWatchdogTimerInvalidate(TIMER) do { [TIMER invalidate]; TIMER = nil; } while(0)
+
+@implementation RMStoreWatchdoggedObject
+
++ (NSError *)watchdogTimeoutError
+{
+    NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeWatchdogTimerFired userInfo:@{NSLocalizedDescriptionKey:NSLocalizedString(@"Request is timed out because of network bottelneck.", @"Timeout error message")}];
+    return error;
+}
+
+- (void)dealloc
+{
+    RMWatchdogTimerInvalidate(_watchdogTimer);
+}
+
+- (void)scheduleTimer
+{
+    if (self.storeUsingWatchedTimers && self.storeUsingWatchedTimers.useRequestProductsWatchdogTimer &&
+        !_isWatchdogTimerFired && !_isWatchdogTimerDisabled) {
+        RMWatchdogTimerInvalidate(_watchdogTimer);
+        NSTimeInterval timeout = _timeout > RMStoreWatchdogMinimalAllowedTimeout ? _timeout : RMStoreWatchdogMinimalAllowedTimeout;
+        _watchdogTimer = [NSTimer
+                          scheduledTimerWithTimeInterval:timeout
+                          target:self
+                          selector:@selector(watchdogTimerFired:)
+                          userInfo:nil
+                          repeats:NO];
+        RMStoreLog(@"Watcdog timer is scheduled with timeout: %.2f for: %@", timeout, self);
     }
-    NSDictionary *userInfo = nil;
-    if (error)
-    { // error might be nil (e.g., on airplane mode)
-        userInfo = @{RMStoreNotificationStoreError: error};
+}
+
+- (void)watchdogTimerFired:(NSTimer *)timer
+{
+    @synchronized(self) {
+        if (_isWatchdogTimerFired || _isWatchdogTimerDisabled || timer != _watchdogTimer) {
+            return;
+        }
+        RMStoreLog(@"Watchdog timer is fired for: %@", self);
+        [self watchdogTimerFiredAction];
+        _isWatchdogTimerFired = YES;
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestFailed object:self.store userInfo:userInfo];
-    [self.store removeProductsRequestDelegate:self];
+}
+
+- (void)setIsWatchdogTimerDisabled:(BOOL)isWatchdogTimerDisabled
+{
+    _isWatchdogTimerDisabled = isWatchdogTimerDisabled;
+    if (_isWatchdogTimerDisabled) {
+        RMWatchdogTimerInvalidate(_watchdogTimer);
+        RMStoreLog(@"Watchdog timer is invalidated and disabled for: %@.", self);
+    }
+}
+
+#pragma mark For use in subclass
+- (void)activateWatchdogTimerWithStore:(RMStore __weak *)store timeout:(NSTimeInterval)timeout
+{
+    @synchronized(self) {
+        self.storeUsingWatchedTimers = store;
+        _timeout = timeout;
+        [self scheduleTimer];
+    }
+}
+
+- (void)watchdogTimerFiredAction
+{
+    // Overload this in subclass.
+}
+
+- (void)ifNotWatchdogTimerIsFiredResetItAndRun:(void (^)())block
+{
+    @synchronized(self) {
+        if (!self.storeUsingWatchedTimers.useRequestProductsWatchdogTimer) { // bypass when timers are disabled or store is inaccessible
+            if (block) {
+                block();
+            }
+        } else { // handle with timer
+            if (_isWatchdogTimerFired) {
+                return;
+            }
+            RMWatchdogTimerInvalidate(_watchdogTimer);
+            if (block) {
+                block();
+            }
+            [self scheduleTimer];
+        }
+    }
+}
+
+- (void)resetWatchdogTimer
+{
+    @synchronized(self) {
+        RMWatchdogTimerInvalidate(_watchdogTimer);
+        [self scheduleTimer];
+    }
+}
+
+- (void)disableWatchdogTimerAndComplete:(void (^)())completion
+{
+    @synchronized(self) {
+        if (!self.storeUsingWatchedTimers.useRequestProductsWatchdogTimer) { // bypass when timers are disabled or store is inaccessible
+            if (completion) {
+                completion();
+            }
+        } else { // handle with timer
+            self.isWatchdogTimerDisabled = YES;
+            if (_isWatchdogTimerFired) {
+                return;
+            }
+            if (completion) {
+                completion();
+            }
+        }
+    }
 }
 
 @end
