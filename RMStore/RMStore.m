@@ -28,17 +28,23 @@ NSInteger const RMStoreErrorCodeUnknownProductIdentifier = 100;
 NSInteger const RMStoreErrorCodeUnableToCompleteVerification = 200;
 NSInteger const RMStoreErrorCodeWatchdogTimerFired = 300;
 
+NSString* const RMSKPaymentTransactionStarted = @"RMSKPaymentTransactionStarted";
 NSString* const RMSKPaymentTransactionFailed = @"RMSKPaymentTransactionFailed";
 NSString* const RMSKPaymentTransactionFinished = @"RMSKPaymentTransactionFinished";
+NSString* const RMSKProductsRequestStarted = @"RMSKProductsRequestStarted";
 NSString* const RMSKProductsRequestFailed = @"RMSKProductsRequestFailed";
 NSString* const RMSKProductsRequestFinished = @"RMSKProductsRequestFinished";
+NSString* const RMSKRefreshReceiptStarted = @"RMSKRefreshReceiptStarted";
 NSString* const RMSKRefreshReceiptFailed = @"RMSKRefreshReceiptFailed";
 NSString* const RMSKRefreshReceiptFinished = @"RMSKRefreshReceiptFinished";
+NSString* const RMSKRestoreTransactionsStarted = @"RMSKRestoreTransactionsStarted";
 NSString* const RMSKRestoreTransactionsFailed = @"RMSKRestoreTransactionsFailed";
 NSString* const RMSKRestoreTransactionsFinished = @"RMSKRestoreTransactionsFinished";
 
 NSString* const RMStoreNotificationInvalidProductIdentifiers = @"invalidProductIdentifiers";
 NSString* const RMStoreNotificationProductIdentifier = @"productIdentifier";
+NSString* const RMStoreNotificationProductsIdentifiers = @"productsIdentifiers";
+NSString* const RMStoreNotificationUserIdentifier = @"userIdentifier";
 NSString* const RMStoreNotificationProducts = @"products";
 NSString* const RMStoreNotificationStoreError = @"storeError";
 NSString* const RMStoreNotificationStoreReceipt = @"storeReceipt";
@@ -214,6 +220,11 @@ typedef void (^RMStoreSuccessBlock)();
     [_addPaymentParameters setValue:parameters forKey:productIdentifier];
     
     [[SKPaymentQueue defaultQueue] addPayment:payment];
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setValue:productIdentifier forKey:RMStoreNotificationProductIdentifier];
+    [userInfo setValue:userIdentifier forKey:RMStoreNotificationUserIdentifier];
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionStarted object:self userInfo:userInfo];
 }
 
 - (void)requestProducts:(NSSet*)identifiers
@@ -237,6 +248,10 @@ typedef void (^RMStoreSuccessBlock)();
     [productsRequest start];
     delegate.request = productsRequest;
     [delegate activateWatchdogTimerWithStore:self timeout:self.requestProductTimeout];
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setValue:identifiers forKey:RMStoreNotificationProductsIdentifiers];
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKProductsRequestStarted object:self userInfo:userInfo];
 }
 
 - (void)restoreTransactions
@@ -252,6 +267,9 @@ typedef void (^RMStoreSuccessBlock)();
     _restoreTransactionsSuccessBlock = successBlock;
     _restoreTransactionsFailureBlock = failureBlock;
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+    
+    NSMutableDictionary *userInfo = nil;
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsStarted object:self userInfo:userInfo];
 }
 
 - (void)restoreTransactionsOfUser:(NSString*)userIdentifier
@@ -264,6 +282,10 @@ typedef void (^RMStoreSuccessBlock)();
     _restoreTransactionsSuccessBlock = successBlock;
     _restoreTransactionsFailureBlock = failureBlock;
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactionsWithApplicationUsername:userIdentifier];
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setValue:userIdentifier forKey:RMStoreNotificationUserIdentifier];
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsStarted object:self userInfo:userInfo];
 }
 
 #pragma mark Receipt
@@ -289,6 +311,9 @@ typedef void (^RMStoreSuccessBlock)();
     _refreshReceiptRequest = [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:@{}];
     _refreshReceiptRequest.delegate = self;
     [_refreshReceiptRequest start];
+    
+    NSMutableDictionary *userInfo = nil;
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRefreshReceiptStarted object:self userInfo:userInfo];
 }
 
 #pragma mark Product management
@@ -311,24 +336,32 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)addStoreObserver:(id<RMStoreObserver>)observer
 {
+    [self addStoreObserver:observer selector:@selector(storeProductsRequestStarted:) notificationName:RMSKProductsRequestStarted];
     [self addStoreObserver:observer selector:@selector(storeProductsRequestFailed:) notificationName:RMSKProductsRequestFailed];
     [self addStoreObserver:observer selector:@selector(storeProductsRequestFinished:) notificationName:RMSKProductsRequestFinished];
+    [self addStoreObserver:observer selector:@selector(storePaymentTransactionStarted:) notificationName:RMSKPaymentTransactionStarted];
     [self addStoreObserver:observer selector:@selector(storePaymentTransactionFailed:) notificationName:RMSKPaymentTransactionFailed];
     [self addStoreObserver:observer selector:@selector(storePaymentTransactionFinished:) notificationName:RMSKPaymentTransactionFinished];
+    [self addStoreObserver:observer selector:@selector(storeRefreshReceiptStarted) notificationName:RMSKRefreshReceiptStarted];
     [self addStoreObserver:observer selector:@selector(storeRefreshReceiptFailed:) notificationName:RMSKRefreshReceiptFailed];
     [self addStoreObserver:observer selector:@selector(storeRefreshReceiptFinished:) notificationName:RMSKRefreshReceiptFinished];
+    [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsStarted:) notificationName:RMSKRestoreTransactionsStarted];
     [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFailed:) notificationName:RMSKRestoreTransactionsFailed];
     [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFinished:) notificationName:RMSKRestoreTransactionsFinished];
 }
 
 - (void)removeStoreObserver:(id<RMStoreObserver>)observer
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestStarted object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestFinished object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionStarted object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionFinished object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRefreshReceiptStarted object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRefreshReceiptFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRefreshReceiptFinished object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsStarted object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFinished object:self];
 }

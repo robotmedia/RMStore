@@ -32,6 +32,10 @@ extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 extern NSInteger const RMStoreErrorCodeWatchdogTimerFired;
 
+extern NSString* const RMStoreNotificationProductIdentifier;
+extern NSString* const RMStoreNotificationProductsIdentifiers;
+extern NSString* const RMStoreNotificationUserIdentifier;
+
 @class RMStore;
 
 /** Provides watchdog timer functionality to StoreKit response handling classes.
@@ -253,12 +257,16 @@ extern NSInteger const RMStoreErrorCodeWatchdogTimerFired;
 @protocol RMStoreObserver<NSObject>
 @optional
 
+- (void)storePaymentTransactionStarted:(NSNotification*)notification;
 - (void)storePaymentTransactionFailed:(NSNotification*)notification;
 - (void)storePaymentTransactionFinished:(NSNotification*)notification;
+- (void)storeProductsRequestStarted:(NSNotification*)notification;
 - (void)storeProductsRequestFailed:(NSNotification*)notification;
 - (void)storeProductsRequestFinished:(NSNotification*)notification;
+- (void)storeRefreshReceiptStarted __attribute__((availability(ios,introduced=7.0)));
 - (void)storeRefreshReceiptFailed:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
 - (void)storeRefreshReceiptFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
+- (void)storeRestoreTransactionsStarted:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
 
