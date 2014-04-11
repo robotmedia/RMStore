@@ -46,7 +46,7 @@ NSInteger const RMAppReceiptASN1TypeCancellationDate = 1712;
 
 #pragma mark - ANS1
 
-int RMASN1ReadInteger(const uint8_t **pp, long omax)
+static int RMASN1ReadInteger(const uint8_t **pp, long omax)
 {
     int tag, class;
     long length;
@@ -63,7 +63,7 @@ int RMASN1ReadInteger(const uint8_t **pp, long omax)
     return value;
 }
 
-NSData* RMASN1ReadOctectString(const uint8_t **pp, long omax)
+static NSData* RMASN1ReadOctectString(const uint8_t **pp, long omax)
 {
     int tag, class;
     long length;
@@ -77,7 +77,7 @@ NSData* RMASN1ReadOctectString(const uint8_t **pp, long omax)
     return data;
 }
 
-NSString* RMASN1ReadString(const uint8_t **pp, long omax, int expectedTag, NSStringEncoding encoding)
+static NSString* RMASN1ReadString(const uint8_t **pp, long omax, int expectedTag, NSStringEncoding encoding)
 {
     int tag, class;
     long length;
@@ -91,12 +91,12 @@ NSString* RMASN1ReadString(const uint8_t **pp, long omax, int expectedTag, NSStr
     return value;
 }
 
-NSString* RMASN1ReadUTF8String(const uint8_t **pp, long omax)
+static NSString* RMASN1ReadUTF8String(const uint8_t **pp, long omax)
 {
     return RMASN1ReadString(pp, omax, V_ASN1_UTF8STRING, NSUTF8StringEncoding);
 }
 
-NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
+static NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
 {
     return RMASN1ReadString(pp, omax, V_ASN1_IA5STRING, NSASCIIStringEncoding);
 }
