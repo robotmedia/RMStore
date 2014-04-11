@@ -187,7 +187,6 @@ If you are using RMStore in your non-ARC project, you will need to set a `-fobjc
 RMStore is in initial development and its public API should not be considered stable. Future enhancements will include:
 
 * [Content download support](https://github.com/robotmedia/RMStore/issues/2)
-* [Better subcriptions support](https://github.com/robotmedia/RMStore/issues/3)
 * [Better OS X support](https://github.com/robotmedia/RMStore/issues/4)
 
 If you are looking for something more mature, check out [CargoBay](https://github.com/mattt/CargoBay) or [MKStoreKit](https://github.com/MugunthKumar/MKStoreKit) for iOS 5 to 6 (to date, MKStoreKit has not been updated for iOS 7).
