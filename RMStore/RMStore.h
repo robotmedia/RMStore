@@ -196,8 +196,10 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 @protocol RMStoreObserver<NSObject>
 @optional
 
+- (void)storeDownloadCanceled:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
 - (void)storeDownloadFailed:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
 - (void)storeDownloadFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+- (void)storeDownloadPaused:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
 - (void)storeDownloadUpdate:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
 - (void)storePaymentTransactionFailed:(NSNotification*)notification;
 - (void)storePaymentTransactionFinished:(NSNotification*)notification;
@@ -219,7 +221,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  */
 @property (nonatomic, readonly) NSArray *invalidProductIdentifiers;
 
-/** Used in `storeDownloadFinished`, `storePaymentTransactionFinished` and `storePaymentTransactionFailed`.
+/** Used in `storeDownload*`, `storePaymentTransactionFinished` and `storePaymentTransactionFailed`.
  */
 @property (nonatomic, readonly) NSString *productIdentifier;
 
@@ -227,15 +229,15 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  */
 @property (nonatomic, readonly) NSArray *products;
 
-/** Used in `storeDownloadFailed`, `storeDownloadUpdate` and `storeDownloadFinished`.
+/** Used in `storeDownload*`.
  */
 @property (nonatomic, readonly) SKDownload *storeDownload __attribute__((availability(ios,introduced=6.0)));
 
-/** Used in `storePaymentTransactionFailed`, `storeProductsRequestFailed`, `storeRefreshReceiptFailed` and `storeRestoreTransactionsFailed`.
+/** Used in `storeDownloadFailed`, `storePaymentTransactionFailed`, `storeProductsRequestFailed`, `storeRefreshReceiptFailed` and `storeRestoreTransactionsFailed`.
  */
 @property (nonatomic, readonly) NSError *storeError;
 
-/** Used in `storeDownloadFinished`, `storePaymentTransactionFinished` and in `storePaymentTransactionFailed`.
+/** Used in `storeDownload*`, `storePaymentTransactionFinished` and in `storePaymentTransactionFailed`.
  */
 @property (nonatomic, readonly) SKPaymentTransaction *transaction;
 
