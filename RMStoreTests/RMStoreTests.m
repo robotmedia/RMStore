@@ -614,6 +614,7 @@ extern NSString* const RMStoreNotificationStoreError;
     [[[transaction stub] andReturn:[NSDate date]] transactionDate];
     [[[transaction stub] andReturn:@"transaction"] transactionIdentifier];
     [[[transaction stub] andReturn:[NSData data]] transactionReceipt];
+    [[[transaction stub] andReturn:@[]] downloads];
     id payment = [OCMockObject mockForClass:[SKPayment class]];
     [[[payment stub] andReturn:@"test"] productIdentifier];
     [[[transaction stub] andReturn:payment] payment];
