@@ -29,7 +29,7 @@ NSString* const RMSKDownloadCanceled = @"RMSKDownloadCanceled";
 NSString* const RMSKDownloadFailed = @"RMSKDownloadFailed";
 NSString* const RMSKDownloadFinished = @"RMSKDownloadFinished";
 NSString* const RMSKDownloadPaused = @"RMSKDownloadPaused";
-NSString* const RMSKDownloadUpdate = @"RMSKDownloadUpdate";
+NSString* const RMSKDownloadUpdated = @"RMSKDownloadUpdated";
 NSString* const RMSKPaymentTransactionFailed = @"RMSKPaymentTransactionFailed";
 NSString* const RMSKPaymentTransactionFinished = @"RMSKPaymentTransactionFinished";
 NSString* const RMSKProductsRequestFailed = @"RMSKProductsRequestFailed";
@@ -308,7 +308,7 @@ typedef void (^RMStoreSuccessBlock)();
     [self addStoreObserver:observer selector:@selector(storeDownloadFailed:) notificationName:RMSKDownloadFailed];
     [self addStoreObserver:observer selector:@selector(storeDownloadFinished:) notificationName:RMSKDownloadFinished];
     [self addStoreObserver:observer selector:@selector(storeDownloadPaused:) notificationName:RMSKDownloadPaused];
-    [self addStoreObserver:observer selector:@selector(storeDownloadUpdate:) notificationName:RMSKDownloadUpdate];
+    [self addStoreObserver:observer selector:@selector(storeDownloadUpdated:) notificationName:RMSKDownloadUpdated];
     [self addStoreObserver:observer selector:@selector(storeProductsRequestFailed:) notificationName:RMSKProductsRequestFailed];
     [self addStoreObserver:observer selector:@selector(storeProductsRequestFinished:) notificationName:RMSKProductsRequestFinished];
     [self addStoreObserver:observer selector:@selector(storePaymentTransactionFailed:) notificationName:RMSKPaymentTransactionFailed];
@@ -325,7 +325,7 @@ typedef void (^RMStoreSuccessBlock)();
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKDownloadFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKDownloadFinished object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKDownloadPaused object:self];
-    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKDownloadUpdate object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKDownloadUpdated object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestFinished object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionFailed object:self];
@@ -485,7 +485,7 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)didUpdateDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
 {
     RMStoreLog(@"download %@ for product %@ updated", download.contentIdentifier, download.transaction.payment.productIdentifier);
-    [self download:download postNotificationWithName:RMSKDownloadUpdate userInfoExtras:nil];
+    [self download:download postNotificationWithName:RMSKDownloadUpdated userInfoExtras:nil];
 }
 
 - (void)download:(SKDownload*)download postNotificationWithName:(NSString*)notificiationName userInfoExtras:(NSDictionary*)extras
