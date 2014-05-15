@@ -287,7 +287,6 @@ extern NSString* const RMStoreNotificationStoreError;
     [_store paymentQueue:queue updatedDownloads:@[download]];
     
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Canceled__PurchasedTransaction_SingleDownload
@@ -318,7 +317,6 @@ extern NSString* const RMStoreNotificationStoreError;
     
     [queue verify];
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Canceled__PurchasedTransaction_MultipleFinishedDownloads
@@ -350,7 +348,6 @@ extern NSString* const RMStoreNotificationStoreError;
     
     [queue verify];
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Canceled__PurchasedTransaction_PendingDownloads
@@ -370,7 +367,6 @@ extern NSString* const RMStoreNotificationStoreError;
     
     [queue verify];
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Failed__PurchasedTransaction_SingleDownload
@@ -393,7 +389,6 @@ extern NSString* const RMStoreNotificationStoreError;
     
     [queue verify];
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Failed__PurchasedTransaction_MutipleFinishedDownload
@@ -418,7 +413,6 @@ extern NSString* const RMStoreNotificationStoreError;
     
     [queue verify];
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Failed__PurchasedTransaction_PendingDownloads
@@ -441,7 +435,6 @@ extern NSString* const RMStoreNotificationStoreError;
     
     [queue verify];
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Finished__PurchasedTransaction_SingleDownload
@@ -462,7 +455,6 @@ extern NSString* const RMStoreNotificationStoreError;
 
     [queue verify];
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Finished__RestoredTransaction_SingleDownload
@@ -487,7 +479,6 @@ extern NSString* const RMStoreNotificationStoreError;
     
     [queue verify];
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Finished__RestoredTransaction_SingleDownload_RestoreCompletedTransactionsFinished
@@ -514,7 +505,6 @@ extern NSString* const RMStoreNotificationStoreError;
     
     [queue verify];
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 
@@ -537,7 +527,6 @@ extern NSString* const RMStoreNotificationStoreError;
     
     [queue verify];
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Finished__PurchasedTransaction_PendingDownloads
@@ -557,7 +546,6 @@ extern NSString* const RMStoreNotificationStoreError;
     
     [queue verify];
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Paused
@@ -583,7 +571,6 @@ extern NSString* const RMStoreNotificationStoreError;
     [_store paymentQueue:queue updatedDownloads:@[download]];
     
     [observer verify];
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedDownloads_Waiting
@@ -597,8 +584,6 @@ extern NSString* const RMStoreNotificationStoreError;
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
     
     [_store paymentQueue:queue updatedDownloads:@[download]];
-    
-    [_store removeStoreObserver:observer];
 }
 
 - (void)testPaymentQueueUpdatedTransactions_Empty
