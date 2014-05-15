@@ -194,7 +194,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  @param successBlock Called if the download was successful. Must be called in the main queue.
  @param progressBlock Called to notify progress. Provides a number between 0.0 and 1.0, inclusive, where 0.0 means no data has been downloaded and 1.0 means all the data has been downloaded. Must be called in the main queue.
  @param failureBlock Called if the download failed. Must be called in the main queue.
- @discussion Hosted content from Apple’s server (SKDownload) is handled automatically by RMStore.
+ @discussion Hosted content from Apple’s server (@c SKDownload) is handled automatically by RMStore.
  */
 - (void)downloadContentForTransaction:(SKPaymentTransaction*)transaction
                               success:(void (^)())successBlock
@@ -272,31 +272,31 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  A value that indicates how much of the file has been downloaded.
  The value of this property is a floating point number between 0.0 and 1.0, inclusive, where 0.0 means no data has been downloaded and 1.0 means all the data has been downloaded. Typically, your app uses the value of this property to update a user interface element, such as a progress bar, that displays how much of the file has been downloaded.
  @discussion Corresponds to [SKDownload progress].
- @discussion Used in `storeDownloadUpdated`.
+ @discussion Used in @c storeDownloadUpdated:.
  */
 @property (nonatomic, readonly) float downloadProgress;
 
-/** Array of product identifiers that were not recognized by the App Store. Used in `storeProductsRequestFinished:`.
+/** Array of product identifiers that were not recognized by the App Store. Used in @c storeProductsRequestFinished:.
  */
 @property (nonatomic, readonly) NSArray *invalidProductIdentifiers;
 
-/** Used in `storeDownload*`, `storePaymentTransactionFinished` and `storePaymentTransactionFailed`.
+/** Used in @c storeDownload*:, @c storePaymentTransactionFinished: and @c storePaymentTransactionFailed:.
  */
 @property (nonatomic, readonly) NSString *productIdentifier;
 
-/** Array of SKProducts, one product for each valid product identifier provided in the corresponding request. Used in `storeProductsRequestFinished:`.
+/** Array of SKProducts, one product for each valid product identifier provided in the corresponding request. Used in @c storeProductsRequestFinished:.
  */
 @property (nonatomic, readonly) NSArray *products;
 
-/** Used in `storeDownload*`.
+/** Used in @c storeDownload*:.
  */
 @property (nonatomic, readonly) SKDownload *storeDownload __attribute__((availability(ios,introduced=6.0)));
 
-/** Used in `storeDownloadFailed`, `storePaymentTransactionFailed`, `storeProductsRequestFailed`, `storeRefreshReceiptFailed` and `storeRestoreTransactionsFailed`.
+/** Used in @c storeDownloadFailed:, @c storePaymentTransactionFailed:, @c storeProductsRequestFailed:, @c storeRefreshReceiptFailed: and @c storeRestoreTransactionsFailed:.
  */
 @property (nonatomic, readonly) NSError *storeError;
 
-/** Used in `storeDownload*`, `storePaymentTransactionFinished` and in `storePaymentTransactionFailed`.
+/** Used in @c storeDownload*:, @c storePaymentTransactionFinished: and in @c storePaymentTransactionFailed:.
  */
 @property (nonatomic, readonly) SKPaymentTransaction *transaction;
 
