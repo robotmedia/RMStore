@@ -4,7 +4,7 @@
 
 A lightweight iOS library for In-App Purchases.
 
-RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.md#storekit-with-blocks) and [notifications](https://github.com/robotmedia/RMStore/blob/master/README.md#notifications) to StoreKit, plus [receipt verification](https://github.com/robotmedia/RMStore/blob/master/README.md#receipt-verification) and [transaction persistence](https://github.com/robotmedia/RMStore/blob/master/README.md#transaction-persistence). All in one class without external dependencies. Purchasing a product is as simple as:
+RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.md#storekit-with-blocks) and [notifications](https://github.com/robotmedia/RMStore/blob/master/README.md#notifications) to StoreKit, plus [receipt verification](https://github.com/robotmedia/RMStore/blob/master/README.md#receipt-verification), [content downloads](https://github.com/robotmedia/RMStore/blob/master/README.md#downloading-content) and [transaction persistence](https://github.com/robotmedia/RMStore/blob/master/README.md#transaction-persistence). All in one class without external dependencies. Purchasing a product is as simple as:
 
 ```objective-c
 [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
@@ -122,6 +122,52 @@ Payment transaction notifications are sent after a payment has been requested or
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification { }
 ```
 
+###Download notifications (iOS 6+ only)
+
+For Apple-hosted and self-hosted downloads:
+
+```objective-c
+- (void)storeDownloadFailed:(NSNotification*)notification
+{
+	SKDownload *download = notification.storeDownload; // Apple-hosted only
+    NSString *productIdentifier = notification.productIdentifier;
+    SKPaymentTransaction *transaction = notification.transaction;
+    NSError *error = notification.storeError;
+}
+
+- (void)storeDownloadFinished:(NSNotification*)notification;
+{
+	SKDownload *download = notification.storeDownload; // Apple-hosted only
+    NSString *productIdentifier = notification.productIdentifier;
+    SKPaymentTransaction *transaction = notification.transaction;
+}
+
+- (void)storeDownloadUpdated:(NSNotification*)notification
+{
+	SKDownload *download = notification.storeDownload; // Apple-hosted only
+    NSString *productIdentifier = notification.productIdentifier;
+    SKPaymentTransaction *transaction = notification.transaction;
+	float progress = notification.download.progress;
+}
+
+Only for Apple-hosted downloads:
+
+```objective-c
+- (void)storeDownloadCanceled:(NSNotification*)notification
+{
+	SKDownload *download = notification.storeDownload;
+    NSString *productIdentifier = notification.productIdentifier;
+    SKPaymentTransaction *transaction = notification.transaction;
+}
+
+- (void)storeDownloadPaused:(NSNotification*)notification
+{
+	SKDownload *download = notification.storeDownload;
+    NSString *productIdentifier = notification.productIdentifier;
+    SKPaymentTransaction *transaction = notification.transaction;
+}
+```
+
 ###Refresh receipt notifications (iOS 7+ only)
 
 ```objective-c
@@ -170,11 +216,35 @@ Call `successBlock` if the receipt passes verification, and `failureBlock` if it
 
 You will also need to set the `receiptVerificator` delegate at startup, as indicated above.
 
+##Downloading content
+
+RMStore automatically downloads Apple-hosted content and provides a delegate for a self-hosted content.
+
+###Apple-hosted content
+
+Downloadable content hosted by Apple (`SKDownload`) will be automatically downloaded when purchasing o restoring a product. RMStore will notify observers of the download progress by calling `storeDownloadUpdate:` and finally `storeDownloadFinished:`. Additionally, RMStore notifies when downloads are paused, cancelled or have failed.
+
+RMStore will notify that a transaction finished or failed only after all of its downloads have been processed. If you use blocks, they will called afterwards as well. The same applies to restoring transactions.
+
+###Self-hosted content
+
+RMStore delegates the downloading of self-hosted content via optional the `contentDownloader` delegate. You can provide your own implementation using the `RMStoreContentDownloader` protocol:
+
+```objective-c
+- (void)downloadContentForTransaction:(SKPaymentTransaction*)transaction
+                              success:(void (^)())successBlock
+                             progress:(void (^)(float progress))progressBlock
+                              failure:(void (^)(NSError *error))failureBlock;
+```
+
+Call `successBlock` if the download is successful, `failureBlock` if it isn't and `progressBlock` to notify the download progress. RMStore will consider that a transaction has finished or failed only after the content downloader delegate has successfully or unsuccessfully downloaded its content.
+
 ##Transaction persistence
 
 RMStore delegates transaction persistence and provides two optional reference implementations for storing transactions in the Keychain or in `NSUserDefaults`. You can implement your transaction, use the reference implementations provided by the library or, in the case of non-consumables and auto-renewable subscriptions, get the transactions directly from the receipt.
 
 For more info, check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Transaction-persistence).
+
 
 ##Requirements
 
