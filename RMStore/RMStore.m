@@ -348,7 +348,7 @@ typedef void (^RMStoreSuccessBlock)();
         switch (transaction.transactionState)
         {
             case SKPaymentTransactionStatePurchased:
-                [self paymentQueue:queue completedTransaction:transaction];
+                [self paymentQueue:queue purchasedTransaction:transaction];
                 break;
             case SKPaymentTransactionStateFailed:
                 [self paymentQueue:queue failedTransaction:transaction error:transaction.error];
@@ -392,21 +392,39 @@ typedef void (^RMStoreSuccessBlock)();
         switch (download.downloadState)
         {
             case SKDownloadStateFinished:
-                [self paymentQueue:queue completedDownload:download];
+                [self didFinishDownload:download queue:queue];
                 break;
             case SKDownloadStateActive:
-                [self paymentQueue:queue activeDownload:download];
+                [self didUpdateDownload:download queue:queue];
                 break;
             case SKDownloadStateCancelled:
             case SKDownloadStateFailed:
-                [self paymentQueue:queue failedDownload:download error:download.error];
+                [self didFailDownload:download queue:queue];
+                break;
             default:
                 break;
         }
     }
 }
 
-- (void)paymentQueue:(SKPaymentQueue*)queue completedDownload:(SKDownload *)download
+#pragma mark Download State
+
+- (void)didFailDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
+{
+    NSError *error = download.error;
+    RMStoreLog(@"download for product %@ failed with error %@", download.transaction.payment.productIdentifier, error.debugDescription);
+    [_pendingRestoredTransactionsDownloadingContent removeObject:download.transaction.transactionIdentifier];
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setObject:download forKey:RMStoreNotificationStoreDownload];
+    [userInfo setObject:download.transaction.payment.productIdentifier forKey:RMStoreNotificationProductIdentifier];
+    if (download.error)
+    {
+        [userInfo setObject:download.error forKey:RMStoreNotificationStoreError];
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadFailed object:self userInfo:userInfo];
+}
+
+- (void)didFinishDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
 {
     RMStoreLog(@"download for product %@ finished", download.transaction.payment.productIdentifier);
     [_pendingRestoredTransactionsDownloadingContent removeObject:download.transaction.transactionIdentifier];
@@ -420,7 +438,7 @@ typedef void (^RMStoreSuccessBlock)();
     [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:download.transaction];
 }
 
-- (void)paymentQueue:(SKPaymentQueue*)queue activeDownload:(SKDownload *)download
+- (void)didUpdateDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
 {
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     [userInfo setObject:download forKey:RMStoreNotificationStoreDownload];
@@ -428,21 +446,9 @@ typedef void (^RMStoreSuccessBlock)();
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadUpdate object:self userInfo:userInfo];
 }
 
-- (void)paymentQueue:(SKPaymentQueue*)queue failedDownload:(SKDownload *)download error:(NSError *)error
-{
-    RMStoreLog(@"download for product %@ failed with error %@", download.transaction.payment.productIdentifier, download.error.debugDescription);
-    [_pendingRestoredTransactionsDownloadingContent removeObject:download.transaction.transactionIdentifier];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setObject:download forKey:RMStoreNotificationStoreDownload];
-    [userInfo setObject:download.transaction.payment.productIdentifier forKey:RMStoreNotificationProductIdentifier];
-    if (download.error)
-    {
-        [userInfo setObject:download.error forKey:RMStoreNotificationStoreError];
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadFailed object:self userInfo:userInfo];
-}
+#pragma mark Transaction State
 
-- (void)paymentQueue:(SKPaymentQueue*)queue completedTransaction:(SKPaymentTransaction *)transaction
+- (void)paymentQueue:(SKPaymentQueue*)queue purchasedTransaction:(SKPaymentTransaction *)transaction
 {
     RMStoreLog(@"transaction purchased with product %@", transaction.payment.productIdentifier);
     
