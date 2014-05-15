@@ -219,7 +219,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  */
 @property (nonatomic, readonly) NSArray *invalidProductIdentifiers;
 
-/** Used in `storePaymentTransactionFinished` and `storePaymentTransactionFailed`.
+/** Used in `storeDownloadFinished`, `storePaymentTransactionFinished` and `storePaymentTransactionFailed`.
  */
 @property (nonatomic, readonly) NSString *productIdentifier;
 
@@ -235,7 +235,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  */
 @property (nonatomic, readonly) NSError *storeError;
 
-/** Used in `storePaymentTransactionFinished` and in `storePaymentTransactionFailed`.
+/** Used in `storeDownloadFinished`, `storePaymentTransactionFinished` and in `storePaymentTransactionFailed`.
  */
 @property (nonatomic, readonly) SKPaymentTransaction *transaction;
 

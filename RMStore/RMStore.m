@@ -426,16 +426,20 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)didFinishDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
 {
-    RMStoreLog(@"download for product %@ finished", download.transaction.payment.productIdentifier);
-    [_pendingRestoredTransactionsDownloadingContent removeObject:download.transaction.transactionIdentifier];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setObject:download forKey:RMStoreNotificationStoreDownload];
-    [userInfo setObject:download.transaction.payment.productIdentifier forKey:RMStoreNotificationProductIdentifier];
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadUpdate object:self userInfo:userInfo]; // To monitor progress = 1.0
+    SKPaymentTransaction *transaction = download.transaction;
+    NSString *productIdentifier = transaction.payment.productIdentifier;
+    RMStoreLog(@"download for product %@ finished", productIdentifier);
+    [_pendingRestoredTransactionsDownloadingContent removeObject:transaction.transactionIdentifier];
+    
+    NSDictionary *userInfo = @{
+                               RMStoreNotificationStoreDownload: download,
+                               RMStoreNotificationTransaction :transaction,
+                               RMStoreNotificationProductIdentifier : productIdentifier
+                               };
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadFinished object:self userInfo:userInfo];
     
     [self finishTransaction:download.transaction queue:queue];
-    [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:download.transaction];
+    [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
 }
 
 - (void)didUpdateDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
