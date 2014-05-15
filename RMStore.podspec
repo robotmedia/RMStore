@@ -10,6 +10,7 @@ Pod::Spec.new do |s|
   s.platform = :ios, '7.0'
   s.frameworks = 'StoreKit'
   s.requires_arc = true
+  s.default_subspec = 'Core'
 
   s.subspec 'Core' do |core|
     core.source_files = 'RMStore/*.{h,m}'
@@ -21,13 +22,6 @@ Pod::Spec.new do |s|
     kp.frameworks = 'Security'
   end
 
-  s.subspec 'OpenSSL' do |openssl|
-    openssl.preserve_paths = 'RMStore/Optional/openssl-1.0.1e/include/openssl/*.h', 'RMStore/Optional/openssl-1.0.1e/include/LICENSE'
-    openssl.vendored_libraries = 'RMStore/Optional/openssl-1.0.1e/lib/libcrypto.a', 'RMStore/Optional/openssl-1.0.1e/lib/libssl.a'
-    openssl.libraries = 'ssl', 'crypto'
-    openssl.xcconfig = { 'HEADER_SEARCH_PATHS' => '${PODS_ROOT}/RMStore/RMStore/Optional/openssl-1.0.1e/include/**' }
-  end
-
   s.subspec 'NSUserDefaultsPersistence' do |nsudp|
     nsudp.dependency 'RMStore/Core'
     nsudp.source_files = 'RMStore/Optional/RMStoreUserDefaultsPersistence.{h,m}', 'RMStore/Optional/RMStoreTransaction.{h,m}'
@@ -37,6 +31,7 @@ Pod::Spec.new do |s|
     arv.dependency 'RMStore/Core'
     arv.platform = :ios, '7.0'
     arv.source_files = 'RMStore/Optional/RMStoreAppReceiptVerificator.{h,m}', 'RMStore/Optional/RMAppReceipt.{h,m}'
+    arv.dependency 'OpenSSL', '~> 1.0.1'
   end
 
   s.subspec 'TransactionReceiptVerificator' do |trv|
