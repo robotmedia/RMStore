@@ -242,6 +242,7 @@ typedef void (^RMStoreSuccessBlock)();
 {
     _restoredCompletedTransactionsFinished = NO;
     _pendingRestoredTransactionsCount = 0;
+    [_pendingRestoredTransactionsDownloadingContent removeAllObjects];
     _restoreTransactionsSuccessBlock = successBlock;
     _restoreTransactionsFailureBlock = failureBlock;
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
