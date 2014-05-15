@@ -14,11 +14,17 @@ RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.m
 }];
 ```
 
-##Add RMStore to your project
+##Installation
 
-1. Add [`RMStore.h`](https://github.com/robotmedia/RMStore/blob/master/RMStore/RMStore.h) and [`RMStore.m`](https://github.com/robotmedia/RMStore/blob/master/RMStore/RMStore.m)
-2. Link `StoreKit.framework`
-3. Profit!
+Using [CocoaPods](http://cocoapods.org/):
+
+```ruby
+pod "RMStore", "~> 0.5"
+```
+
+Or add the files from the [RMStore](https://github.com/robotmedia/RMStore/tree/master/RMStore) directory if you're doing it manually.
+
+Check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Installation) for more options. 
 
 ##StoreKit with blocks
 
@@ -249,9 +255,7 @@ For more info, check out the [wiki](https://github.com/robotmedia/RMStore/wiki/T
 
 ##Requirements
 
-RMStore requires iOS 5.0 or above and ARC.
-
-If you are using RMStore in your non-ARC project, you will need to set a `-fobjc-arc` compiler flag on all of the RMStore source files.
+RMStore requires iOS 5.0 or above and ARC. Some features are only available on iOS 6.0 and iOS 7.0.
 
 ##Roadmap
 
