@@ -94,7 +94,7 @@
     NSString *productID = [_productIdentifiers objectAtIndex:indexPath.row];
     SKProduct *product = [store productForIdentifier:productID];
     cell.textLabel.text = product ? product.localizedTitle : productID;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [_persistence countProductOfdentifier:productID]];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%ld", (long)[_persistence countProductOfdentifier:productID]];
     return cell;
 }
 
