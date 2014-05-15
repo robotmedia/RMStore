@@ -348,13 +348,13 @@ typedef void (^RMStoreSuccessBlock)();
         switch (transaction.transactionState)
         {
             case SKPaymentTransactionStatePurchased:
-                [self paymentQueue:queue purchasedTransaction:transaction];
+                [self didPurchaseTransaction:transaction queue:queue];
                 break;
             case SKPaymentTransactionStateFailed:
-                [self paymentQueue:queue failedTransaction:transaction error:transaction.error];
+                [self didFailTransaction:transaction queue:queue error:transaction.error];
                 break;
             case SKPaymentTransactionStateRestored:
-                [self paymentQueue:queue restoredTransaction:transaction];
+                [self didRestoreTransaction:transaction queue:queue];
             default:
                 break;
         }
@@ -434,7 +434,7 @@ typedef void (^RMStoreSuccessBlock)();
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadUpdate object:self userInfo:userInfo]; // To monitor progress = 1.0
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKDownloadFinished object:self userInfo:userInfo];
     
-    [self paymentQueue:queue finishedTransaction:download.transaction];
+    [self finishTransaction:download.transaction queue:queue];
     [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:download.transaction];
 }
 
@@ -448,58 +448,26 @@ typedef void (^RMStoreSuccessBlock)();
 
 #pragma mark Transaction State
 
-- (void)paymentQueue:(SKPaymentQueue*)queue purchasedTransaction:(SKPaymentTransaction *)transaction
+- (void)didPurchaseTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
 {
     RMStoreLog(@"transaction purchased with product %@", transaction.payment.productIdentifier);
     
     if (self.receiptVerificator != nil)
     {
         [self.receiptVerificator verifyTransaction:transaction success:^{
-            [self paymentQueue:queue verifiedTransaction:transaction];
+            [self didVerifyTransaction:transaction queue:queue];
         } failure:^(NSError *error) {
-            [self paymentQueue:queue failedTransaction:transaction error:error];
+            [self didFailTransaction:transaction queue:queue error:error];
         }];
     }
     else
     {
         RMStoreLog(@"WARNING: no receipt verification");
-        [self paymentQueue:queue verifiedTransaction:transaction];
+        [self didVerifyTransaction:transaction queue:queue];
     }
 }
 
-- (void)paymentQueue:(SKPaymentQueue*)queue finishedTransaction:(SKPaymentTransaction *)transaction
-{
-    SKPayment *payment = transaction.payment;
-	NSString* productIdentifier = payment.productIdentifier;
-    [queue finishTransaction:transaction];
-    [self.transactionPersistor persistTransaction:transaction];
-    
-    RMAddPaymentParameters *wrapper = [self popAddPaymentParametersForIdentifier:productIdentifier];
-    if (wrapper.successBlock != nil)
-    {
-        wrapper.successBlock(transaction);
-    }
-    
-    NSDictionary *userInfo = @{RMStoreNotificationTransaction: transaction, RMStoreNotificationProductIdentifier: productIdentifier};
-    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionFinished object:self userInfo:userInfo];
-}
-
-- (void)paymentQueue:(SKPaymentQueue*)queue verifiedTransaction:(SKPaymentTransaction *)transaction
-{
-    NSArray *downloads = [transaction respondsToSelector:@selector(downloads)] ? transaction.downloads : @[];
-    if (downloads.count > 0)
-    {
-        RMStoreLog(@"download for product %@ started", transaction.payment.productIdentifier);
-        [_pendingRestoredTransactionsDownloadingContent addObject:transaction.transactionIdentifier];
-        [queue startDownloads:downloads];
-    }
-    else
-    {
-        [self paymentQueue:queue finishedTransaction:transaction];
-    }
-}
-
-- (void)paymentQueue:(SKPaymentQueue *)queue failedTransaction:(SKPaymentTransaction *)transaction error:(NSError*)error
+- (void)didFailTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue error:(NSError*)error
 {
     SKPayment *payment = transaction.payment;
 	NSString* productIdentifier = payment.productIdentifier;
@@ -509,7 +477,7 @@ typedef void (^RMStoreSuccessBlock)();
     { // If we were unable to complete the verification we want StoreKit to keep reminding us of the transaction
         [queue finishTransaction:transaction];
     }
-
+    
     RMAddPaymentParameters *parameters = [self popAddPaymentParametersForIdentifier:productIdentifier];
     if (parameters.failureBlock != nil)
     {
@@ -527,7 +495,7 @@ typedef void (^RMStoreSuccessBlock)();
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionFailed object:self userInfo:userInfo];
 }
 
-- (void)paymentQueue:(SKPaymentQueue*)queue restoredTransaction:(SKPaymentTransaction *)transaction
+- (void)didRestoreTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
 {
     RMStoreLog(@"transaction restored with product %@", transaction.originalTransaction.payment.productIdentifier);
     
@@ -538,19 +506,51 @@ typedef void (^RMStoreSuccessBlock)();
     if (self.receiptVerificator != nil)
     {
         [self.receiptVerificator verifyTransaction:transaction success:^{
-            [self paymentQueue:queue verifiedTransaction:transaction];
+            [self didVerifyTransaction:transaction queue:queue];
             [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
         } failure:^(NSError *error) {
-            [self paymentQueue:queue failedTransaction:transaction error:error];
+            [self didFailTransaction:transaction queue:queue error:error];
             [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
         }];
     }
     else
     {
         RMStoreLog(@"WARNING: no receipt verification");
-        [self paymentQueue:queue verifiedTransaction:transaction];
+        [self didVerifyTransaction:transaction queue:queue];
         [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
     }
+}
+
+- (void)didVerifyTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
+{
+    NSArray *downloads = [transaction respondsToSelector:@selector(downloads)] ? transaction.downloads : @[];
+    if (downloads.count > 0)
+    {
+        RMStoreLog(@"download for product %@ started", transaction.payment.productIdentifier);
+        [_pendingRestoredTransactionsDownloadingContent addObject:transaction.transactionIdentifier];
+        [queue startDownloads:downloads];
+    }
+    else
+    {
+        [self finishTransaction:transaction queue:queue];
+    }
+}
+
+- (void)finishTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
+{
+    SKPayment *payment = transaction.payment;
+	NSString* productIdentifier = payment.productIdentifier;
+    [queue finishTransaction:transaction];
+    [self.transactionPersistor persistTransaction:transaction];
+    
+    RMAddPaymentParameters *wrapper = [self popAddPaymentParametersForIdentifier:productIdentifier];
+    if (wrapper.successBlock != nil)
+    {
+        wrapper.successBlock(transaction);
+    }
+    
+    NSDictionary *userInfo = @{RMStoreNotificationTransaction: transaction, RMStoreNotificationProductIdentifier: productIdentifier};
+    [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionFinished object:self userInfo:userInfo];
 }
 
 - (void)notifyRestoreTransactionFinishedIfApplicableAfterTransaction:(SKPaymentTransaction*)transaction
