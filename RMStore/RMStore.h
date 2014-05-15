@@ -21,6 +21,7 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
+@protocol RMStoreContentDownloader;
 @protocol RMStoreReceiptVerificator;
 @protocol RMStoreTransactionPersistor;
 @protocol RMStoreObserver;
@@ -138,15 +139,25 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 /// @name Setting Delegates
 ///---------------------------------------------
 
+/**
+ The content downloader. Required to download product content from your own server.
+ @discussion Hosted content from Apple’s server (SKDownload) is handled automatically. You don't need to provide a content downloader for it.
+ */
+@property (nonatomic, weak) id<RMStoreContentDownloader> contentDownloader;
+
 /** The receipt verificator. You can provide your own or use one of the reference implementations provided by the library.
  @see RMStoreAppReceiptVerificator
  @see RMStoreTransactionReceiptVerificator
  */
 @property (nonatomic, weak) id<RMStoreReceiptVerificator> receiptVerificator;
 
-/** The transaction persistor. It is recommended to provide your own obfuscator if piracy is a concern. The store will use weak obfuscation via `NSKeyedArchiver` by default.
+/** 
+ The transaction persistor. It is recommended to provide your own obfuscator if piracy is a concern. The store will use weak obfuscation via `NSKeyedArchiver` by default.
+ @see RMStoreKeychainPersistence
+ @see RMStoreUserDefaultsPersistence
  */
 @property (nonatomic, weak) id<RMStoreTransactionPersistor> transactionPersistor;
+
 
 #pragma mark Product management
 ///---------------------------------------------
@@ -175,6 +186,23 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 
 @end
 
+@protocol RMStoreContentDownloader <NSObject>
+
+/**
+ Downloads the self-hosted content associated to the given transaction and calls the given success or failure block accordingly. Can also call the given progress block to notify progress.
+ @param transaction The transaction whose associated content will be downloaded.
+ @param successBlock Called if the download was successful. Must be called in the main queue.
+ @param progressBlock Called to notify progress. Provides a number between 0.0 and 1.0, inclusive, where 0.0 means no data has been downloaded and 1.0 means all the data has been downloaded. Must be called in the main queue.
+ @param failureBlock Called if the download failed. Must be called in the main queue.
+ @discussion Hosted content from Apple’s server (SKDownload) is handled automatically by RMStore.
+ */
+- (void)downloadContentForTransaction:(SKPaymentTransaction*)transaction
+                              success:(void (^)())successBlock
+                             progress:(void (^)(float progress))progressBlock
+                              failure:(void (^)(NSError *error))failureBlock;
+
+@end
+
 @protocol RMStoreTransactionPersistor<NSObject>
 
 - (void)persistTransaction:(SKPaymentTransaction*)transaction;
@@ -185,8 +213,8 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 
 /** Verifies the given transaction and calls the given success or failure block accordingly.
  @param transaction The transaction to be verified.
- @param successBlock Called if the transaction passed verification.
- @param failureBlock Called if the transaction failed verification. If verification could not be completed (e.g., due to connection issues), then error must be of code RMStoreErrorCodeUnableToCompleteVerification to prevent RMStore to finish the transaction.
+ @param successBlock Called if the transaction passed verification. Must be called in the main queu.
+ @param failureBlock Called if the transaction failed verification. If verification could not be completed (e.g., due to connection issues), then error must be of code RMStoreErrorCodeUnableToCompleteVerification to prevent RMStore to finish the transaction. Must be called in the main queu.
  */
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
                            success:(void (^)())successBlock
@@ -217,6 +245,14 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  Category on NSNotification to recover store data from userInfo without requiring to know the keys.
  */
 @interface NSNotification(RMStore)
+
+/**
+ A value that indicates how much of the file has been downloaded.
+ The value of this property is a floating point number between 0.0 and 1.0, inclusive, where 0.0 means no data has been downloaded and 1.0 means all the data has been downloaded. Typically, your app uses the value of this property to update a user interface element, such as a progress bar, that displays how much of the file has been downloaded.
+ @discussion Corresponds to [SKDownload progress].
+ @discussion Used in `storeDownloadUpdated`.
+ */
+@property (nonatomic, readonly) float downloadProgress;
 
 /** Array of product identifiers that were not recognized by the App Store. Used in `storeProductsRequestFinished:`.
  */

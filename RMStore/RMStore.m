@@ -40,6 +40,7 @@ NSString* const RMSKRestoreTransactionsFailed = @"RMSKRestoreTransactionsFailed"
 NSString* const RMSKRestoreTransactionsFinished = @"RMSKRestoreTransactionsFinished";
 
 NSString* const RMStoreNotificationInvalidProductIdentifiers = @"invalidProductIdentifiers";
+NSString* const RMStoreNotificationDownloadProgress = @"downloadProgress";
 NSString* const RMStoreNotificationProductIdentifier = @"productIdentifier";
 NSString* const RMStoreNotificationProducts = @"products";
 NSString* const RMStoreNotificationStoreDownload = @"storeDownload";
@@ -61,6 +62,11 @@ typedef void (^RMStoreFailureBlock)(NSError *error);
 typedef void (^RMStoreSuccessBlock)();
 
 @implementation NSNotification(RMStore)
+
+- (float)downloadProgress
+{
+    return [self.userInfo[RMStoreNotificationDownloadProgress] floatValue];
+}
 
 - (NSArray*)invalidProductIdentifiers
 {
@@ -588,6 +594,28 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)didVerifyTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
 {
+    if (self.contentDownloader != nil)
+    {
+        [self.contentDownloader downloadContentForTransaction:transaction success:^{
+            [self postNotificationWithName:RMSKDownloadFinished transaction:transaction userInfoExtras:nil];
+            [self didDownloadSelfHostedContentForTransaction:transaction queue:queue];
+        } progress:^(float progress) {
+            NSDictionary *extras = @{RMStoreNotificationDownloadProgress : @(progress)};
+            [self postNotificationWithName:RMSKDownloadUpdated transaction:transaction userInfoExtras:extras];
+        } failure:^(NSError *error) {
+            NSDictionary *extras = error ? @{RMStoreNotificationStoreError : error} : nil;
+            [self postNotificationWithName:RMSKDownloadFailed transaction:transaction userInfoExtras:extras];
+            [self didFailTransaction:transaction queue:queue error:error];
+        }];
+    }
+    else
+    {
+        [self didDownloadSelfHostedContentForTransaction:transaction queue:queue];
+    }
+}
+
+- (void)didDownloadSelfHostedContentForTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
+{
     NSArray *downloads = [transaction respondsToSelector:@selector(downloads)] ? transaction.downloads : @[];
     if (downloads.count > 0)
     {
@@ -682,6 +710,19 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)addProduct:(SKProduct*)product
 {
     [_products setObject:product forKey:product.productIdentifier];    
+}
+
+- (void)postNotificationWithName:(NSString*)notificationName transaction:(SKPaymentTransaction*)transaction userInfoExtras:(NSDictionary*)extras
+{
+    NSString *productIdentifier = transaction.payment.productIdentifier;
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    userInfo[RMStoreNotificationTransaction] = transaction;
+    userInfo[RMStoreNotificationProductIdentifier] = productIdentifier;
+    if (extras)
+    {
+        [userInfo addEntriesFromDictionary:extras];
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
 }
 
 - (void)removeProductsRequestDelegate:(RMProductsRequestDelegate*)delegate
