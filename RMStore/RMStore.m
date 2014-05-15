@@ -427,13 +427,18 @@ typedef void (^RMStoreSuccessBlock)();
 {
     SKPaymentTransaction *transaction = download.transaction;
     RMStoreLog(@"download %@ for product %@ canceled", download.contentIdentifier, download.transaction.payment.productIdentifier);
-    [_pendingRestoredTransactionsDownloadingContent removeObject:transaction.transactionIdentifier];
 
     [self download:download postNotificationWithName:RMSKDownloadCanceled userInfoExtras:nil];
 
     NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeDownloadCanceled userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Download canceled", "Error description")}];
-    [self didFailTransaction:transaction queue:queue error:error];
-    [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
+
+    const BOOL hasPendingDownloads = [self.class hasPendingDownloadsInTransaction:transaction];
+    if (!hasPendingDownloads)
+    {
+        [_pendingRestoredTransactionsDownloadingContent removeObject:transaction.transactionIdentifier];
+        [self didFailTransaction:transaction queue:queue error:error];
+        [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
+    }
 }
 
 - (void)didFailDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
@@ -441,13 +446,17 @@ typedef void (^RMStoreSuccessBlock)();
     NSError *error = download.error;
     SKPaymentTransaction *transaction = download.transaction;
     RMStoreLog(@"download %@ for product %@ failed with error %@", download.contentIdentifier, transaction.payment.productIdentifier, error.debugDescription);
-    [_pendingRestoredTransactionsDownloadingContent removeObject:download.transaction.transactionIdentifier];
 
     NSDictionary *extras = error ? @{RMStoreNotificationStoreError : error} : nil;
     [self download:download postNotificationWithName:RMSKDownloadFailed userInfoExtras:extras];
 
-    [self didFailTransaction:transaction queue:queue error:error];
-    [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
+    const BOOL hasPendingDownloads = [self.class hasPendingDownloadsInTransaction:transaction];
+    if (!hasPendingDownloads)
+    {
+        [_pendingRestoredTransactionsDownloadingContent removeObject:transaction.transactionIdentifier];
+        [self didFailTransaction:transaction queue:queue error:error];
+        [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
+    }
 }
 
 - (void)didFinishDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
@@ -458,8 +467,13 @@ typedef void (^RMStoreSuccessBlock)();
     
     [self download:download postNotificationWithName:RMSKDownloadFinished userInfoExtras:nil];
 
-    [self finishTransaction:download.transaction queue:queue];
-    [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
+    const BOOL hasPendingDownloads = [self.class hasPendingDownloadsInTransaction:transaction];
+    if (!hasPendingDownloads)
+    {
+        [_pendingRestoredTransactionsDownloadingContent removeObject:transaction.transactionIdentifier];
+        [self finishTransaction:download.transaction queue:queue];
+        [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
+    }
 }
 
 - (void)didPauseDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
@@ -487,6 +501,25 @@ typedef void (^RMStoreSuccessBlock)();
         [userInfo addEntriesFromDictionary:extras];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:notificiationName object:self userInfo:userInfo];
+}
+
++ (BOOL)hasPendingDownloadsInTransaction:(SKPaymentTransaction*)transaction
+{
+    for (SKDownload *download in transaction.downloads)
+    {
+        switch (download.downloadState)
+        {
+            case SKDownloadStateActive:
+            case SKDownloadStatePaused:
+            case SKDownloadStateWaiting:
+                return YES;
+            case SKDownloadStateCancelled:
+            case SKDownloadStateFailed:
+            case SKDownloadStateFinished:
+                continue;
+        }
+    }
+    return NO;
 }
 
 #pragma mark Transaction State
