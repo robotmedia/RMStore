@@ -26,6 +26,7 @@
 @protocol RMStoreObserver;
 
 extern NSString *const RMStoreErrorDomain;
+extern NSInteger const RMStoreErrorCodeDownloadCanceled;
 extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 

@@ -21,6 +21,7 @@
 #import "RMStore.h"
 
 NSString *const RMStoreErrorDomain = @"net.robotmedia.store";
+NSInteger const RMStoreErrorCodeDownloadCanceled = 300;
 NSInteger const RMStoreErrorCodeUnknownProductIdentifier = 100;
 NSInteger const RMStoreErrorCodeUnableToCompleteVerification = 200;
 
@@ -401,6 +402,7 @@ typedef void (^RMStoreSuccessBlock)();
                 [self didUpdateDownload:download queue:queue];
                 break;
             case SKDownloadStateCancelled:
+                [self didCancelDownload:download queue:queue];
                 break;
             case SKDownloadStateFailed:
                 [self didFailDownload:download queue:queue];
@@ -409,6 +411,7 @@ typedef void (^RMStoreSuccessBlock)();
                 [self didFinishDownload:download queue:queue];
                 break;
             case SKDownloadStatePaused:
+                [self didPauseDownload:download queue:queue];
                 break;
             case SKDownloadStateWaiting:
                 // Do nothing
@@ -427,8 +430,10 @@ typedef void (^RMStoreSuccessBlock)();
     [_pendingRestoredTransactionsDownloadingContent removeObject:transaction.transactionIdentifier];
 
     [self download:download postNotificationWithName:RMSKDownloadCanceled userInfoExtras:nil];
-    
-    // TODO: Fail transaction
+
+    NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeDownloadCanceled userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Download canceled", "Error description")}];
+    [self didFailTransaction:transaction queue:queue error:error];
+    [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
 }
 
 - (void)didFailDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
@@ -441,7 +446,8 @@ typedef void (^RMStoreSuccessBlock)();
     NSDictionary *extras = error ? @{RMStoreNotificationStoreError : error} : nil;
     [self download:download postNotificationWithName:RMSKDownloadFailed userInfoExtras:extras];
 
-    // TODO: Fail transaction
+    [self didFailTransaction:transaction queue:queue error:error];
+    [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
 }
 
 - (void)didFinishDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
