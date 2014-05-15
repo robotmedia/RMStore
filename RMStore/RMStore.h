@@ -196,6 +196,9 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 @protocol RMStoreObserver<NSObject>
 @optional
 
+- (void)storeDownloadFailed:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+- (void)storeDownloadFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+- (void)storeDownloadUpdate:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
 - (void)storePaymentTransactionFailed:(NSNotification*)notification;
 - (void)storePaymentTransactionFinished:(NSNotification*)notification;
 - (void)storeProductsRequestFailed:(NSNotification*)notification;
@@ -204,9 +207,6 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 - (void)storeRefreshReceiptFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
 - (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
-- (void)storeDownloadFailed:(NSNotification*)notification;
-- (void)storeDownloadFinished:(NSNotification*)notification;
-- (void)storeDownloadUpdate:(NSNotification*)notification;
 
 @end
 
@@ -237,6 +237,6 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 
 /** Used in `storeDownloadFailed`, `storeDownloadUpdate` and `storeDownloadFinished`.
  */
-@property (nonatomic, readonly) SKDownload *storeDownload;
+@property (nonatomic, readonly) SKDownload *storeDownload __attribute__((availability(ios,introduced=6.0)));
 
 @end
