@@ -480,11 +480,12 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)paymentQueue:(SKPaymentQueue*)queue verifiedTransaction:(SKPaymentTransaction *)transaction
 {
-    if (transaction.downloads)
+    NSArray *downloads = transaction.downloads;
+    if (downloads.count > 0)
     {
         RMStoreLog(@"download for product %@ started", transaction.payment.productIdentifier);
         [_pendingRestoredTransactionsDownloadingContent addObject:transaction.transactionIdentifier];
-        [queue startDownloads:transaction.downloads];
+        [queue startDownloads:downloads];
     }
     else
     {
