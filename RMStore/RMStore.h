@@ -227,6 +227,10 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  */
 @property (nonatomic, readonly) NSArray *products;
 
+/** Used in `storeDownloadFailed`, `storeDownloadUpdate` and `storeDownloadFinished`.
+ */
+@property (nonatomic, readonly) SKDownload *storeDownload __attribute__((availability(ios,introduced=6.0)));
+
 /** Used in `storePaymentTransactionFailed`, `storeProductsRequestFailed`, `storeRefreshReceiptFailed` and `storeRestoreTransactionsFailed`.
  */
 @property (nonatomic, readonly) NSError *storeError;
@@ -234,9 +238,5 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 /** Used in `storePaymentTransactionFinished` and in `storePaymentTransactionFailed`.
  */
 @property (nonatomic, readonly) SKPaymentTransaction *transaction;
-
-/** Used in `storeDownloadFailed`, `storeDownloadUpdate` and `storeDownloadFinished`.
- */
-@property (nonatomic, readonly) SKDownload *storeDownload __attribute__((availability(ios,introduced=6.0)));
 
 @end

@@ -24,6 +24,9 @@ NSString *const RMStoreErrorDomain = @"net.robotmedia.store";
 NSInteger const RMStoreErrorCodeUnknownProductIdentifier = 100;
 NSInteger const RMStoreErrorCodeUnableToCompleteVerification = 200;
 
+NSString* const RMSKDownloadFailed = @"RMSKDownloadFailed";
+NSString* const RMSKDownloadFinished = @"RMSKDownloadFinished";
+NSString* const RMSKDownloadUpdate = @"RMSKDownloadUpdate";
 NSString* const RMSKPaymentTransactionFailed = @"RMSKPaymentTransactionFailed";
 NSString* const RMSKPaymentTransactionFinished = @"RMSKPaymentTransactionFinished";
 NSString* const RMSKProductsRequestFailed = @"RMSKProductsRequestFailed";
@@ -32,17 +35,14 @@ NSString* const RMSKRefreshReceiptFailed = @"RMSKRefreshReceiptFailed";
 NSString* const RMSKRefreshReceiptFinished = @"RMSKRefreshReceiptFinished";
 NSString* const RMSKRestoreTransactionsFailed = @"RMSKRestoreTransactionsFailed";
 NSString* const RMSKRestoreTransactionsFinished = @"RMSKRestoreTransactionsFinished";
-NSString* const RMSKDownloadFailed = @"RMSKDownloadFailed";
-NSString* const RMSKDownloadFinished = @"RMSKDownloadFinished";
-NSString* const RMSKDownloadUpdate = @"RMSKDownloadUpdate";
 
 NSString* const RMStoreNotificationInvalidProductIdentifiers = @"invalidProductIdentifiers";
 NSString* const RMStoreNotificationProductIdentifier = @"productIdentifier";
 NSString* const RMStoreNotificationProducts = @"products";
+NSString* const RMStoreNotificationStoreDownload = @"storeDownload";
 NSString* const RMStoreNotificationStoreError = @"storeError";
 NSString* const RMStoreNotificationStoreReceipt = @"storeReceipt";
 NSString* const RMStoreNotificationTransaction = @"transaction";
-NSString* const RMStoreNotificationStoreDownload = @"storeDownload";
 
 #ifdef DEBUG
 #define RMStoreLog(...) NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]);
@@ -74,6 +74,11 @@ typedef void (^RMStoreSuccessBlock)();
     return [self.userInfo objectForKey:RMStoreNotificationProducts];
 }
 
+- (SKDownload*)storeDownload
+{
+    return [self.userInfo objectForKey:RMStoreNotificationStoreDownload];
+}
+
 - (NSError*)storeError
 {
     return [self.userInfo objectForKey:RMStoreNotificationStoreError];
@@ -82,11 +87,6 @@ typedef void (^RMStoreSuccessBlock)();
 - (SKPaymentTransaction*)transaction
 {
     return [self.userInfo objectForKey:RMStoreNotificationTransaction];
-}
-
-- (SKDownload*)storeDownload
-{
-    return [self.userInfo objectForKey:RMStoreNotificationStoreDownload];
 }
 
 @end
