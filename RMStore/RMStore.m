@@ -731,10 +731,9 @@ typedef void (^RMStoreSuccessBlock)();
         [self.store addProduct:product];
     }
     
-    for (NSString *invalid in invalidProductIdentifiers)
-    {
+    [invalidProductIdentifiers enumerateObjectsUsingBlock:^(NSString *invalid, NSUInteger idx, BOOL *stop) {
         RMStoreLog(@"invalid product with id %@", invalid);
-    }
+    }];
     
     if (self.successBlock)
     {
