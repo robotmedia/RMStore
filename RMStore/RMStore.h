@@ -225,11 +225,33 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 @protocol RMStoreObserver<NSObject>
 @optional
 
+/**
+ Tells the observer that a download has been canceled.
+ @discussion Only for Apple-hosted downloads.
+ */
 - (void)storeDownloadCanceled:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+
+/**
+ Tells the observer that a download has failed. Use @c storeError to get the cause.
+ */
 - (void)storeDownloadFailed:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+
+/**
+ Tells the observer that a download has finished.
+ */
 - (void)storeDownloadFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+
+/**
+ Tells the observer that a download has been paused.
+ @discussion Only for Apple-hosted downloads.
+ */
 - (void)storeDownloadPaused:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+
+/**
+ Tells the observer that a download has been updated. Use @c downloadProgress to get the progress.
+ */
 - (void)storeDownloadUpdated:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+
 - (void)storePaymentTransactionFailed:(NSNotification*)notification;
 - (void)storePaymentTransactionFinished:(NSNotification*)notification;
 - (void)storeProductsRequestFailed:(NSNotification*)notification;
