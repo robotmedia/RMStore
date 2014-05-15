@@ -267,6 +267,7 @@ extern NSString* const RMStoreNotificationStoreError;
 - (void)testPaymentQueueUpdatedDownloads_Active
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_5_1)
     id download = [self mockDownloadWithState:SKDownloadStateActive];
+    [[[download stub] andReturnValue:OCMOCK_VALUE(0.5f)] progress];
     
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased downloads:@[download]];
     NSString *productID = [[transaction payment] productIdentifier];
@@ -276,9 +277,11 @@ extern NSString* const RMStoreNotificationStoreError;
         SKDownload *returnedDownload = notification.storeDownload;
         SKPaymentTransaction *returnedTransaction = notification.transaction;
         NSString *returnedProductID = notification.productIdentifier;
+        float downloadProgress = notification.downloadProgress;
         STAssertEqualObjects(download, returnedDownload, nil);
         STAssertEqualObjects(transaction, returnedTransaction, nil);
         STAssertTrue([productID isEqualToString:returnedProductID], nil);
+        STAssertTrue([download progress] == downloadProgress, nil);
     }]];
     [_store addStoreObserver:observer];
     

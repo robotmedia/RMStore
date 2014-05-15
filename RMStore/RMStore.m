@@ -481,7 +481,8 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)didUpdateDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
 {
     RMStoreLog(@"download %@ for product %@ updated", download.contentIdentifier, download.transaction.payment.productIdentifier);
-    [self download:download postNotificationWithName:RMSKDownloadUpdated userInfoExtras:nil];
+    NSDictionary *extras = @{RMStoreNotificationDownloadProgress : @(download.progress)};
+    [self download:download postNotificationWithName:RMSKDownloadUpdated userInfoExtras:extras];
 }
 
 - (void)download:(SKDownload*)download postNotificationWithName:(NSString*)notificiationName userInfoExtras:(NSDictionary*)extras
