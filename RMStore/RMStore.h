@@ -204,6 +204,9 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 - (void)storeRefreshReceiptFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
 - (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
+- (void)storeDownloadFailed:(NSNotification*)notification;
+- (void)storeDownloadFinished:(NSNotification*)notification;
+- (void)storeDownloadUpdate:(NSNotification*)notification;
 
 @end
 
@@ -231,5 +234,9 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 /** Used in `storePaymentTransactionFinished` and in `storePaymentTransactionFailed`.
  */
 @property (nonatomic, readonly) SKPaymentTransaction *transaction;
+
+/** Used in `storeDownloadFailed`, `storeDownloadUpdate` and `storeDownloadFinished`.
+ */
+@property (nonatomic, readonly) SKDownload *storeDownload;
 
 @end
