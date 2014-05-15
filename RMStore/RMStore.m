@@ -123,7 +123,6 @@ typedef void (^RMStoreSuccessBlock)();
     NSMutableSet *_productsRequestDelegates;
     
     NSInteger _pendingRestoredTransactionsCount;
-    NSMutableSet *_pendingRestoredTransactionsDownloadingContent; // HACK: We track downloading content transactions because non-consumable products with downloadable content are some times restored twice when calling restoreCompletedTransactions
     BOOL _restoredCompletedTransactionsFinished;
     
     SKReceiptRefreshRequest *_refreshReceiptRequest;
@@ -141,7 +140,6 @@ typedef void (^RMStoreSuccessBlock)();
         _addPaymentParameters = [NSMutableDictionary dictionary];
         _products = [NSMutableDictionary dictionary];
         _productsRequestDelegates = [NSMutableSet set];
-        _pendingRestoredTransactionsDownloadingContent = [NSMutableSet set];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
     }
     return self;
@@ -242,7 +240,6 @@ typedef void (^RMStoreSuccessBlock)();
 {
     _restoredCompletedTransactionsFinished = NO;
     _pendingRestoredTransactionsCount = 0;
-    [_pendingRestoredTransactionsDownloadingContent removeAllObjects];
     _restoreTransactionsSuccessBlock = successBlock;
     _restoreTransactionsFailureBlock = failureBlock;
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
@@ -417,7 +414,6 @@ typedef void (^RMStoreSuccessBlock)();
             case SKDownloadStateWaiting:
                 // Do nothing
                 break;
-
         }
     }
 }
@@ -436,9 +432,7 @@ typedef void (^RMStoreSuccessBlock)();
     const BOOL hasPendingDownloads = [self.class hasPendingDownloadsInTransaction:transaction];
     if (!hasPendingDownloads)
     {
-        [_pendingRestoredTransactionsDownloadingContent removeObject:transaction.transactionIdentifier];
         [self didFailTransaction:transaction queue:queue error:error];
-        [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
     }
 }
 
@@ -454,9 +448,7 @@ typedef void (^RMStoreSuccessBlock)();
     const BOOL hasPendingDownloads = [self.class hasPendingDownloadsInTransaction:transaction];
     if (!hasPendingDownloads)
     {
-        [_pendingRestoredTransactionsDownloadingContent removeObject:transaction.transactionIdentifier];
         [self didFailTransaction:transaction queue:queue error:error];
-        [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
     }
 }
 
@@ -464,16 +456,13 @@ typedef void (^RMStoreSuccessBlock)();
 {
     SKPaymentTransaction *transaction = download.transaction;
     RMStoreLog(@"download %@ for product %@ finished", download.contentIdentifier, transaction.payment.productIdentifier);
-    [_pendingRestoredTransactionsDownloadingContent removeObject:transaction.transactionIdentifier];
     
     [self download:download postNotificationWithName:RMSKDownloadFinished userInfoExtras:nil];
 
     const BOOL hasPendingDownloads = [self.class hasPendingDownloadsInTransaction:transaction];
     if (!hasPendingDownloads)
     {
-        [_pendingRestoredTransactionsDownloadingContent removeObject:transaction.transactionIdentifier];
         [self finishTransaction:download.transaction queue:queue];
-        [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
     }
 }
 
@@ -570,31 +559,30 @@ typedef void (^RMStoreSuccessBlock)();
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionFailed object:self userInfo:userInfo];
+    
+    if (transaction.transactionState == SKPaymentTransactionStateRestored)
+    {
+        [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
+    }
 }
 
 - (void)didRestoreTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
 {
     RMStoreLog(@"transaction restored with product %@", transaction.originalTransaction.payment.productIdentifier);
     
-    if (![_pendingRestoredTransactionsDownloadingContent containsObject:transaction.transactionIdentifier])
-    {
-        _pendingRestoredTransactionsCount++;
-    }
+    _pendingRestoredTransactionsCount++;
     if (self.receiptVerificator != nil)
     {
         [self.receiptVerificator verifyTransaction:transaction success:^{
             [self didVerifyTransaction:transaction queue:queue];
-            [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
         } failure:^(NSError *error) {
             [self didFailTransaction:transaction queue:queue error:error];
-            [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
         }];
     }
     else
     {
         RMStoreLog(@"WARNING: no receipt verification");
         [self didVerifyTransaction:transaction queue:queue];
-        [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
     }
 }
 
@@ -603,8 +591,7 @@ typedef void (^RMStoreSuccessBlock)();
     NSArray *downloads = [transaction respondsToSelector:@selector(downloads)] ? transaction.downloads : @[];
     if (downloads.count > 0)
     {
-        RMStoreLog(@"download for product %@ started", transaction.payment.productIdentifier);
-        [_pendingRestoredTransactionsDownloadingContent addObject:transaction.transactionIdentifier];
+        RMStoreLog(@"starting downloads for product %@ started", transaction.payment.productIdentifier);
         [queue startDownloads:downloads];
     }
     else
@@ -628,16 +615,18 @@ typedef void (^RMStoreSuccessBlock)();
     
     NSDictionary *userInfo = @{RMStoreNotificationTransaction: transaction, RMStoreNotificationProductIdentifier: productIdentifier};
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKPaymentTransactionFinished object:self userInfo:userInfo];
+    
+    if (transaction.transactionState == SKPaymentTransactionStateRestored)
+    {
+        [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
+    }
 }
 
 - (void)notifyRestoreTransactionFinishedIfApplicableAfterTransaction:(SKPaymentTransaction*)transaction
 {
-    if (transaction != nil && transaction.transactionState == SKPaymentTransactionStateRestored)
+    if (transaction != nil)
     {
-        if (![_pendingRestoredTransactionsDownloadingContent containsObject:transaction.transactionIdentifier])
-        { // Wait until the transaction's downloadable content is downloaded
-            _pendingRestoredTransactionsCount--;
-        }
+        _pendingRestoredTransactionsCount--;
     }
     if (_restoredCompletedTransactionsFinished && _pendingRestoredTransactionsCount == 0)
     { // Wait until all restored transations have been verified
