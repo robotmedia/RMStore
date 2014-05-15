@@ -288,6 +288,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertEqualObjects(transaction, returnedTransaction, nil);
         STAssertTrue([productID isEqualToString:returnedProductID], nil);
         STAssertTrue([download progress] == downloadProgress, nil);
+        return YES;
     }]];
     [_store addStoreObserver:observer];
     
@@ -319,6 +320,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertTrue([productID isEqualToString:returnedProductID], nil);
         STAssertTrue([error.domain isEqualToString:RMStoreErrorDomain], nil);
         STAssertEquals(error.code, RMStoreErrorCodeDownloadCanceled, nil);
+        return YES;
     }]];
     [_store addStoreObserver:observer];
     
@@ -350,6 +352,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertTrue([productID isEqualToString:returnedProductID], nil);
         STAssertTrue([error.domain isEqualToString:RMStoreErrorDomain], nil);
         STAssertEquals(error.code, RMStoreErrorCodeDownloadCanceled, nil);
+        return YES;
     }]];
     [_store addStoreObserver:observer];
     
@@ -572,6 +575,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertEqualObjects(download, returnedDownload, nil);
         STAssertEqualObjects(transaction, returnedTransaction, nil);
         STAssertTrue([productID isEqualToString:returnedProductID], nil);
+        return YES;
     }]];
     [_store addStoreObserver:observer];
 
@@ -650,6 +654,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertEqualObjects(transaction, returnedTransaction, nil);
         STAssertTrue([productID isEqualToString:returnedProductID], nil);
         STAssertTrue(downloader.progress == downloadProgress, nil);
+        return YES;
     }]];
     [_store addStoreObserver:observer];
     
@@ -804,6 +809,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertEqualObjects(transaction, returnedTransaction, nil);
         STAssertTrue([productID isEqualToString:returnedProductID], nil);
         STAssertTrue(downloader.progress == downloadProgress, nil);
+        return YES;
     }]];
     [_store addStoreObserver:observer];
     
@@ -1133,6 +1139,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertEqualObjects(transaction, notification.transaction, nil);
         STAssertTrue([productID isEqualToString:notification.productIdentifier], nil);
         STAssertEqualObjects(error, notification.storeError, nil);
+        return YES;
     }]];
 }
 
@@ -1144,6 +1151,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertEqualObjects(transaction, notification.transaction, nil);
         STAssertTrue([productID isEqualToString:notification.productIdentifier], nil);
         STAssertEqualObjects(error, notification.storeError, nil);
+        return YES;
     }]];
 }
 
@@ -1156,6 +1164,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertEqualObjects(transaction, notification.transaction, nil);
         STAssertTrue([productID isEqualToString:notification.productIdentifier], nil);
         STAssertNil(notification.storeError, nil);
+        return YES;
     }]];
 }
 
@@ -1167,6 +1176,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertEqualObjects(transaction, notification.transaction, nil);
         STAssertTrue([productID isEqualToString:notification.productIdentifier], nil);
         STAssertNil(notification.storeError, nil);
+        return YES;
     }]];
 }
 
@@ -1180,6 +1190,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertEqualObjects(transaction, notification.transaction, nil);
         STAssertTrue([productID isEqualToString:notification.productIdentifier], nil);
         STAssertNil(notification.storeError, nil);
+        return YES;
     }]];
 }
 
@@ -1191,6 +1202,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertEqualObjects(transaction, notification.transaction, nil);
         STAssertTrue([productID isEqualToString:notification.productIdentifier], nil);
         STAssertEqualObjects(error, notification.storeError, nil);
+        return YES;
     }]];
 }
 
@@ -1202,6 +1214,7 @@ extern NSString* const RMStoreNotificationStoreError;
         STAssertEqualObjects(transaction, notification.transaction, nil);
         STAssertTrue([productID isEqualToString:notification.productIdentifier], nil);
         STAssertNil(notification.storeError, nil);
+        return YES;
     }]];
 }
 
