@@ -149,6 +149,7 @@ For Apple-hosted and self-hosted downloads:
     SKPaymentTransaction *transaction = notification.transaction;
 	float progress = notification.download.progress;
 }
+```
 
 Only for Apple-hosted downloads:
 
@@ -256,14 +257,11 @@ If you are using RMStore in your non-ARC project, you will need to set a `-fobjc
 
 RMStore is in initial development and its public API should not be considered stable. Future enhancements will include:
 
-* [Content download support](https://github.com/robotmedia/RMStore/issues/2)
 * [Better OS X support](https://github.com/robotmedia/RMStore/issues/4)
-
-If you are looking for something more mature, check out [CargoBay](https://github.com/mattt/CargoBay) or [MKStoreKit](https://github.com/MugunthKumar/MKStoreKit) for iOS 5 to 6 (to date, MKStoreKit has not been updated for iOS 7).
 
 ##License
 
- Copyright 2013 [Robot Media SL](http://www.robotmedia.net)
+ Copyright 2013-2014 [Robot Media SL](http://www.robotmedia.net)
  
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
