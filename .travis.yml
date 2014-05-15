@@ -1,4 +1,7 @@
 language: objective-c
+before_script:
+  - brew update
+  - brew upgrade xctool
 script: 
   - xctool -project RMStore.xcodeproj -scheme 'RMStoreExcludeKeychainTests' -configuration Release -sdk iphonesimulator build-tests
   - xctool -project RMStore.xcodeproj -scheme 'RMStoreExcludeKeychainTests' -configuration Release run-tests -test-sdk iphonesimulator5.0
