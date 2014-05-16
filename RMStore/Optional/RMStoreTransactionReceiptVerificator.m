@@ -80,7 +80,7 @@ static const char _base64EncodingTable[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
     *objPointer = '\0';
     
     // Create result NSString object
-    NSString *base64String = [NSString stringWithCString:strResult encoding:NSASCIIStringEncoding];
+    NSString *base64String = @(strResult);
     
     // Free memory
     free(strResult);
@@ -164,7 +164,7 @@ static const char _base64EncodingTable[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
             }
             
             static NSString *statusKey = @"status";
-            NSInteger statusCode = [[responseJSON objectForKey:statusKey] integerValue];
+            NSInteger statusCode = [responseJSON[statusKey] integerValue];
             
             static NSInteger successCode = 0;
             static NSInteger sandboxCode = 21007;

@@ -70,32 +70,32 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (NSArray*)invalidProductIdentifiers
 {
-    return [self.userInfo objectForKey:RMStoreNotificationInvalidProductIdentifiers];
+    return (self.userInfo)[RMStoreNotificationInvalidProductIdentifiers];
 }
 
 - (NSString*)productIdentifier
 {
-    return [self.userInfo objectForKey:RMStoreNotificationProductIdentifier];
+    return (self.userInfo)[RMStoreNotificationProductIdentifier];
 }
 
 - (NSArray*)products
 {
-    return [self.userInfo objectForKey:RMStoreNotificationProducts];
+    return (self.userInfo)[RMStoreNotificationProducts];
 }
 
 - (SKDownload*)storeDownload
 {
-    return [self.userInfo objectForKey:RMStoreNotificationStoreDownload];
+    return (self.userInfo)[RMStoreNotificationStoreDownload];
 }
 
 - (NSError*)storeError
 {
-    return [self.userInfo objectForKey:RMStoreNotificationStoreError];
+    return (self.userInfo)[RMStoreNotificationStoreError];
 }
 
 - (SKPaymentTransaction*)transaction
 {
-    return [self.userInfo objectForKey:RMStoreNotificationTransaction];
+    return (self.userInfo)[RMStoreNotificationTransaction];
 }
 
 @end
@@ -210,7 +210,7 @@ typedef void (^RMStoreSuccessBlock)();
     RMAddPaymentParameters *parameters = [[RMAddPaymentParameters alloc] init];
     parameters.successBlock = successBlock;
     parameters.failureBlock = failureBlock;
-    [_addPaymentParameters setObject:parameters forKey:productIdentifier];
+    _addPaymentParameters[productIdentifier] = parameters;
     
     [[SKPaymentQueue defaultQueue] addPayment:payment];
 }
@@ -292,7 +292,7 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (SKProduct*)productForIdentifier:(NSString*)productIdentifier
 {
-    return [_products objectForKey:productIdentifier];
+    return _products[productIdentifier];
 }
 
 + (NSString*)localizedPriceOfProduct:(SKProduct*)product
@@ -647,7 +647,7 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (RMAddPaymentParameters*)popAddPaymentParametersForIdentifier:(NSString*)identifier
 {
-    RMAddPaymentParameters *parameters = [_addPaymentParameters objectForKey:identifier];
+    RMAddPaymentParameters *parameters = _addPaymentParameters[identifier];
     [_addPaymentParameters removeObjectForKey:identifier];
     return parameters;
 }
@@ -687,7 +687,7 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)addProduct:(SKProduct*)product
 {
-    [_products setObject:product forKey:product.productIdentifier];    
+    _products[product.productIdentifier] = product;    
 }
 
 - (void)postNotificationWithName:(NSString*)notificationName download:(SKDownload*)download userInfoExtras:(NSDictionary*)extras

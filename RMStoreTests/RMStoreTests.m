@@ -129,7 +129,7 @@ extern NSString* const RMStoreNotificationStoreError;
     static NSString *productIdentifier = @"test";
     id product = [OCMockObject mockForClass:[SKProduct class]];
     [[[product stub] andReturn:productIdentifier] productIdentifier];
-    [_store.products setObject:product forKey:productIdentifier];
+    (_store.products)[productIdentifier] = product;
     [_store addPayment:productIdentifier];
 }
 
@@ -705,7 +705,7 @@ extern NSString* const RMStoreNotificationStoreError;
 
     id product = [OCMockObject mockForClass:[SKProduct class]];
     [[[product stub] andReturn:@"test"] productIdentifier];
-    [_store.products setObject:product forKey:@"test"];
+    (_store.products)[@"test"] = product;
     [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction) {
         STAssertEqualObjects(transaction, originalTransaction, @"");
     } failure:^(SKPaymentTransaction *transaction, NSError *error) {
@@ -949,7 +949,7 @@ extern NSString* const RMStoreNotificationStoreError;
 
     id product = [OCMockObject mockForClass:[SKProduct class]];
     [[[product stub] andReturn:@"test"] productIdentifier];
-    [_store.products setObject:product forKey:@"test"];
+    (_store.products)[@"test"] = product;
     [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction) {
         STFail(@"");
     } failure:^(SKPaymentTransaction *transaction, NSError *error) {
@@ -1016,7 +1016,7 @@ extern NSString* const RMStoreNotificationStoreError;
 {
     NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
-        NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
+        NSError *error = userInfo[RMStoreNotificationStoreError];
         STAssertEqualObjects(error, originalError, @"");
         return YES;
     }];
@@ -1032,7 +1032,7 @@ extern NSString* const RMStoreNotificationStoreError;
 {
     NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
-        NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
+        NSError *error = userInfo[RMStoreNotificationStoreError];
         STAssertEqualObjects(error, originalError, @"");
         return YES;
     }];
@@ -1067,7 +1067,7 @@ extern NSString* const RMStoreNotificationStoreError;
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
-        NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
+        NSError *error = userInfo[RMStoreNotificationStoreError];
         STAssertEqualObjects(error, originalError, @"");
         return YES;
     }];
@@ -1105,7 +1105,7 @@ extern NSString* const RMStoreNotificationStoreError;
     __block BOOL executed;
     NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     id observerMock = [self observerMockForNotification:RMSKRefreshReceiptFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
-        NSError *error = [userInfo objectForKey:RMStoreNotificationStoreError];
+        NSError *error = userInfo[RMStoreNotificationStoreError];
         STAssertEqualObjects(error, originalError, @"");
         return YES;
     }];

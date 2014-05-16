@@ -28,15 +28,15 @@ NSString* const RMStoreTransactionsKeychainKey = @"RMStoreTransactions";
 NSMutableDictionary* RMKeychainGetSearchDictionary(NSString *key)
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-    [dictionary setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
+    dictionary[(__bridge id)kSecClass] = (__bridge id)kSecClassGenericPassword;
     
     NSData *encodedIdentifier = [key dataUsingEncoding:NSUTF8StringEncoding];
     
-    [dictionary setObject:encodedIdentifier forKey:(__bridge id)kSecAttrGeneric];
-    [dictionary setObject:encodedIdentifier forKey:(__bridge id)kSecAttrAccount];
+    dictionary[(__bridge id)kSecAttrGeneric] = encodedIdentifier;
+    dictionary[(__bridge id)kSecAttrAccount] = encodedIdentifier;
     
     NSString *serviceName = [NSBundle mainBundle].bundleIdentifier;
-    [dictionary setObject:serviceName forKey:(__bridge id)kSecAttrService];
+    dictionary[(__bridge id)kSecAttrService] = serviceName;
     
     return dictionary;
 }
@@ -53,13 +53,13 @@ void RMKeychainSetValue(NSData *value, NSString *key)
             status = SecItemDelete((__bridge CFDictionaryRef)searchDictionary);
         } else {
             NSMutableDictionary *updateDictionary = [NSMutableDictionary dictionary];
-            [updateDictionary setObject:value forKey:(__bridge id)kSecValueData];
+            updateDictionary[(__bridge id)kSecValueData] = value;
             status = SecItemUpdate((__bridge CFDictionaryRef)searchDictionary, (__bridge CFDictionaryRef)updateDictionary);
         }
     }
     else if (value)
     { // Add
-        [searchDictionary setObject:value forKey:(__bridge id)kSecValueData];
+        searchDictionary[(__bridge id)kSecValueData] = value;
         status = SecItemAdd((__bridge CFDictionaryRef)searchDictionary, NULL);
     }
     if (status != errSecSuccess)
@@ -71,8 +71,8 @@ void RMKeychainSetValue(NSData *value, NSString *key)
 NSData* RMKeychainGetValue(NSString *key)
 {
     NSMutableDictionary *searchDictionary = RMKeychainGetSearchDictionary(key);
-    [searchDictionary setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
-    [searchDictionary setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
+    searchDictionary[(__bridge id)kSecMatchLimit] = (__bridge id)kSecMatchLimitOne;
+    searchDictionary[(__bridge id)kSecReturnData] = (id)kCFBooleanTrue;
     
     CFDataRef value = nil;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)searchDictionary, (CFTypeRef *)&value);
@@ -94,10 +94,10 @@ NSData* RMKeychainGetValue(NSString *key)
     SKPayment *payment = paymentTransaction.payment;
     NSString *productIdentifier = payment.productIdentifier;
     NSDictionary *transactions = [self transactionsDictionary];
-    NSInteger count = [[transactions objectForKey:productIdentifier] integerValue];
+    NSInteger count = [transactions[productIdentifier] integerValue];
     count++;
     NSMutableDictionary *updatedTransactions = [NSMutableDictionary dictionaryWithDictionary:transactions];
-    [updatedTransactions setObject:@(count) forKey:productIdentifier];
+    updatedTransactions[productIdentifier] = @(count);
     [self setTransactionsDictionary:updatedTransactions];
 }
 
@@ -111,12 +111,12 @@ NSData* RMKeychainGetValue(NSString *key)
 - (BOOL)consumeProductOfIdentifier:(NSString*)productIdentifier
 {
     NSDictionary *transactions = [self transactionsDictionary];
-    NSInteger count = [[transactions objectForKey:productIdentifier] integerValue];
+    NSInteger count = [transactions[productIdentifier] integerValue];
     if (count > 0)
     {
         count--;
         NSMutableDictionary *updatedTransactions = [NSMutableDictionary dictionaryWithDictionary:transactions];
-        [updatedTransactions setObject:@(count) forKey:productIdentifier];
+        updatedTransactions[productIdentifier] = @(count);
         [self setTransactionsDictionary:updatedTransactions];
         return YES;
     } else {
@@ -127,14 +127,14 @@ NSData* RMKeychainGetValue(NSString *key)
 - (NSInteger)countProductOfdentifier:(NSString*)productIdentifier
 {
     NSDictionary *transactions = [self transactionsDictionary];
-    NSInteger count = [[transactions objectForKey:productIdentifier] integerValue];
+    NSInteger count = [transactions[productIdentifier] integerValue];
     return count;
 }
 
 - (BOOL)isPurchasedProductOfIdentifier:(NSString*)productIdentifier
 {
     NSDictionary *transactions = [self transactionsDictionary];
-    return [transactions objectForKey:productIdentifier] != nil;
+    return transactions[productIdentifier] != nil;
 }
 
 - (NSSet*)purchasedProductIdentifiers
@@ -151,7 +151,7 @@ NSData* RMKeychainGetValue(NSString *key)
     if (!_transactionsDictionary)
     { // Reading the keychain is slow so we cache its values in memory
         NSData *data = RMKeychainGetValue(RMStoreTransactionsKeychainKey);
-        NSDictionary *transactions = [NSDictionary dictionary];
+        NSDictionary *transactions = @{};
         if (data)
         {
             NSError *error;

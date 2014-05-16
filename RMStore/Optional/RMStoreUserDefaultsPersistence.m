@@ -30,12 +30,12 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
 - (void)persistTransaction:(SKPaymentTransaction*)paymentTransaction
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey] ? : [NSDictionary dictionary];
+    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey] ? : @{};
     
     SKPayment *payment = paymentTransaction.payment;
     NSString *productIdentifier = payment.productIdentifier;
 
-    NSArray *transactions = [purchases objectForKey:productIdentifier] ? : @[];
+    NSArray *transactions = purchases[productIdentifier] ? : @[];
     NSMutableArray *updatedTransactions = [NSMutableArray arrayWithArray:transactions];
     
     RMStoreTransaction *transaction = [[RMStoreTransaction alloc] initWithPaymentTransaction:paymentTransaction];
@@ -56,8 +56,8 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
 - (BOOL)consumeProductOfIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey] ? : [NSDictionary dictionary];
-    NSArray *transactions = [purchases objectForKey:productIdentifier] ? : @[];
+    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey] ? : @{};
+    NSArray *transactions = purchases[productIdentifier] ? : @[];
     for (NSData *data in transactions)
     {
         RMStoreTransaction *transaction = [self transactionWithData:data];
@@ -67,7 +67,7 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
             NSData *updatedData = [self dataWithTransaction:transaction];
             NSMutableArray *updatedTransactions = [NSMutableArray arrayWithArray:transactions];
             NSInteger index = [updatedTransactions indexOfObject:data];
-            [updatedTransactions replaceObjectAtIndex:index withObject:updatedData];
+            updatedTransactions[index] = updatedData;
             [self setTransactions:updatedTransactions forProductIdentifier:productIdentifier];
             return YES;
         }
@@ -104,7 +104,7 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey];
-    NSArray *obfuscatedTransactions = [purchases objectForKey:productIdentifier] ? : @[];
+    NSArray *obfuscatedTransactions = purchases[productIdentifier] ? : @[];
     NSMutableArray *transactions = [NSMutableArray arrayWithCapacity:obfuscatedTransactions.count];
     for (NSData *data in obfuscatedTransactions)
     {
@@ -138,9 +138,9 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
 - (void)setTransactions:(NSArray*)transactions forProductIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey] ? : [NSDictionary dictionary];
+    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey] ? : @{};
     NSMutableDictionary *updatedPurchases = [NSMutableDictionary dictionaryWithDictionary:purchases];
-    [updatedPurchases setObject:transactions forKey:productIdentifier];
+    updatedPurchases[productIdentifier] = transactions;
     [defaults setObject:updatedPurchases forKey:RMStoreTransactionsUserDefaultsKey];
     [defaults synchronize];
 }
