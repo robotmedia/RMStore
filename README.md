@@ -4,7 +4,7 @@
 
 A lightweight iOS library for In-App Purchases.
 
-RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.md#storekit-with-blocks) and [notifications](https://github.com/robotmedia/RMStore/blob/master/README.md#notifications) to StoreKit, plus [receipt verification](https://github.com/robotmedia/RMStore/blob/master/README.md#receipt-verification), [content downloads](https://github.com/robotmedia/RMStore/blob/master/README.md#downloading-content) and [transaction persistence](https://github.com/robotmedia/RMStore/blob/master/README.md#transaction-persistence). All in one class without external dependencies. Purchasing a product is as simple as:
+RMStore adds [blocks](#storekit-with-blocks) and [notifications](#notifications) to StoreKit, plus [receipt verification](#receipt-verification), [content downloads](#downloading-content) and [transaction persistence](#transaction-persistence). All in one class without external dependencies. Purchasing a product is as simple as:
 
 ```objective-c
 [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
@@ -19,7 +19,7 @@ RMStore adds [blocks](https://github.com/robotmedia/RMStore/blob/master/README.m
 Using [CocoaPods](http://cocoapods.org/):
 
 ```ruby
-pod "RMStore", "~> 0.5"
+pod `RMStore`, `~> 0.5`
 ```
 
 Or add the files from the [RMStore](https://github.com/robotmedia/RMStore/tree/master/RMStore) directory if you're doing it manually.
@@ -135,7 +135,7 @@ For Apple-hosted and self-hosted downloads:
 ```objective-c
 - (void)storeDownloadFailed:(NSNotification*)notification
 {
-	SKDownload *download = notification.storeDownload; // Apple-hosted only
+    SKDownload *download = notification.storeDownload; // Apple-hosted only
     NSString *productIdentifier = notification.productIdentifier;
     SKPaymentTransaction *transaction = notification.transaction;
     NSError *error = notification.storeError;
@@ -143,17 +143,17 @@ For Apple-hosted and self-hosted downloads:
 
 - (void)storeDownloadFinished:(NSNotification*)notification;
 {
-	SKDownload *download = notification.storeDownload; // Apple-hosted only
+    SKDownload *download = notification.storeDownload; // Apple-hosted only
     NSString *productIdentifier = notification.productIdentifier;
     SKPaymentTransaction *transaction = notification.transaction;
 }
 
 - (void)storeDownloadUpdated:(NSNotification*)notification
 {
-	SKDownload *download = notification.storeDownload; // Apple-hosted only
+    SKDownload *download = notification.storeDownload; // Apple-hosted only
     NSString *productIdentifier = notification.productIdentifier;
     SKPaymentTransaction *transaction = notification.transaction;
-	float progress = notification.download.progress;
+    float progress = notification.download.progress;
 }
 ```
 
@@ -255,7 +255,7 @@ For more info, check out the [wiki](https://github.com/robotmedia/RMStore/wiki/T
 
 ##Requirements
 
-RMStore requires iOS 5.0 or above and ARC. Some features are only available on iOS 6.0 and iOS 7.0.
+RMStore requires iOS 5.0 or above and ARC. Some features are only available for iOS 6.0 and iOS 7.0.
 
 ##Roadmap
 
