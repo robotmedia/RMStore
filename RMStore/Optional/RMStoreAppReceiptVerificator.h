@@ -42,6 +42,7 @@ __attribute__((availability(ios,introduced=7.0)))
 /**
  Verifies the app receipt by checking the integrity of the receipt, comparing its bundle identifier and bundle version to the values returned by the corresponding properties and verifying the receipt hash.
  @return YES if the receipt is verified, NO otherwise.
+ @discussion If validation fails in iOS, Apple recommends to refresh the receipt and try again.
  */
 - (BOOL)verifyAppReceipt;
 
