@@ -48,10 +48,10 @@ NSInteger const RMAppReceiptASN1TypeCancellationDate = 1712;
 
 static int RMASN1ReadInteger(const uint8_t **pp, long omax)
 {
-    int tag, clazz;
+    int tag, asn1Class;
     long length;
     int value = 0;
-    ASN1_get_object(pp, &length, &tag, &clazz, omax);
+    ASN1_get_object(pp, &length, &tag, &asn1Class, omax);
     if (tag == V_ASN1_INTEGER)
     {
         for (int i = 0; i < length; i++)
@@ -65,10 +65,10 @@ static int RMASN1ReadInteger(const uint8_t **pp, long omax)
 
 static NSData* RMASN1ReadOctectString(const uint8_t **pp, long omax)
 {
-    int tag, clazz;
+    int tag, asn1Class;
     long length;
     NSData *data = nil;
-    ASN1_get_object(pp, &length, &tag, &clazz, omax);
+    ASN1_get_object(pp, &length, &tag, &asn1Class, omax);
     if (tag == V_ASN1_OCTET_STRING)
     {
         data = [NSData dataWithBytes:*pp length:length];
@@ -79,10 +79,10 @@ static NSData* RMASN1ReadOctectString(const uint8_t **pp, long omax)
 
 static NSString* RMASN1ReadString(const uint8_t **pp, long omax, int expectedTag, NSStringEncoding encoding)
 {
-    int tag, clazz;
+    int tag, asn1Class;
     long length;
     NSString *value = nil;
-    ASN1_get_object(pp, &length, &tag, &clazz, omax);
+    ASN1_get_object(pp, &length, &tag, &asn1Class, omax);
     if (tag == expectedTag)
     {
         value = [[NSString alloc] initWithBytes:*pp length:length encoding:encoding];
@@ -110,6 +110,7 @@ static NSURL *_appleRootCertificateURL = nil;
     if (self = [super init])
     {
         NSMutableArray *purchases = [NSMutableArray array];
+         // Explicit casting to avoid errors when compiling as Objective-C++
         [RMAppReceipt enumerateASN1Attributes:(const uint8_t*)asn1Data.bytes length:asn1Data.length usingBlock:^(NSData *data, int type) {
             const uint8_t *s = (const uint8_t*)data.bytes;
             const NSUInteger length = data.length;
@@ -190,7 +191,7 @@ static NSURL *_appleRootCertificateURL = nil;
     [data appendData:self.bundleIdentifierData];
     
     NSMutableData *expectedHash = [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
-    SHA1((const uint8_t*)data.bytes, data.length, (uint8_t*)expectedHash.mutableBytes);
+    SHA1((const uint8_t*)data.bytes, data.length, (uint8_t*)expectedHash.mutableBytes); // Explicit casting to avoid errors when compiling as Objective-C++
     
     return [expectedHash isEqualToData:self.hash];
 }
@@ -328,6 +329,7 @@ static NSURL *_appleRootCertificateURL = nil;
 {
     if (self = [super init])
     {
+        // Explicit casting to avoid errors when compiling as Objective-C++
         [RMAppReceipt enumerateASN1Attributes:(const uint8_t*)asn1Data.bytes length:asn1Data.length usingBlock:^(NSData *data, int type) {
             const uint8_t *p = (const uint8_t*)data.bytes;
             const NSUInteger length = data.length;
