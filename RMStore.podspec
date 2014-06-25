@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'RMStore'
-  s.version = '0.5'
+  s.version = '0.5.1'
   s.license = 'Apache 2.0'
   s.summary = 'A lightweight iOS framework for In-App Purchases.'
   s.homepage = 'https://github.com/robotmedia/RMStore'
