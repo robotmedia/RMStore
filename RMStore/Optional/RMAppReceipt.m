@@ -127,7 +127,7 @@ static NSURL *_appleRootCertificateURL = nil;
                     _opaqueValue = data;
                     break;
                 case RMAppReceiptASN1TypeHash:
-                    _hash = data;
+                    _receiptHash = data;
                     break;
                 case RMAppReceiptASN1TypeInAppPurchaseReceipt:
                 {
@@ -193,7 +193,7 @@ static NSURL *_appleRootCertificateURL = nil;
     NSMutableData *expectedHash = [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
     SHA1((const uint8_t*)data.bytes, data.length, (uint8_t*)expectedHash.mutableBytes); // Explicit casting to avoid errors when compiling as Objective-C++
     
-    return [expectedHash isEqualToData:self.hash];
+    return [expectedHash isEqualToData:self.receiptHash];
 }
 
 + (RMAppReceipt*)bundleReceipt

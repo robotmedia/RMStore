@@ -26,7 +26,7 @@
     STAssertNil(_receipt.bundleIdentifierData, @"");
     STAssertNil(_receipt.appVersion, @"");
     STAssertNil(_receipt.opaqueValue, @"");
-    STAssertNil(_receipt.hash, @"");
+    STAssertNil(_receipt.receiptHash, @"");
     STAssertTrue(_receipt.inAppPurchases.count == 0, @"");
     STAssertNil(_receipt.originalAppVersion, @"");
     STAssertNil(_receipt.expirationDate, @"");
