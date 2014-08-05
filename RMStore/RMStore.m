@@ -48,7 +48,7 @@ NSString* const RMStoreNotificationStoreError = @"storeError";
 NSString* const RMStoreNotificationStoreReceipt = @"storeReceipt";
 NSString* const RMStoreNotificationTransaction = @"transaction";
 
-#if defined(DEBUG) && DEBUG
+#if DEBUG
 #define RMStoreLog(...) NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]);
 #else
 #define RMStoreLog(...)
