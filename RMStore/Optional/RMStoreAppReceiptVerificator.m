@@ -96,7 +96,7 @@
     const BOOL transactionVerified = [receipt containsInAppPurchaseOfProductIdentifier:payment.productIdentifier];
     if (!transactionVerified)
     {
-        [self failWithBlock:failureBlock message:NSLocalizedString(@"The app receipt doest not contain the given product", @"")];
+        [self failWithBlock:failureBlock message:NSLocalizedString(@"The app receipt does not contain the given product", @"")];
         return NO;
     }
     if (successBlock)
