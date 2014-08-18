@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Robot Media. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "RMStoreAppReceiptVerificator.h"
 #import <OCMock/OCMock.h>
 
-@interface RMStoreAppReceiptVerificatorTests : SenTestCase
+@interface RMStoreAppReceiptVerificatorTests : XCTestCase
 
 @end
 
@@ -34,23 +34,23 @@
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     id transaction = [OCMockObject mockForClass:[SKPaymentTransaction class]];
     [_verificator verifyTransaction:transaction success:^{
-        STFail(@"");
+        XCTFail(@"");
     } failure:^(NSError *error) {
-        STAssertNotNil(error, @"");
+        XCTAssertNotNil(error, @"");
     }];
 }
 
 - (void)testVerifyAppReceipt_NO
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     BOOL result = [_verificator verifyAppReceipt];
-    STAssertFalse(result, @"");
+    XCTAssertFalse(result, @"");
 }
 
 - (void)testBundleIdentifier_default
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     NSString *expected = [[NSBundle mainBundle] bundleIdentifier];
     NSString *result = _verificator.bundleIdentifier;
-    STAssertEqualObjects(expected, result, @"");
+    XCTAssertEqualObjects(expected, result, @"");
 }
 
 - (void)testBundleIdentifier_set
@@ -58,14 +58,14 @@
     NSString *expected = @"test";
     _verificator.bundleIdentifier = expected;
     NSString *result = _verificator.bundleIdentifier;
-    STAssertEqualObjects(expected, result, @"");
+    XCTAssertEqualObjects(expected, result, @"");
 }
 
 - (void)testBundleVersion_default
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     NSString *expected = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     NSString *result = _verificator.bundleVersion;
-    STAssertEqualObjects(expected, result, @"");
+    XCTAssertEqualObjects(expected, result, @"");
 }
 
 - (void)testBundleVersion_set
@@ -73,7 +73,7 @@
     NSString *expected = @"2.0";
     _verificator.bundleVersion = expected;
     NSString *result = _verificator.bundleVersion;
-    STAssertEqualObjects(expected, result, @"");
+    XCTAssertEqualObjects(expected, result, @"");
 }
 
 @end

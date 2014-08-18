@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Robot Media. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "RMStoreTransaction.h"
 #import <OCMock/OCMock.h>
 
-@interface RMStoreTransactionTests : SenTestCase
+@interface RMStoreTransactionTests : XCTestCase
 
 @end
 
@@ -29,14 +29,14 @@
     RMStoreTransaction *transaction = [[RMStoreTransaction alloc] initWithPaymentTransaction:paymentTransaction];
 
     SKPayment *payment = paymentTransaction.payment;
-    STAssertNotNil(transaction, @"");
-    STAssertEqualObjects(transaction.productIdentifier, payment.productIdentifier, @"");
-    STAssertEqualObjects(transaction.transactionDate, paymentTransaction.transactionDate, @"");
-    STAssertEqualObjects(transaction.transactionIdentifier, paymentTransaction.transactionIdentifier, @"");
+    XCTAssertNotNil(transaction, @"");
+    XCTAssertEqualObjects(transaction.productIdentifier, payment.productIdentifier, @"");
+    XCTAssertEqualObjects(transaction.transactionDate, paymentTransaction.transactionDate, @"");
+    XCTAssertEqualObjects(transaction.transactionIdentifier, paymentTransaction.transactionIdentifier, @"");
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-    STAssertEqualObjects(transaction.transactionReceipt, paymentTransaction.transactionReceipt, @"");
+    XCTAssertEqualObjects(transaction.transactionReceipt, paymentTransaction.transactionReceipt, @"");
 #endif
-    STAssertFalse(transaction.consumed, @"");
+    XCTAssertFalse(transaction.consumed, @"");
 }
 
 #pragma mark - NSCoding
@@ -61,14 +61,14 @@
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
     RMStoreTransaction *decodedTransaction = [unarchiver decodeObject];
     
-    STAssertNotNil(decodedTransaction, @"");
-    STAssertEqualObjects(decodedTransaction.productIdentifier, transaction.productIdentifier, @"");
-    STAssertEqualObjects(decodedTransaction.transactionDate, transaction.transactionDate, @"");
-    STAssertEqualObjects(decodedTransaction.transactionIdentifier, transaction.transactionIdentifier, @"");
+    XCTAssertNotNil(decodedTransaction, @"");
+    XCTAssertEqualObjects(decodedTransaction.productIdentifier, transaction.productIdentifier, @"");
+    XCTAssertEqualObjects(decodedTransaction.transactionDate, transaction.transactionDate, @"");
+    XCTAssertEqualObjects(decodedTransaction.transactionIdentifier, transaction.transactionIdentifier, @"");
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-    STAssertEqualObjects(decodedTransaction.transactionReceipt, transaction.transactionReceipt, @"");
+    XCTAssertEqualObjects(decodedTransaction.transactionReceipt, transaction.transactionReceipt, @"");
 #endif
-    STAssertEquals(decodedTransaction.consumed, transaction.consumed, @"");
+    XCTAssertEqual(decodedTransaction.consumed, transaction.consumed, @"");
 }
 
 #pragma mark - Private
