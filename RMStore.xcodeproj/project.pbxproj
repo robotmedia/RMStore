@@ -59,6 +59,8 @@
 		A0AF3DAA17A810B700D2E836 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D3317A8059900D2E836 /* StoreKit.framework */; };
 		A0AF3DAE17A8303800D2E836 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3DAD17A8303800D2E836 /* Default-568h@2x.png */; };
 		C90EF0F119A20C8200A9E738 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90EF0F019A20C8200A9E738 /* XCTest.framework */; };
+		C9F0A43019A23EE000811E80 /* GTMCodeCoverageApp.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F0A42E19A23EE000811E80 /* GTMCodeCoverageApp.m */; };
+		C9F0A43119A23EE000811E80 /* GTMCodeCoverageTestsXC.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F0A42F19A23EE000811E80 /* GTMCodeCoverageTestsXC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -146,6 +148,9 @@
 		A0AF3DA617A8095F00D2E836 /* RMPurchasesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RMPurchasesViewController.xib; sourceTree = "<group>"; };
 		A0AF3DAD17A8303800D2E836 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		C90EF0F019A20C8200A9E738 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		C9F0A42D19A23EE000811E80 /* GTMCodeCoverageApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMCodeCoverageApp.h; sourceTree = "<group>"; };
+		C9F0A42E19A23EE000811E80 /* GTMCodeCoverageApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMCodeCoverageApp.m; sourceTree = "<group>"; };
+		C9F0A42F19A23EE000811E80 /* GTMCodeCoverageTestsXC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMCodeCoverageTestsXC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -307,6 +312,9 @@
 		A0AF3D2217A802F300D2E836 /* RMStoreTests */ = {
 			isa = PBXGroup;
 			children = (
+				C9F0A42D19A23EE000811E80 /* GTMCodeCoverageApp.h */,
+				C9F0A42E19A23EE000811E80 /* GTMCodeCoverageApp.m */,
+				C9F0A42F19A23EE000811E80 /* GTMCodeCoverageTestsXC.m */,
 				8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */,
 				87A2A3A2180D817600376773 /* RMAppReceiptIAPTests.m */,
 				87A2A39F180D7B0400376773 /* RMAppReceiptTests.m */,
@@ -498,6 +506,8 @@
 				87A2A3A0180D7B0400376773 /* RMAppReceiptTests.m in Sources */,
 				87A2A3A3180D817600376773 /* RMAppReceiptIAPTests.m in Sources */,
 				87A2A3AC180E8AF500376773 /* RMStoreUserDefaultsPersistenceTests.m in Sources */,
+				C9F0A43019A23EE000811E80 /* GTMCodeCoverageApp.m in Sources */,
+				C9F0A43119A23EE000811E80 /* GTMCodeCoverageTestsXC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -608,6 +618,11 @@
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"GTM_USING_XCTEST=1",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
