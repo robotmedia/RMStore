@@ -7,14 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 
 /**
  Xcode 5 stopped generating .gcda files so we need to force them with __gcov_flush when the test suite stops.
  See: http://stackoverflow.com/questions/18394655/xcode5-code-coverage-from-cmd-line-for-ci-builds
  */
-@interface RMTestObserver : SenTestLog
+@interface RMTestObserver : XCTestLog
 
 @end
 
@@ -26,36 +26,36 @@ static id mainSuite = nil;
 #ifdef DEBUG
 + (void)initialize
 {
-    [[NSUserDefaults standardUserDefaults] setValue:NSStringFromClass(self) forKey:SenTestObserverClassKey];
+    [[NSUserDefaults standardUserDefaults] setValue:NSStringFromClass(self) forKey:XCTestObserverClassKey];
 
     [super initialize];
 }
 
-+ (void)testSuiteDidStart:(NSNotification*)notification
+- (void)testSuiteDidStart:(XCTestRun *)testRun
 {
-    [super testSuiteDidStart:notification];
+    [super testSuiteDidStart:testRun];
 
-    SenTestSuiteRun* suite = notification.object;
+    XCTestSuiteRun* suite = [[XCTestSuiteRun alloc] init];
+    [suite addTestRun:testRun];
 
-    if (!mainSuite)
-    {
+    if (!mainSuite) {
         mainSuite = suite;
     }
 }
 
 extern void __gcov_flush(void);
 
-+ (void)testSuiteDidStop:(NSNotification*)notification
+- (void) testSuiteDidStop:(XCTestRun *) testRun
 {
-    [super testSuiteDidStop:notification];
-    
-    SenTestSuiteRun* suite = notification.object;
-    
+    [super testSuiteDidStop:testRun];
+    XCTestSuiteRun *suite = [[XCTestSuiteRun alloc] init];
+    [suite addTestRun:testRun];
+        
     if (mainSuite == suite)
     {
         __gcov_flush();
     }
 }
-#endif
 
+#endif
 @end

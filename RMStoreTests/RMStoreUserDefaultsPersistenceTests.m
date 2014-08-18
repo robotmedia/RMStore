@@ -6,12 +6,12 @@
 //  Copyright (c) 2013 Robot Media. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "RMStoreUserDefaultsPersistence.h"
 #import "RMStoreTransaction.h"
 #import <OCMock/OCMock.h>
 
-@interface RMStoreUserDefaultsPersistenceTests : SenTestCase
+@interface RMStoreUserDefaultsPersistenceTests : XCTestCase
 
 @end
 
@@ -33,7 +33,7 @@
 
 - (void)testInitialState
 {
-    STAssertTrue([_persistor purchasedProductIdentifiers].count == 0, @"");
+    XCTAssertTrue([_persistor purchasedProductIdentifiers].count == 0, @"");
 }
 
 - (void)testPersistTransaction
@@ -43,8 +43,8 @@
     NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
     RMStoreTransaction *transaction = [transactions firstObject];
     SKPayment *payment = paymentTransaction.payment;
-    STAssertNotNil(transaction, @"");
-    STAssertEqualObjects(transaction.productIdentifier, payment.productIdentifier, @"");
+    XCTAssertNotNil(transaction, @"");
+    XCTAssertEqualObjects(transaction.productIdentifier, payment.productIdentifier, @"");
 }
 
 - (void)testRemoveTransactions
@@ -53,7 +53,7 @@
     
     [_persistor removeTransactions];
 
-    STAssertFalse([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
+    XCTAssertFalse([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
 }
 
 - (void)testConsumeProductOfIdentifier_YES
@@ -62,13 +62,13 @@
     
     BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
     
-    STAssertTrue(result, @"");
+    XCTAssertTrue(result, @"");
 }
 
 - (void)testConsumeProductOfIdentifier_NO_inexistingProduct
 {
     BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
-    STAssertFalse(result, @"");
+    XCTAssertFalse(result, @"");
 }
 
 - (void)testConsumeProductOfIdentifier_NO_alreadyConsumedProduct
@@ -77,18 +77,18 @@
     [_persistor consumeProductOfIdentifier:@"test"];
 
     BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
-    STAssertFalse(result, @"");
+    XCTAssertFalse(result, @"");
 }
 
 - (void)testcountProductOfdentifier_zero
 {
-    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 0, @"");
+    XCTAssertTrue([_persistor countProductOfdentifier:@"test"] == 0, @"");
 }
 
 - (void)testcountProductOfdentifier_one
 {
     [self persistMockTransactionOfProductIdentifer:@"test"];
-    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 1, @"");
+    XCTAssertTrue([_persistor countProductOfdentifier:@"test"] == 1, @"");
 }
 
 - (void)testcountProductOfdentifier_many
@@ -96,7 +96,7 @@
     [self persistMockTransactionOfProductIdentifer:@"test"];
     [self persistMockTransactionOfProductIdentifer:@"test"];
     [self persistMockTransactionOfProductIdentifer:@"test"];
-    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 3, @"");
+    XCTAssertTrue([_persistor countProductOfdentifier:@"test"] == 3, @"");
 }
 
 - (void)testIsPurchasedProductOfIdentifier_YES
@@ -104,27 +104,27 @@
     [self persistMockTransactionOfProductIdentifer:@"test"];
     
     BOOL result = [_persistor isPurchasedProductOfIdentifier:@"test"];
-    STAssertTrue(result, @"");
+    XCTAssertTrue(result, @"");
 }
 
 - (void)testIsPurchasedProductOfIdentifier_NO
 {
     BOOL result = [_persistor isPurchasedProductOfIdentifier:@"test"];
-    STAssertFalse(result, @"");
+    XCTAssertFalse(result, @"");
 }
 
 - (void)testPurchasedProductIdentifiers_empty
 {
     NSSet *result = [_persistor purchasedProductIdentifiers];
-    STAssertTrue(result.count == 0, @"");
+    XCTAssertTrue(result.count == 0, @"");
 }
 
 - (void)testPurchasedProductIdentifiers_one
 {
     [self persistMockTransactionOfProductIdentifer:@"test"];
     NSSet *result = [_persistor purchasedProductIdentifiers];
-    STAssertTrue(result.count == 1, @"");
-    STAssertEqualObjects([result anyObject], @"test", nil);
+    XCTAssertTrue(result.count == 1, @"");
+    XCTAssertEqualObjects([result anyObject], @"test");
 }
 
 - (void)testPurchasedProductIdentifiers_many
@@ -132,20 +132,20 @@
     [self persistMockTransactionOfProductIdentifer:@"test1"];
     [self persistMockTransactionOfProductIdentifer:@"test2"];
     NSSet *result = [_persistor purchasedProductIdentifiers];
-    STAssertTrue(result.count == 2, @"");
+    XCTAssertTrue(result.count == 2, @"");
 }
 
 - (void)testTransactionsForProductIdentifier_zero
 {
     NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
-    STAssertTrue(transactions.count == 0, @"");
+    XCTAssertTrue(transactions.count == 0, @"");
 }
 
 - (void)testTransactionsForProductIdentifier_one
 {
     [self persistMockTransactionOfProductIdentifer:@"test"];
     NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
-    STAssertTrue(transactions.count == 1, @"");
+    XCTAssertTrue(transactions.count == 1, @"");
 }
 
 - (void)testTransactionsForProductIdentifier_many
@@ -155,7 +155,7 @@
     [self persistMockTransactionOfProductIdentifer:@"test1"];
     [self persistMockTransactionOfProductIdentifer:@"test2"];
     NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test1"];
-    STAssertTrue(transactions.count == 3, @"");
+    XCTAssertTrue(transactions.count == 3, @"");
 }
 
 #pragma mark - Obfuscation
@@ -166,7 +166,7 @@
     
     NSData *data = [_persistor dataWithTransaction:transaction];
     
-    STAssertNotNil(data, @"");
+    XCTAssertNotNil(data, @"");
     RMStoreTransaction *unobfuscatedTransaction = [_persistor transactionWithData:data];
     [self compareTransaction:unobfuscatedTransaction withTransaction:transaction];
 }
@@ -178,7 +178,7 @@
     
     RMStoreTransaction *result = [_persistor transactionWithData:data];
 
-    STAssertNotNil(result, @"");
+    XCTAssertNotNil(result, @"");
     [self compareTransaction:result withTransaction:transaction];
 }
 
@@ -199,13 +199,13 @@
 
 - (void)compareTransaction:(RMStoreTransaction*)transaction1 withTransaction:(RMStoreTransaction*)transaction2
 {
-    STAssertEqualObjects(transaction1.productIdentifier, transaction2.productIdentifier, @"");
-    STAssertEqualObjects(transaction1.transactionDate, transaction2.transactionDate, @"");
-    STAssertEqualObjects(transaction1.transactionIdentifier, transaction2.transactionIdentifier, @"");
+    XCTAssertEqualObjects(transaction1.productIdentifier, transaction2.productIdentifier, @"");
+    XCTAssertEqualObjects(transaction1.transactionDate, transaction2.transactionDate, @"");
+    XCTAssertEqualObjects(transaction1.transactionIdentifier, transaction2.transactionIdentifier, @"");
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-    STAssertEqualObjects(transaction1.transactionReceipt, transaction2.transactionReceipt, @"");
+    XCTAssertEqualObjects(transaction1.transactionReceipt, transaction2.transactionReceipt, @"");
 #endif
-    STAssertEquals(transaction1.consumed, transaction2.consumed, @"");
+    XCTAssertEqual(transaction1.consumed, transaction2.consumed, @"");
 }
 
 

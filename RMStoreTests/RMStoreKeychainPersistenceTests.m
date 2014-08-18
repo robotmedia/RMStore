@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Robot Media. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "RMStoreKeychainPersistence.h"
 #import <OCMock/OCMock.h>
 #import <objc/runtime.h>
@@ -37,7 +37,7 @@ extern NSString* const RMStoreTransactionsKeychainKey;
 
 @end
 
-@interface RMStoreKeychainPersistenceTests : SenTestCase
+@interface RMStoreKeychainPersistenceTests : XCTestCase
 
 @end
 
@@ -59,7 +59,7 @@ extern NSString* const RMStoreTransactionsKeychainKey;
 
 - (void)testInitialState
 {
-    STAssertTrue([_persistor purchasedProductIdentifiers].count == 0, @"");
+    XCTAssertTrue([_persistor purchasedProductIdentifiers].count == 0, @"");
 }
 
 - (void)testPersistTransaction
@@ -68,7 +68,7 @@ extern NSString* const RMStoreTransactionsKeychainKey;
 
     [_persistor persistTransaction:transaction];
     
-    STAssertTrue([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
+    XCTAssertTrue([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
 }
 
 - (void)testRemoveTransactions
@@ -78,7 +78,7 @@ extern NSString* const RMStoreTransactionsKeychainKey;
     
     [_persistor removeTransactions];
     
-    STAssertFalse([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
+    XCTAssertFalse([_persistor isPurchasedProductOfIdentifier:@"test"], @"");
 }
 
 - (void)testConsumeProductOfIdentifier_YES
@@ -88,13 +88,13 @@ extern NSString* const RMStoreTransactionsKeychainKey;
     
     BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
     
-    STAssertTrue(result, @"");
+    XCTAssertTrue(result, @"");
 }
 
 - (void)testConsumeProductOfIdentifier_NO_inexistingProduct
 {
     BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
-    STAssertFalse(result, @"");
+    XCTAssertFalse(result, @"");
 }
 
 - (void)testConsumeProductOfIdentifier_NO_alreadyConsumedProduct
@@ -105,12 +105,12 @@ extern NSString* const RMStoreTransactionsKeychainKey;
     [_persistor consumeProductOfIdentifier:@"test"];
     
     BOOL result = [_persistor consumeProductOfIdentifier:@"test"];
-    STAssertFalse(result, @"");
+    XCTAssertFalse(result, @"");
 }
 
 - (void)testcountProductOfdentifier_zero
 {
-    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 0, @"");
+    XCTAssertTrue([_persistor countProductOfdentifier:@"test"] == 0, @"");
 }
 
 - (void)testcountProductOfdentifier_one
@@ -118,7 +118,7 @@ extern NSString* const RMStoreTransactionsKeychainKey;
     SKPaymentTransaction *transaction = [self mockTransactionOfProductIdentifer:@"test"];
     [self keychainPersistTransaction:transaction];
     
-    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 1, @"");
+    XCTAssertTrue([_persistor countProductOfdentifier:@"test"] == 1, @"");
 }
 
 - (void)testcountProductOfdentifier_many
@@ -128,7 +128,7 @@ extern NSString* const RMStoreTransactionsKeychainKey;
     [_persistor persistTransaction:transaction];
     [_persistor persistTransaction:transaction];
     
-    STAssertTrue([_persistor countProductOfdentifier:@"test"] == 3, @"");
+    XCTAssertTrue([_persistor countProductOfdentifier:@"test"] == 3, @"");
 }
 
 - (void)testIsPurchasedProductOfIdentifier_YES
@@ -137,19 +137,19 @@ extern NSString* const RMStoreTransactionsKeychainKey;
     [self keychainPersistTransaction:transaction];
     
     BOOL result = [_persistor isPurchasedProductOfIdentifier:@"test"];
-    STAssertTrue(result, @"");
+    XCTAssertTrue(result, @"");
 }
 
 - (void)testIsPurchasedProductOfIdentifier_NO
 {
     BOOL result = [_persistor isPurchasedProductOfIdentifier:@"test"];
-    STAssertFalse(result, @"");
+    XCTAssertFalse(result, @"");
 }
 
 - (void)testPurchasedProductIdentifiers_empty
 {
     NSSet *result = [_persistor purchasedProductIdentifiers];
-    STAssertTrue(result.count == 0, @"");
+    XCTAssertTrue(result.count == 0, @"");
 }
 
 - (void)testPurchasedProductIdentifiers_one
@@ -158,8 +158,8 @@ extern NSString* const RMStoreTransactionsKeychainKey;
     [self keychainPersistTransaction:transaction];
     
     NSSet *result = [_persistor purchasedProductIdentifiers];
-    STAssertTrue(result.count == 1, @"");
-    STAssertEqualObjects([result anyObject], @"test", nil);
+    XCTAssertTrue(result.count == 1, @"");
+    XCTAssertEqualObjects([result anyObject], @"test");
 }
 
 - (void)testPurchasedProductIdentifiers_many
@@ -171,7 +171,7 @@ extern NSString* const RMStoreTransactionsKeychainKey;
 
     NSSet *result = [_persistor purchasedProductIdentifiers];
 
-    STAssertTrue(result.count == 2, @"");
+    XCTAssertTrue(result.count == 2, @"");
 }
 
 #pragma mark - Private

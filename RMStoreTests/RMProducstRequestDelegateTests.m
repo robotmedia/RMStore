@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Robot Media. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "RMStore.h"
 
@@ -31,7 +31,7 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
 
 @end
 
-@interface RMProducstRequestDelegateTests : SenTestCase
+@interface RMProducstRequestDelegateTests : XCTestCase
 
 @end
 
@@ -52,22 +52,22 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
     [[[response stub] andReturn:@[]] products];
     [[[response stub] andReturn:@[]] invalidProductIdentifiers];
     _object.successBlock = ^(NSArray *products, NSArray *invalidIdentifiers) {
-        STAssertNotNil(products, @"");
-        STAssertNotNil(invalidIdentifiers, @"");
-        STAssertTrue(products.count == 0, @"");
-        STAssertTrue(invalidIdentifiers.count == 0, @"");
+        XCTAssertNotNil(products, @"");
+        XCTAssertNotNil(invalidIdentifiers, @"");
+        XCTAssertTrue(products.count == 0, @"");
+        XCTAssertTrue(invalidIdentifiers.count == 0, @"");
     };
     _object.failureBlock = ^(NSError *error) {
-        STFail(@"");
+        XCTFail(@"");
     };
     OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
         NSArray *products = userInfo[RMStoreNotificationProducts];
         NSArray *invalidIdentifiers = userInfo[RMStoreNotificationInvalidProductIdentifiers];
         
-        STAssertNotNil(products, @"");
-        STAssertNotNil(invalidIdentifiers, @"");
-        STAssertTrue(products.count == 0, @"");
-        STAssertTrue(invalidIdentifiers.count == 0, @"");
+        XCTAssertNotNil(products, @"");
+        XCTAssertNotNil(invalidIdentifiers, @"");
+        XCTAssertTrue(products.count == 0, @"");
+        XCTAssertTrue(invalidIdentifiers.count == 0, @"");
         return YES;
     }];
     
@@ -88,24 +88,24 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
     [[[response stub] andReturn:@[product]] products];
     [[[response stub] andReturn:@[]] invalidProductIdentifiers];
     _object.successBlock = ^(NSArray *products, NSArray *invalidIdentifiers) {
-        STAssertNotNil(products, @"");
-        STAssertNotNil(invalidIdentifiers, @"");
-        STAssertTrue(products.count == 1, @"");
-        STAssertTrue(invalidIdentifiers.count == 0, @"");
-        STAssertTrue([products containsObject:product], @"");
+        XCTAssertNotNil(products, @"");
+        XCTAssertNotNil(invalidIdentifiers, @"");
+        XCTAssertTrue(products.count == 1, @"");
+        XCTAssertTrue(invalidIdentifiers.count == 0, @"");
+        XCTAssertTrue([products containsObject:product], @"");
     };
     _object.failureBlock = ^(NSError *error) {
-        STFail(@"");
+        XCTFail(@"");
     };
     OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
         NSArray *products = userInfo[RMStoreNotificationProducts];
         NSArray *invalidIdentifiers = userInfo[RMStoreNotificationInvalidProductIdentifiers];
         
-        STAssertNotNil(products, @"");
-        STAssertNotNil(invalidIdentifiers, @"");
-        STAssertTrue(products.count == 1, @"");
-        STAssertTrue(invalidIdentifiers.count == 0, @"");
-        STAssertTrue([products containsObject:product], @"");
+        XCTAssertNotNil(products, @"");
+        XCTAssertNotNil(invalidIdentifiers, @"");
+        XCTAssertTrue(products.count == 1, @"");
+        XCTAssertTrue(invalidIdentifiers.count == 0, @"");
+        XCTAssertTrue([products containsObject:product], @"");
         return YES;
     }];
     
@@ -122,24 +122,24 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
     [[[response stub] andReturn:@[]] products];
     [[[response stub] andReturn:@[@"test"]] invalidProductIdentifiers];
     _object.successBlock = ^(NSArray *products, NSArray *invalidIdentifiers) {
-        STAssertNotNil(products, @"");
-        STAssertNotNil(invalidIdentifiers, @"");
-        STAssertTrue(products.count == 0, @"");
-        STAssertTrue(invalidIdentifiers.count == 1, @"");
-        STAssertTrue([invalidIdentifiers containsObject:@"test"], @"");
+        XCTAssertNotNil(products, @"");
+        XCTAssertNotNil(invalidIdentifiers, @"");
+        XCTAssertTrue(products.count == 0, @"");
+        XCTAssertTrue(invalidIdentifiers.count == 1, @"");
+        XCTAssertTrue([invalidIdentifiers containsObject:@"test"], @"");
     };
     _object.failureBlock = ^(NSError *error) {
-        STFail(@"");
+        XCTFail(@"");
     };
     OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
         NSArray *products = userInfo[RMStoreNotificationProducts];
         NSArray *invalidIdentifiers = userInfo[RMStoreNotificationInvalidProductIdentifiers];
         
-        STAssertNotNil(products, @"");
-        STAssertNotNil(invalidIdentifiers, @"");
-        STAssertTrue(products.count == 0, @"");
-        STAssertTrue(invalidIdentifiers.count == 1, @"");
-        STAssertTrue([invalidIdentifiers containsObject:@"test"], @"");
+        XCTAssertNotNil(products, @"");
+        XCTAssertNotNil(invalidIdentifiers, @"");
+        XCTAssertTrue(products.count == 0, @"");
+        XCTAssertTrue(invalidIdentifiers.count == 1, @"");
+        XCTAssertTrue([invalidIdentifiers containsObject:@"test"], @"");
         return YES;
     }];
     
@@ -159,10 +159,10 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
 {
     id request = [OCMockObject mockForClass:[SKProductsRequest class]];
     _object.successBlock = ^(NSArray *products, NSArray *invalidIdentifiers) {
-        STFail(@"");
+        XCTFail(@"");
     };
     _object.failureBlock = ^(NSError *error) {
-        STAssertNil(error, @"");
+        XCTAssertNil(error, @"");
     };
     OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFailed];
 
@@ -176,15 +176,15 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
 {
     id request = [OCMockObject mockForClass:[SKProductsRequest class]];
     _object.successBlock = ^(NSArray *products, NSArray *invalidIdentifiers) {
-        STFail(@"");
+        XCTFail(@"");
     };
     NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     _object.failureBlock = ^(NSError *error) {
-        STAssertEqualObjects(originalError, error, @"");
+        XCTAssertEqualObjects(originalError, error, @"");
     };
     OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFailed checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
         NSError *error = userInfo[RMStoreNotificationStoreError];
-        STAssertEqualObjects(originalError, error, @"");
+        XCTAssertEqualObjects(originalError, error, @"");
         return YES;
     }];
     

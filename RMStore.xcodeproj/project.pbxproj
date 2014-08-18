@@ -38,7 +38,6 @@
 		A0AF3D0C17A802F300D2E836 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
 		A0AF3D1117A802F300D2E836 /* RMStore.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A0AF3D1017A802F300D2E836 /* RMStore.h */; };
 		A0AF3D1317A802F300D2E836 /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D1217A802F300D2E836 /* RMStore.m */; };
-		A0AF3D1B17A802F300D2E836 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D1A17A802F300D2E836 /* SenTestingKit.framework */; };
 		A0AF3D1D17A802F300D2E836 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D1C17A802F300D2E836 /* UIKit.framework */; };
 		A0AF3D1E17A802F300D2E836 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
 		A0AF3D2117A802F300D2E836 /* libRMStore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0817A802F300D2E836 /* libRMStore.a */; };
@@ -59,6 +58,7 @@
 		A0AF3DA917A80B2F00D2E836 /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D1217A802F300D2E836 /* RMStore.m */; };
 		A0AF3DAA17A810B700D2E836 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D3317A8059900D2E836 /* StoreKit.framework */; };
 		A0AF3DAE17A8303800D2E836 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3DAD17A8303800D2E836 /* Default-568h@2x.png */; };
+		C90EF0F119A20C8200A9E738 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90EF0F019A20C8200A9E738 /* XCTest.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,7 +123,7 @@
 		A0AF3D0B17A802F300D2E836 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A0AF3D1017A802F300D2E836 /* RMStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RMStore.h; sourceTree = "<group>"; };
 		A0AF3D1217A802F300D2E836 /* RMStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RMStore.m; sourceTree = "<group>"; };
-		A0AF3D1917A802F300D2E836 /* RMStoreTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RMStoreTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0AF3D1917A802F300D2E836 /* RMStoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RMStoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0AF3D1A17A802F300D2E836 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		A0AF3D1C17A802F300D2E836 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		A0AF3D2417A802F300D2E836 /* RMStoreTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RMStoreTests-Info.plist"; sourceTree = "<group>"; };
@@ -145,6 +145,7 @@
 		A0AF3DA517A8095F00D2E836 /* RMPurchasesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMPurchasesViewController.m; sourceTree = "<group>"; };
 		A0AF3DA617A8095F00D2E836 /* RMPurchasesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RMPurchasesViewController.xib; sourceTree = "<group>"; };
 		A0AF3DAD17A8303800D2E836 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		C90EF0F019A20C8200A9E738 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,9 +164,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C90EF0F119A20C8200A9E738 /* XCTest.framework in Frameworks */,
 				8760464D18130DD400C9B78C /* Security.framework in Frameworks */,
 				A0AF3D3517A805AD00D2E836 /* StoreKit.framework in Frameworks */,
-				A0AF3D1B17A802F300D2E836 /* SenTestingKit.framework in Frameworks */,
 				A0AF3D1D17A802F300D2E836 /* UIKit.framework in Frameworks */,
 				A0AF3D1E17A802F300D2E836 /* Foundation.framework in Frameworks */,
 				A0AF3D2117A802F300D2E836 /* libRMStore.a in Frameworks */,
@@ -263,7 +264,7 @@
 			isa = PBXGroup;
 			children = (
 				A0AF3D0817A802F300D2E836 /* libRMStore.a */,
-				A0AF3D1917A802F300D2E836 /* RMStoreTests.octest */,
+				A0AF3D1917A802F300D2E836 /* RMStoreTests.xctest */,
 				A0AF3D7217A8085900D2E836 /* RMStoreDemo.app */,
 			);
 			name = Products;
@@ -272,6 +273,7 @@
 		A0AF3D0A17A802F300D2E836 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C90EF0F019A20C8200A9E738 /* XCTest.framework */,
 				A0AF3D3D17A807FF00D2E836 /* CoreGraphics.framework */,
 				A0AF3D0B17A802F300D2E836 /* Foundation.framework */,
 				8793E797180C2ABE005D7A66 /* libcrypto.a */,
@@ -387,7 +389,6 @@
 				A0AF3D1417A802F300D2E836 /* Sources */,
 				A0AF3D1517A802F300D2E836 /* Frameworks */,
 				A0AF3D1617A802F300D2E836 /* Resources */,
-				A0AF3D1717A802F300D2E836 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -396,7 +397,7 @@
 			);
 			name = RMStoreTests;
 			productName = RMStoreTests;
-			productReference = A0AF3D1917A802F300D2E836 /* RMStoreTests.octest */;
+			productReference = A0AF3D1917A802F300D2E836 /* RMStoreTests.xctest */;
 			productType = "com.apple.product-type.bundle";
 		};
 		A0AF3D7117A8085900D2E836 /* RMStoreDemo */ = {
@@ -466,22 +467,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		A0AF3D1717A802F300D2E836 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A0AF3D0417A802F300D2E836 /* Sources */ = {
@@ -665,6 +650,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -680,7 +666,7 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
 		};
@@ -690,6 +676,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RMStoreTests/RMStoreTests-Prefix.pch";
@@ -704,7 +691,7 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
 		};

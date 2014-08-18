@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Robot Media. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "RMStoreTransactionReceiptVerificator.h"
 #import <OCMock/OCMock.h>
 
-@interface RMStoreTransactionReceiptVerificatorTests : SenTestCase
+@interface RMStoreTransactionReceiptVerificatorTests : XCTestCase
 
 @end
 
@@ -33,9 +33,9 @@
 {
     id transaction = [self mockPaymentTransactionWithReceipt:nil];
     [_verificator verifyTransaction:transaction success:^{
-        STFail(@"");
+        XCTFail(@"");
     } failure:^(NSError *error) {
-        STAssertNotNil(error, @"");
+        XCTAssertNotNil(error, @"");
     }];
 }
 
@@ -44,7 +44,7 @@
     NSData *receipt = [@"receipt" dataUsingEncoding:NSUTF8StringEncoding];
     id transaction = [self mockPaymentTransactionWithReceipt:receipt];
     [_verificator verifyTransaction:transaction success:^{
-        STFail(@"");
+        XCTFail(@"");
     } failure:^(NSError *error) {
     }];
 }
