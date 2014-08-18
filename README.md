@@ -235,7 +235,7 @@ RMStore will notify that a transaction finished or failed only after all of its 
 
 ###Self-hosted content
 
-RMStore delegates the downloading of self-hosted content via optional the `contentDownloader` delegate. You can provide your own implementation using the `RMStoreContentDownloader` protocol:
+RMStore delegates the downloading of self-hosted content via the optional `contentDownloader` delegate. You can provide your own implementation using the `RMStoreContentDownloader` protocol:
 
 ```objective-c
 - (void)downloadContentForTransaction:(SKPaymentTransaction*)transaction
