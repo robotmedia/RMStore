@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		8700D1C117DCA548005C8F5D /* NSNotification+RMStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */; };
 		8700D1D717DCB011005C8F5D /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8700D1D617DCB011005C8F5D /* libOCMock.a */; };
-		8745CCA5180558990014A274 /* RMTestObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 8745CCA4180558990014A274 /* RMTestObserver.m */; };
 		876046491812FB7500C9B78C /* RMStoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 876046481812FB7500C9B78C /* RMStoreKeychainPersistence.m */; };
 		8760464B18130CBB00C9B78C /* RMStoreKeychainPersistenceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8760464A18130CBB00C9B78C /* RMStoreKeychainPersistenceTests.m */; };
 		8760464D18130DD400C9B78C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8760464C18130DD400C9B78C /* Security.framework */; };
@@ -59,8 +58,8 @@
 		A0AF3DAA17A810B700D2E836 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D3317A8059900D2E836 /* StoreKit.framework */; };
 		A0AF3DAE17A8303800D2E836 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A0AF3DAD17A8303800D2E836 /* Default-568h@2x.png */; };
 		C90EF0F119A20C8200A9E738 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90EF0F019A20C8200A9E738 /* XCTest.framework */; };
-		C9F0A43019A23EE000811E80 /* GTMCodeCoverageApp.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F0A42E19A23EE000811E80 /* GTMCodeCoverageApp.m */; };
 		C9F0A43119A23EE000811E80 /* GTMCodeCoverageTestsXC.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F0A42F19A23EE000811E80 /* GTMCodeCoverageTestsXC.m */; };
+		C9F0A43219A241C700811E80 /* GTMCodeCoverageApp.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F0A42E19A23EE000811E80 /* GTMCodeCoverageApp.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,7 +94,6 @@
 		8700D1D317DCB011005C8F5D /* OCMockObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockObject.h; sourceTree = "<group>"; };
 		8700D1D417DCB011005C8F5D /* OCMockRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMockRecorder.h; sourceTree = "<group>"; };
 		8700D1D617DCB011005C8F5D /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOCMock.a; sourceTree = "<group>"; };
-		8745CCA4180558990014A274 /* RMTestObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMTestObserver.m; sourceTree = "<group>"; };
 		876046471812FB7500C9B78C /* RMStoreKeychainPersistence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMStoreKeychainPersistence.h; sourceTree = "<group>"; };
 		876046481812FB7500C9B78C /* RMStoreKeychainPersistence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreKeychainPersistence.m; sourceTree = "<group>"; };
 		8760464A18130CBB00C9B78C /* RMStoreKeychainPersistenceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreKeychainPersistenceTests.m; sourceTree = "<group>"; };
@@ -325,7 +323,6 @@
 				87950C2217E127A4001DF541 /* RMStoreTransactionReceiptVerificatorTests.m */,
 				87B7853E18105E6A00B5E54E /* RMStoreTransactionTests.m */,
 				87A2A3AB180E8AF500376773 /* RMStoreUserDefaultsPersistenceTests.m */,
-				8745CCA4180558990014A274 /* RMTestObserver.m */,
 				A0AF3D2317A802F300D2E836 /* Supporting Files */,
 				8700D1CC17DCB011005C8F5D /* usr */,
 			);
@@ -488,6 +485,7 @@
 				87A2A3A9180E82BB00376773 /* RMStoreUserDefaultsPersistence.m in Sources */,
 				8793E808180D512E005D7A66 /* RMAppReceipt.m in Sources */,
 				876631F9180EEBF40049B368 /* RMStoreTransaction.m in Sources */,
+				C9F0A43219A241C700811E80 /* GTMCodeCoverageApp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,11 +500,9 @@
 				87B7853F18105E6A00B5E54E /* RMStoreTransactionTests.m in Sources */,
 				87D5A74217DE893E000E2B6C /* RMProducstRequestDelegateTests.m in Sources */,
 				87950C2317E127A4001DF541 /* RMStoreTransactionReceiptVerificatorTests.m in Sources */,
-				8745CCA5180558990014A274 /* RMTestObserver.m in Sources */,
 				87A2A3A0180D7B0400376773 /* RMAppReceiptTests.m in Sources */,
 				87A2A3A3180D817600376773 /* RMAppReceiptIAPTests.m in Sources */,
 				87A2A3AC180E8AF500376773 /* RMStoreUserDefaultsPersistenceTests.m in Sources */,
-				C9F0A43019A23EE000811E80 /* GTMCodeCoverageApp.m in Sources */,
 				C9F0A43119A23EE000811E80 /* GTMCodeCoverageTestsXC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -576,6 +572,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					"GTM_IS_COVERAGE_BUILD=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
