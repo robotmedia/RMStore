@@ -150,7 +150,7 @@ For Apple-hosted and self-hosted downloads:
 
 - (void)storeDownloadUpdated:(NSNotification*)notification
 {
-    SKDownload *download = notification.storeDownload; // Apple-hosted only
+    SKDownload *download = notification.rm_storeDownload; // Apple-hosted only
     NSString *productIdentifier = notification.rm_productIdentifier;
     SKPaymentTransaction *transaction = notification.rm_transaction;
     float progress = notification.rm_downloadProgress;
