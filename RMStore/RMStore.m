@@ -63,37 +63,37 @@ typedef void (^RMStoreSuccessBlock)();
 
 @implementation NSNotification(RMStore)
 
-- (float)downloadProgress
+- (float)rm_downloadProgress
 {
     return [self.userInfo[RMStoreNotificationDownloadProgress] floatValue];
 }
 
-- (NSArray*)invalidProductIdentifiers
+- (NSArray*)rm_invalidProductIdentifiers
 {
     return (self.userInfo)[RMStoreNotificationInvalidProductIdentifiers];
 }
 
-- (NSString*)productIdentifier
+- (NSString*)rm_productIdentifier
 {
     return (self.userInfo)[RMStoreNotificationProductIdentifier];
 }
 
-- (NSArray*)products
+- (NSArray*)rm_products
 {
     return (self.userInfo)[RMStoreNotificationProducts];
 }
 
-- (SKDownload*)storeDownload
+- (SKDownload*)rm_storeDownload
 {
     return (self.userInfo)[RMStoreNotificationStoreDownload];
 }
 
-- (NSError*)storeError
+- (NSError*)rm_storeError
 {
     return (self.userInfo)[RMStoreNotificationStoreError];
 }
 
-- (SKPaymentTransaction*)transaction
+- (SKPaymentTransaction*)rm_transaction
 {
     return (self.userInfo)[RMStoreNotificationTransaction];
 }

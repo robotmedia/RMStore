@@ -24,31 +24,31 @@
 
 - (void)testInvalidProductIdentifiers
 {
-    NSArray *result = _notification.invalidProductIdentifiers;
+    NSArray *result = _notification.rm_invalidProductIdentifiers;
     XCTAssertNil(result, @"");
 }
 
 - (void)testProductIdentifier
 {
-    NSString *result = _notification.productIdentifier;
+    NSString *result = _notification.rm_productIdentifier;
     XCTAssertNil(result, @"");
 }
 
 - (void)testProducts
 {
-    NSArray *result = _notification.products;
+    NSArray *result = _notification.rm_products;
     XCTAssertNil(result, @"");
 }
 
 - (void)testStoreError
 {
-    NSError *result = _notification.storeError;
+    NSError *result = _notification.rm_storeError;
     XCTAssertNil(result, @"");
 }
 
 - (void)testTransaction
 {
-    SKPaymentTransaction *result = _notification.transaction;
+    SKPaymentTransaction *result = _notification.rm_transaction;
     XCTAssertNil(result, @"");
 }
 
