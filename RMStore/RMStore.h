@@ -274,30 +274,30 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  @discussion Corresponds to [SKDownload progress].
  @discussion Used in @c storeDownloadUpdated:.
  */
-@property (nonatomic, readonly) float downloadProgress;
+@property (nonatomic, readonly) float rm_downloadProgress;
 
 /** Array of product identifiers that were not recognized by the App Store. Used in @c storeProductsRequestFinished:.
  */
-@property (nonatomic, readonly) NSArray *invalidProductIdentifiers;
+@property (nonatomic, readonly) NSArray *rm_invalidProductIdentifiers;
 
 /** Used in @c storeDownload*:, @c storePaymentTransactionFinished: and @c storePaymentTransactionFailed:.
  */
-@property (nonatomic, readonly) NSString *productIdentifier;
+@property (nonatomic, readonly) NSString *rm_productIdentifier;
 
 /** Array of SKProducts, one product for each valid product identifier provided in the corresponding request. Used in @c storeProductsRequestFinished:.
  */
-@property (nonatomic, readonly) NSArray *products;
+@property (nonatomic, readonly) NSArray *rm_products;
 
 /** Used in @c storeDownload*:.
  */
-@property (nonatomic, readonly) SKDownload *storeDownload __attribute__((availability(ios,introduced=6.0)));
+@property (nonatomic, readonly) SKDownload *rm_storeDownload __attribute__((availability(ios,introduced=6.0)));
 
 /** Used in @c storeDownloadFailed:, @c storePaymentTransactionFailed:, @c storeProductsRequestFailed:, @c storeRefreshReceiptFailed: and @c storeRestoreTransactionsFailed:.
  */
-@property (nonatomic, readonly) NSError *storeError;
+@property (nonatomic, readonly) NSError *rm_storeError;
 
 /** Used in @c storeDownload*:, @c storePaymentTransactionFinished: and in @c storePaymentTransactionFailed:.
  */
-@property (nonatomic, readonly) SKPaymentTransaction *transaction;
+@property (nonatomic, readonly) SKPaymentTransaction *rm_transaction;
 
 @end

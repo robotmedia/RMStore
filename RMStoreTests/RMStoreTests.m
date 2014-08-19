@@ -280,10 +280,10 @@ extern NSString* const RMStoreNotificationStoreError;
     
     id observer = [OCMockObject mockForProtocol:@protocol(RMStoreObserver)];
     [[observer expect] storeDownloadUpdated:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        SKDownload *returnedDownload = notification.storeDownload;
-        SKPaymentTransaction *returnedTransaction = notification.transaction;
-        NSString *returnedProductID = notification.productIdentifier;
-        float downloadProgress = notification.downloadProgress;
+        SKDownload *returnedDownload = notification.rm_storeDownload;
+        SKPaymentTransaction *returnedTransaction = notification.rm_transaction;
+        NSString *returnedProductID = notification.rm_productIdentifier;
+        float downloadProgress = notification.rm_downloadProgress;
         XCTAssertEqualObjects(download, returnedDownload);
         XCTAssertEqualObjects(transaction, returnedTransaction);
         XCTAssertTrue([productID isEqualToString:returnedProductID]);
@@ -312,10 +312,10 @@ extern NSString* const RMStoreNotificationStoreError;
     id observer = [OCMockObject mockForProtocol:@protocol(RMStoreObserver)];
     [self observer:observer expectStoreDownloadCanceledWithDownload:download];
     [[observer expect] storePaymentTransactionFailed:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        SKPaymentTransaction *returnedTransaction = notification.transaction;
-        NSString *returnedProductID = notification.productIdentifier;
-        NSError *error = notification.storeError;
-        XCTAssertNil(notification.storeDownload);
+        SKPaymentTransaction *returnedTransaction = notification.rm_transaction;
+        NSString *returnedProductID = notification.rm_productIdentifier;
+        NSError *error = notification.rm_storeError;
+        XCTAssertNil(notification.rm_storeDownload);
         XCTAssertEqualObjects(transaction, returnedTransaction);
         XCTAssertTrue([productID isEqualToString:returnedProductID]);
         XCTAssertTrue([error.domain isEqualToString:RMStoreErrorDomain]);
@@ -344,10 +344,10 @@ extern NSString* const RMStoreNotificationStoreError;
     id observer = [OCMockObject mockForProtocol:@protocol(RMStoreObserver)];
     [self observer:observer expectStoreDownloadCanceledWithDownload:download];
     [[observer expect] storePaymentTransactionFailed:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        SKPaymentTransaction *returnedTransaction = notification.transaction;
-        NSString *returnedProductID = notification.productIdentifier;
-        NSError *error = notification.storeError;
-        XCTAssertNil(notification.storeDownload);
+        SKPaymentTransaction *returnedTransaction = notification.rm_transaction;
+        NSString *returnedProductID = notification.rm_productIdentifier;
+        NSError *error = notification.rm_storeError;
+        XCTAssertNil(notification.rm_storeDownload);
         XCTAssertEqualObjects(transaction, returnedTransaction);
         XCTAssertTrue([productID isEqualToString:returnedProductID]);
         XCTAssertTrue([error.domain isEqualToString:RMStoreErrorDomain]);
@@ -569,9 +569,9 @@ extern NSString* const RMStoreNotificationStoreError;
     
     id observer = [OCMockObject mockForProtocol:@protocol(RMStoreObserver)];
     [[observer expect] storeDownloadPaused:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        SKDownload *returnedDownload = notification.storeDownload;
-        SKPaymentTransaction *returnedTransaction = notification.transaction;
-        NSString *returnedProductID = notification.productIdentifier;
+        SKDownload *returnedDownload = notification.rm_storeDownload;
+        SKPaymentTransaction *returnedTransaction = notification.rm_transaction;
+        NSString *returnedProductID = notification.rm_productIdentifier;
         XCTAssertEqualObjects(download, returnedDownload);
         XCTAssertEqualObjects(transaction, returnedTransaction);
         XCTAssertTrue([productID isEqualToString:returnedProductID]);
@@ -648,9 +648,9 @@ extern NSString* const RMStoreNotificationStoreError;
 
     id observer = [OCMockObject mockForProtocol:@protocol(RMStoreObserver)];
     [[observer expect] storeDownloadUpdated:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        SKPaymentTransaction *returnedTransaction = notification.transaction;
-        NSString *returnedProductID = notification.productIdentifier;
-        float downloadProgress = notification.downloadProgress;
+        SKPaymentTransaction *returnedTransaction = notification.rm_transaction;
+        NSString *returnedProductID = notification.rm_productIdentifier;
+        float downloadProgress = notification.rm_downloadProgress;
         XCTAssertEqualObjects(transaction, returnedTransaction);
         XCTAssertTrue([productID isEqualToString:returnedProductID]);
         XCTAssertTrue(downloader.progress == downloadProgress);
@@ -803,9 +803,9 @@ extern NSString* const RMStoreNotificationStoreError;
     
     id observer = [OCMockObject mockForProtocol:@protocol(RMStoreObserver)];
     [[observer expect] storeDownloadUpdated:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        SKPaymentTransaction *returnedTransaction = notification.transaction;
-        NSString *returnedProductID = notification.productIdentifier;
-        float downloadProgress = notification.downloadProgress;
+        SKPaymentTransaction *returnedTransaction = notification.rm_transaction;
+        NSString *returnedProductID = notification.rm_productIdentifier;
+        float downloadProgress = notification.rm_downloadProgress;
         XCTAssertEqualObjects(transaction, returnedTransaction);
         XCTAssertTrue([productID isEqualToString:returnedProductID]);
         XCTAssertTrue(downloader.progress == downloadProgress);
@@ -1136,10 +1136,10 @@ extern NSString* const RMStoreNotificationStoreError;
     SKPaymentTransaction *transaction = download.transaction;
     NSString *productID = transaction.payment.productIdentifier;
     [[observer expect] storeDownloadFailed:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        XCTAssertEqualObjects(download, notification.storeDownload);
-        XCTAssertEqualObjects(transaction, notification.transaction);
-        XCTAssertTrue([productID isEqualToString:notification.productIdentifier]);
-        XCTAssertEqualObjects(error, notification.storeError);
+        XCTAssertEqualObjects(download, notification.rm_storeDownload);
+        XCTAssertEqualObjects(transaction, notification.rm_transaction);
+        XCTAssertTrue([productID isEqualToString:notification.rm_productIdentifier]);
+        XCTAssertEqualObjects(error, notification.rm_storeError);
         return YES;
     }]];
 }
@@ -1148,10 +1148,10 @@ extern NSString* const RMStoreNotificationStoreError;
 {
     NSString *productID = transaction.payment.productIdentifier;
     [[observer expect] storeDownloadFailed:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        XCTAssertNil(notification.storeDownload);
-        XCTAssertEqualObjects(transaction, notification.transaction);
-        XCTAssertTrue([productID isEqualToString:notification.productIdentifier]);
-        XCTAssertEqualObjects(error, notification.storeError);
+        XCTAssertNil(notification.rm_storeDownload);
+        XCTAssertEqualObjects(transaction, notification.rm_transaction);
+        XCTAssertTrue([productID isEqualToString:notification.rm_productIdentifier]);
+        XCTAssertEqualObjects(error, notification.rm_storeError);
         return YES;
     }]];
 }
@@ -1161,10 +1161,10 @@ extern NSString* const RMStoreNotificationStoreError;
     SKPaymentTransaction *transaction = download.transaction;
     NSString *productID = transaction.payment.productIdentifier;
     [[observer expect] storeDownloadFinished:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        XCTAssertEqualObjects(download, notification.storeDownload);
-        XCTAssertEqualObjects(transaction, notification.transaction);
-        XCTAssertTrue([productID isEqualToString:notification.productIdentifier]);
-        XCTAssertNil(notification.storeError);
+        XCTAssertEqualObjects(download, notification.rm_storeDownload);
+        XCTAssertEqualObjects(transaction, notification.rm_transaction);
+        XCTAssertTrue([productID isEqualToString:notification.rm_productIdentifier]);
+        XCTAssertNil(notification.rm_storeError);
         return YES;
     }]];
 }
@@ -1173,10 +1173,10 @@ extern NSString* const RMStoreNotificationStoreError;
 {
     NSString *productID = transaction.payment.productIdentifier;
     [[observer expect] storeDownloadFinished:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        XCTAssertNil(notification.storeDownload);
-        XCTAssertEqualObjects(transaction, notification.transaction);
-        XCTAssertTrue([productID isEqualToString:notification.productIdentifier]);
-        XCTAssertNil(notification.storeError);
+        XCTAssertNil(notification.rm_storeDownload);
+        XCTAssertEqualObjects(transaction, notification.rm_transaction);
+        XCTAssertTrue([productID isEqualToString:notification.rm_productIdentifier]);
+        XCTAssertNil(notification.rm_storeError);
         return YES;
     }]];
 }
@@ -1187,10 +1187,10 @@ extern NSString* const RMStoreNotificationStoreError;
     SKPaymentTransaction *transaction = download.transaction;
     NSString *productID = transaction.payment.productIdentifier;
     [[observer expect] storeDownloadCanceled:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        XCTAssertEqualObjects(download, notification.storeDownload);
-        XCTAssertEqualObjects(transaction, notification.transaction);
-        XCTAssertTrue([productID isEqualToString:notification.productIdentifier]);
-        XCTAssertNil(notification.storeError);
+        XCTAssertEqualObjects(download, notification.rm_storeDownload);
+        XCTAssertEqualObjects(transaction, notification.rm_transaction);
+        XCTAssertTrue([productID isEqualToString:notification.rm_productIdentifier]);
+        XCTAssertNil(notification.rm_storeError);
         return YES;
     }]];
 }
@@ -1199,10 +1199,10 @@ extern NSString* const RMStoreNotificationStoreError;
 {
     NSString *productID = transaction.payment.productIdentifier;
     [[observer expect] storePaymentTransactionFailed:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        XCTAssertNil(notification.storeDownload);
-        XCTAssertEqualObjects(transaction, notification.transaction);
-        XCTAssertTrue([productID isEqualToString:notification.productIdentifier]);
-        XCTAssertEqualObjects(error, notification.storeError);
+        XCTAssertNil(notification.rm_storeDownload);
+        XCTAssertEqualObjects(transaction, notification.rm_transaction);
+        XCTAssertTrue([productID isEqualToString:notification.rm_productIdentifier]);
+        XCTAssertEqualObjects(error, notification.rm_storeError);
         return YES;
     }]];
 }
@@ -1211,10 +1211,10 @@ extern NSString* const RMStoreNotificationStoreError;
 {
     NSString *productID = transaction.payment.productIdentifier;
     [[observer expect] storePaymentTransactionFinished:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
-        XCTAssertNil(notification.storeDownload);
-        XCTAssertEqualObjects(transaction, notification.transaction);
-        XCTAssertTrue([productID isEqualToString:notification.productIdentifier]);
-        XCTAssertNil(notification.storeError);
+        XCTAssertNil(notification.rm_storeDownload);
+        XCTAssertEqualObjects(transaction, notification.rm_transaction);
+        XCTAssertTrue([productID isEqualToString:notification.rm_productIdentifier]);
+        XCTAssertNil(notification.rm_storeError);
         return YES;
     }]];
 }
