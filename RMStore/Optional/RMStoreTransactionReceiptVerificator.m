@@ -145,7 +145,7 @@ static const char _base64EncodingTable[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
             if (!data)
             {
                 RMStoreLog(@"Server Connection Failed");
-                NSError *wrapperError = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnableToCompleteVerification userInfo:@{NSUnderlyingErrorKey : error, NSLocalizedDescriptionKey : NSLocalizedString(@"Connection to Apple failed. Check the underlying error for more info.", @"Error description")}];
+                NSError *wrapperError = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnableToCompleteVerification userInfo:@{NSUnderlyingErrorKey : error, NSLocalizedDescriptionKey : NSLocalizedStringFromTable(@"Connection to Apple failed. Check the underlying error for more info.", @"RMStore", @"Error description")}];
                 if (failureBlock != nil)
                 {
                     failureBlock(wrapperError);

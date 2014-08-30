@@ -89,14 +89,14 @@
     const BOOL receiptVerified = [self verifyAppReceipt:receipt];
     if (!receiptVerified)
     {
-        [self failWithBlock:failureBlock message:NSLocalizedString(@"The app receipt failed verification", @"")];
+        [self failWithBlock:failureBlock message:NSLocalizedStringFromTable(@"The app receipt failed verification", @"RMStore", nil)];
         return NO;
     }
     SKPayment *payment = transaction.payment;
     const BOOL transactionVerified = [receipt containsInAppPurchaseOfProductIdentifier:payment.productIdentifier];
     if (!transactionVerified)
     {
-        [self failWithBlock:failureBlock message:NSLocalizedString(@"The app receipt does not contain the given product", @"")];
+        [self failWithBlock:failureBlock message:NSLocalizedStringFromTable(@"The app receipt does not contain the given product", @"RMStore", nil)];
         return NO;
     }
     if (successBlock)
