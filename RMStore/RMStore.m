@@ -196,7 +196,7 @@ typedef void (^RMStoreSuccessBlock)();
         RMStoreLog(@"unknown product id %@", productIdentifier)
         if (failureBlock != nil)
         {
-            NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnknownProductIdentifier userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Unknown product identifier", "Error description")}];
+            NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnknownProductIdentifier userInfo:@{NSLocalizedDescriptionKey: NSLocalizedStringFromTable(@"Unknown product identifier", @"RMStore", nil)}];
             failureBlock(nil, error);
         }
         return;
@@ -433,7 +433,7 @@ typedef void (^RMStoreSuccessBlock)();
 
     [self postNotificationWithName:RMSKDownloadCanceled download:download userInfoExtras:nil];
 
-    NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeDownloadCanceled userInfo:@{NSLocalizedDescriptionKey: NSLocalizedString(@"Download canceled", "Error description")}];
+    NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeDownloadCanceled userInfo:@{NSLocalizedDescriptionKey: NSLocalizedStringFromTable(@"Download canceled", @"RMStore", nil)}];
 
     const BOOL hasPendingDownloads = [self.class hasPendingDownloadsInTransaction:transaction];
     if (!hasPendingDownloads)
