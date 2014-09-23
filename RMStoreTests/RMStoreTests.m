@@ -29,8 +29,11 @@
 
 extern NSString* const RMSKRefreshReceiptFailed;
 extern NSString* const RMSKRefreshReceiptFinished;
+extern NSString* const RMSKPaymentTransactionDeferred;
 extern NSString* const RMSKRestoreTransactionsFailed;
 extern NSString* const RMSKRestoreTransactionsFinished;
+extern NSString* const RMStoreNotificationProductIdentifier;
+extern NSString* const RMStoreNotificationTransaction;
 
 extern NSString* const RMStoreNotificationStoreError;
 
@@ -960,6 +963,22 @@ extern NSString* const RMStoreNotificationStoreError;
     [_store paymentQueue:queue updatedTransactions:@[originalTransaction]];
 }
 
+- (void)testPaymentQueueUpdatedTransactions_Deferred
+{ SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_7_1)
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateDeferred];
+    id observerMock = [self observerMockForNotification:RMSKPaymentTransactionDeferred checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        XCTAssertEqualObjects(userInfo[RMStoreNotificationProductIdentifier], [[transaction payment] productIdentifier], @"");
+        XCTAssertEqualObjects(userInfo[RMStoreNotificationTransaction], transaction, @"");
+        return YES;
+    }];
+    
+    [_store paymentQueue:queue updatedTransactions:@[transaction]];
+    
+    [observerMock verify];
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
 - (void)testPaymentQueueRestoreCompletedTransactionsFinished
 {
     id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFinished];
@@ -1240,7 +1259,7 @@ extern NSString* const RMStoreNotificationStoreError;
     [[[transaction stub] andReturn:@"transaction"] transactionIdentifier];
     [[[transaction stub] andReturn:[NSData data]] transactionReceipt];
     id payment = [OCMockObject mockForClass:[SKPayment class]];
-    [[[payment stub] andReturn:@"test"] productIdentifier];
+    [[[payment stub] andReturn:self.name] productIdentifier];
     [[[transaction stub] andReturn:payment] payment];
     [[[transaction stub] andReturn:downloads] downloads];
     for (id download in downloads)
