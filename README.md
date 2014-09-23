@@ -103,6 +103,12 @@ RMStore sends notifications of StoreKit related events and extends `NSNotificati
 Payment transaction notifications are sent after a payment has been requested or for each restored transaction.
 
 ```objective-c
+- (void)storePaymentTransactionFinished:(NSNotification*)notification
+{
+    NSString *productIdentifier = notification.rm_productIdentifier;
+    SKPaymentTransaction *transaction = notification.rm_transaction;
+}
+
 - (void)storePaymentTransactionFailed:(NSNotification*)notification
 {
     NSError *error = notification.rm_storeError;
@@ -110,7 +116,9 @@ Payment transaction notifications are sent after a payment has been requested or
     SKPaymentTransaction *transaction = notification.rm_transaction;
 }
 
-- (void)storePaymentTransactionFinished:(NSNotification*)notification
+// iOS 8+ only
+
+- (void)storePaymentTransactionDeferred:(NSNotification*)notification
 {
     NSString *productIdentifier = notification.rm_productIdentifier;
     SKPaymentTransaction *transaction = notification.rm_transaction;
@@ -255,7 +263,7 @@ For more info, check out the [wiki](https://github.com/robotmedia/RMStore/wiki/T
 
 ##Requirements
 
-RMStore requires iOS 5.0 or above and ARC. Some features are only available for iOS 6.0 and iOS 7.0.
+RMStore requires iOS 5.0 or above and ARC.
 
 ##Roadmap
 
