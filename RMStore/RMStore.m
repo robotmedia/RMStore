@@ -30,6 +30,7 @@ NSString* const RMSKDownloadFailed = @"RMSKDownloadFailed";
 NSString* const RMSKDownloadFinished = @"RMSKDownloadFinished";
 NSString* const RMSKDownloadPaused = @"RMSKDownloadPaused";
 NSString* const RMSKDownloadUpdated = @"RMSKDownloadUpdated";
+NSString* const RMSKPaymentTransactionDeferred = @"RMSKPaymentTransactionDeferred";
 NSString* const RMSKPaymentTransactionFailed = @"RMSKPaymentTransactionFailed";
 NSString* const RMSKPaymentTransactionFinished = @"RMSKPaymentTransactionFinished";
 NSString* const RMSKProductsRequestFailed = @"RMSKProductsRequestFailed";
@@ -315,6 +316,7 @@ typedef void (^RMStoreSuccessBlock)();
     [self addStoreObserver:observer selector:@selector(storeDownloadUpdated:) notificationName:RMSKDownloadUpdated];
     [self addStoreObserver:observer selector:@selector(storeProductsRequestFailed:) notificationName:RMSKProductsRequestFailed];
     [self addStoreObserver:observer selector:@selector(storeProductsRequestFinished:) notificationName:RMSKProductsRequestFinished];
+    [self addStoreObserver:observer selector:@selector(storePaymentTransactionDeferred:) notificationName:RMSKPaymentTransactionDeferred];
     [self addStoreObserver:observer selector:@selector(storePaymentTransactionFailed:) notificationName:RMSKPaymentTransactionFailed];
     [self addStoreObserver:observer selector:@selector(storePaymentTransactionFinished:) notificationName:RMSKPaymentTransactionFinished];
     [self addStoreObserver:observer selector:@selector(storeRefreshReceiptFailed:) notificationName:RMSKRefreshReceiptFailed];
@@ -332,6 +334,7 @@ typedef void (^RMStoreSuccessBlock)();
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKDownloadUpdated object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKProductsRequestFinished object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionDeferred object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionFinished object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRefreshReceiptFailed object:self];
@@ -366,6 +369,10 @@ typedef void (^RMStoreSuccessBlock)();
                 break;
             case SKPaymentTransactionStateRestored:
                 [self didRestoreTransaction:transaction queue:queue];
+                break;
+            case SKPaymentTransactionStateDeferred:
+                [self didDeferTransaction:transaction];
+                break;
             default:
                 break;
         }
@@ -569,6 +576,11 @@ typedef void (^RMStoreSuccessBlock)();
         RMStoreLog(@"WARNING: no receipt verification");
         [self didVerifyTransaction:transaction queue:queue];
     }
+}
+
+- (void)didDeferTransaction:(SKPaymentTransaction *)transaction
+{
+    [self postNotificationWithName:RMSKPaymentTransactionDeferred transaction:transaction userInfoExtras:nil];
 }
 
 - (void)didVerifyTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue

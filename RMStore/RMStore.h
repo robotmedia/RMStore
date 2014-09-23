@@ -252,6 +252,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  */
 - (void)storeDownloadUpdated:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
 
+- (void)storePaymentTransactionDeferred:(NSNotification*)notification __attribute__((availability(ios,introduced=8.0)));
 - (void)storePaymentTransactionFailed:(NSNotification*)notification;
 - (void)storePaymentTransactionFinished:(NSNotification*)notification;
 - (void)storeProductsRequestFailed:(NSNotification*)notification;
