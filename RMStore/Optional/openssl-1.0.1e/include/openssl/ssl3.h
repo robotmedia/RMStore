@@ -388,6 +388,7 @@ typedef struct ssl3_buffer_st
 #define TLS1_FLAGS_TLS_PADDING_BUG		0x0008
 #define TLS1_FLAGS_SKIP_CERT_VERIFY		0x0010
 #define TLS1_FLAGS_KEEP_HANDSHAKE		0x0020
+#define SSL3_FLAGS_CCS_OK			0x0080
  
 /* SSL3_FLAGS_SGC_RESTART_DONE is set when we
  * restart a handshake because of MS SGC and so prevents us
@@ -539,6 +540,15 @@ typedef struct ssl3_state_st
 	/* Set if we saw the Next Protocol Negotiation extension from our peer. */
 	int next_proto_neg_seen;
 #endif
+
+#ifndef OPENSSL_NO_TLSEXT
+#ifndef OPENSSL_NO_EC
+	/* This is set to true if we believe that this is a version of Safari
+	 * running on OS X 10.6 or newer. We wish to know this because Safari
+	 * on 10.8 .. 10.8.3 has broken ECDHE-ECDSA support. */
+	char is_probably_safari;
+#endif /* !OPENSSL_NO_EC */
+#endif /* !OPENSSL_NO_TLSEXT */
 	} SSL3_STATE;
 
 #endif
