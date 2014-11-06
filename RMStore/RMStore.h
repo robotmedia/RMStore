@@ -164,6 +164,8 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 /// @name Managing Products
 ///---------------------------------------------
 
+@property (nonatomic) bool downloadProductsIfNotAvailable;
+
 - (SKProduct*)productForIdentifier:(NSString*)productIdentifier;
 
 + (NSString*)localizedPriceOfProduct:(SKProduct*)product;
