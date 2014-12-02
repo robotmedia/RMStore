@@ -85,7 +85,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 
 /** Request localized information about a set of products from the Apple App Store. `successBlock` will be called if the products request is successful, `failureBlock` if it isn't.
  @param identifiers The set of product identifiers for the products you wish to retrieve information of.
- @param successBlock The block to be called if the products request is sucessful. Can be `nil`. It takes two parameters: `products`, an array of SKProducts, one product for each valid product identifier provided in the original request, and `invalidProductIdentifiers`, an array of product identifiers that were not recognized by the App Store. 
+ @param successBlock The block to be called if the products request is sucessful. Can be `nil`. It takes two parameters: `products`, an array of SKProducts, one product for each valid product identifier provided in the original request, and `invalidProductIdentifiers`, an array of product identifiers that were not recognized by the App Store.
  @param failureBlock The block to be called if the products request fails. Can be `nil`.
  */
 - (void)requestProducts:(NSSet*)identifiers
@@ -100,7 +100,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  @param successBlock The block to be called if the restore transactions request is sucessful. Can be `nil`.
  @param failureBlock The block to be called if the restore transactions request fails. Can be `nil`.
  */
-- (void)restoreTransactionsOnSuccess:(void (^)())successBlock
+- (void)restoreTransactionsOnSuccess:(void (^)(NSArray *transactions))successBlock
                              failure:(void (^)(NSError *error))failureBlock;
 
 
@@ -110,7 +110,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  @param failureBlock The block to be called if the restore transactions request fails. Can be `nil`.
  */
 - (void)restoreTransactionsOfUser:(NSString*)userIdentifier
-                        onSuccess:(void (^)())successBlock
+                        onSuccess:(void (^)(NSArray *transactions))successBlock
                           failure:(void (^)(NSError *error))failureBlock __attribute__((availability(ios,introduced=7.0)));
 
 #pragma mark Receipt
@@ -121,7 +121,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 /** Returns the url of the bundle’s App Store receipt, or nil if the receipt is missing.
  If this method returns `nil` you should refresh the receipt by calling `refreshReceipt`.
  @see refreshReceipt
-*/
+ */
 + (NSURL*)receiptURL __attribute__((availability(ios,introduced=7.0)));
 
 /** Request to refresh the App Store receipt in case the receipt is invalid or missing.
@@ -151,7 +151,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  */
 @property (nonatomic, weak) id<RMStoreReceiptVerificator> receiptVerificator;
 
-/** 
+/**
  The transaction persistor. It is recommended to provide your own obfuscator if piracy is a concern. The store will use weak obfuscation via `NSKeyedArchiver` by default.
  @see RMStoreKeychainPersistence
  @see RMStoreUserDefaultsPersistence
@@ -217,8 +217,8 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  @param failureBlock Called if the transaction failed verification. If verification could not be completed (e.g., due to connection issues), then error must be of code RMStoreErrorCodeUnableToCompleteVerification to prevent RMStore to finish the transaction. Must be called in the main queu.
  */
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
-                           success:(void (^)())successBlock
-                           failure:(void (^)(NSError *error))failureBlock;
+                  success:(void (^)())successBlock
+                  failure:(void (^)(NSError *error))failureBlock;
 
 @end
 
@@ -300,5 +300,9 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 /** Used in @c storeDownload*:, @c storePaymentTransactionFinished: and in @c storePaymentTransactionFailed:.
  */
 @property (nonatomic, readonly) SKPaymentTransaction *rm_transaction;
+
+/** Used in @c storeRestoreTransactionsFinished:.
+ */
+@property (nonatomic, readonly) NSArray *rm_transactions;
 
 @end

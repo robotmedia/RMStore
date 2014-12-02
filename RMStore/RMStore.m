@@ -48,6 +48,7 @@ NSString* const RMStoreNotificationStoreDownload = @"storeDownload";
 NSString* const RMStoreNotificationStoreError = @"storeError";
 NSString* const RMStoreNotificationStoreReceipt = @"storeReceipt";
 NSString* const RMStoreNotificationTransaction = @"transaction";
+NSString* const RMStoreNotificationTransactions = @"transactions";
 
 #if DEBUG
 #define RMStoreLog(...) NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]);
@@ -99,6 +100,10 @@ typedef void (^RMStoreSuccessBlock)();
     return (self.userInfo)[RMStoreNotificationTransaction];
 }
 
+- (NSArray*)rm_transactions {
+    return (self.userInfo)[RMStoreNotificationTransactions];
+}
+
 @end
 
 @interface RMProductsRequestDelegate : NSObject<SKProductsRequestDelegate>
@@ -129,6 +134,8 @@ typedef void (^RMStoreSuccessBlock)();
     NSMutableDictionary *_products;
     NSMutableSet *_productsRequestDelegates;
     
+    NSMutableArray *_restoredTransactions;
+    
     NSInteger _pendingRestoredTransactionsCount;
     BOOL _restoredCompletedTransactionsFinished;
     
@@ -137,7 +144,7 @@ typedef void (^RMStoreSuccessBlock)();
     void (^_refreshReceiptSuccessBlock)();
     
     void (^_restoreTransactionsFailureBlock)(NSError* error);
-    void (^_restoreTransactionsSuccessBlock)();
+    void (^_restoreTransactionsSuccessBlock)(NSArray* transactions);
 }
 
 - (id) init
@@ -147,6 +154,7 @@ typedef void (^RMStoreSuccessBlock)();
         _addPaymentParameters = [NSMutableDictionary dictionary];
         _products = [NSMutableDictionary dictionary];
         _productsRequestDelegates = [NSMutableSet set];
+        _restoredTransactions = [NSMutableArray array];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
     }
     return self;
@@ -242,18 +250,19 @@ typedef void (^RMStoreSuccessBlock)();
     [self restoreTransactionsOnSuccess:nil failure:nil];
 }
 
-- (void)restoreTransactionsOnSuccess:(RMStoreSuccessBlock)successBlock
-                             failure:(RMStoreFailureBlock)failureBlock
+- (void)restoreTransactionsOnSuccess:(void (^)(NSArray *transactions))successBlock
+                             failure:(void (^)(NSError *error))failureBlock
 {
     _restoredCompletedTransactionsFinished = NO;
     _pendingRestoredTransactionsCount = 0;
+    _restoredTransactions = [NSMutableArray array];
     _restoreTransactionsSuccessBlock = successBlock;
     _restoreTransactionsFailureBlock = failureBlock;
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
 - (void)restoreTransactionsOfUser:(NSString*)userIdentifier
-                        onSuccess:(void (^)())successBlock
+                        onSuccess:(void (^)(NSArray *transactions))successBlock
                           failure:(void (^)(NSError *error))failureBlock
 {
     NSAssert([[SKPaymentQueue defaultQueue] respondsToSelector:@selector(restoreCompletedTransactionsWithApplicationUsername:)], @"restoreCompletedTransactionsWithApplicationUsername: not supported in this iOS version. Use restoreTransactionsOnSuccess:failure: instead.");
@@ -644,16 +653,19 @@ typedef void (^RMStoreSuccessBlock)();
 {
     if (transaction != nil)
     {
+        [_restoredTransactions addObject:transaction];
         _pendingRestoredTransactionsCount--;
     }
     if (_restoredCompletedTransactionsFinished && _pendingRestoredTransactionsCount == 0)
     { // Wait until all restored transations have been verified
+        NSArray *restoredTransactions = [_restoredTransactions copy];
         if (_restoreTransactionsSuccessBlock != nil)
         {
-            _restoreTransactionsSuccessBlock();
+            _restoreTransactionsSuccessBlock(restoredTransactions);
             _restoreTransactionsSuccessBlock = nil;
         }
-        [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsFinished object:self];
+        NSDictionary *userInfo = @{ RMStoreNotificationTransactions : restoredTransactions };
+        [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsFinished object:self userInfo:userInfo];
     }
 }
 

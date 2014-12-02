@@ -55,7 +55,7 @@
 - (void)restoreAction
 {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [[RMStore defaultStore] restoreTransactionsOnSuccess:^{
+    [[RMStore defaultStore] restoreTransactionsOnSuccess:^(NSArray *transactions) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;        
         [self.tableView reloadData];
     } failure:^(NSError *error) {
