@@ -829,9 +829,7 @@ extern NSString* const RMStoreNotificationStoreError;
     _store.contentDownloader = downloader;
     
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
-    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    [[[transaction stub] andReturn:originalTransaction] originalTransaction];
+    id transaction = [self mockRestoredPaymentTransaction];
     [[queue expect] finishTransaction:transaction];
     
     id observer = [OCMockObject mockForProtocol:@protocol(RMStoreObserver)];
@@ -863,12 +861,12 @@ extern NSString* const RMStoreNotificationStoreError;
 - (void)testPaymentQueueUpdatedTransactions_Restored__ExpectRMSKRestoreTransactionsFinished
 {
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
-    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    [[[transaction stub] andReturn:originalTransaction] originalTransaction];
+    id transaction = [self mockRestoredPaymentTransaction];
     [[queue stub] finishTransaction:[OCMArg any]];
     [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
     id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSArray *transactions = userInfo[RMStoreNotificationTransactions];
+        XCTAssertEqualObjects(transactions, @[transaction]);
         return YES;
     }];
     
@@ -881,9 +879,7 @@ extern NSString* const RMStoreNotificationStoreError;
 - (void)testPaymentQueueUpdatedTransactions_Restored__Twice
 {
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
-    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    [[[transaction stub] andReturn:originalTransaction] originalTransaction];
+    id transaction = [self mockRestoredPaymentTransaction];
     [[queue stub] finishTransaction:[OCMArg any]];
     [_store restoreTransactions];
     [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
@@ -904,9 +900,7 @@ extern NSString* const RMStoreNotificationStoreError;
     id verificator = [[RMStoreReceiptVerificatorSuccess alloc] init];
     _store.receiptVerificator = verificator;
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
-    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    [[[transaction stub] andReturn:originalTransaction] originalTransaction];
+    id transaction = [self mockRestoredPaymentTransaction];
     [[queue stub] finishTransaction:[OCMArg any]];
     
     id observerMock = [OCMockObject observerMock];
@@ -922,9 +916,7 @@ extern NSString* const RMStoreNotificationStoreError;
     id verificator = [[RMStoreReceiptVerificatorFailure alloc] init];
     _store.receiptVerificator = verificator;
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
-    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    [[[transaction stub] andReturn:originalTransaction] originalTransaction];
+    id transaction = [self mockRestoredPaymentTransaction];
     [[queue stub] finishTransaction:[OCMArg any]];
     
     id observerMock = [OCMockObject observerMock];
@@ -985,6 +977,8 @@ extern NSString* const RMStoreNotificationStoreError;
 - (void)testPaymentQueueRestoreCompletedTransactionsFinished
 {
     id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSArray *transactions = userInfo[RMStoreNotificationTransactions];
+        XCTAssertEqualObjects(transactions, @[], @"");
         return YES;
     }];
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
@@ -995,41 +989,41 @@ extern NSString* const RMStoreNotificationStoreError;
     [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
-- (void)testPaymentQueueRestoreCompletedTransactionsFinished__Blocks
+- (void)testPaymentQueueRestoreCompletedTransactionsFinished_Queue__Blocks
 {
-    id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
-        return YES;
-    }];
-    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    [_store restoreTransactionsOnSuccess:^(NSArray* transactions) {
-        XCTAssertNotNil(transactions);
-    } failure:^(NSError *error) {
-        XCTFail(@"");
-    }];
-    
-    [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
-    
-    [observerMock verify];
-    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
-}
-
-- (void)testPaymentQueueUpdatedTransations_Restored_TwoTransactions
-{
-    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    
-    id transactionOne = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
-    id originalTransactionOne = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    [[[transactionOne stub] andReturn:originalTransactionOne] originalTransaction];
-
-    id transactionTwo = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
-    id originalTransactionTwo = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    [[[transactionTwo stub] andReturn:originalTransactionTwo] originalTransaction];
-    
-    [[queue stub] finishTransaction:[OCMArg any]];
-    [_store paymentQueue:queue updatedTransactions:@[transactionOne, transactionTwo]];
     id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
         NSArray *transactions = userInfo[RMStoreNotificationTransactions];
-        XCTAssert([transactions containsObject:transactionOne] && [transactions containsObject:transactionTwo]);
+        XCTAssertEqualObjects(transactions, @[], @"");
+        return YES;
+    }];
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    __block BOOL didSucceed = NO;
+    [_store restoreTransactionsOnSuccess:^(NSArray* transactions) {
+        didSucceed = YES;
+        XCTAssertEqualObjects(transactions, @[], @"");
+    } failure:^(NSError *error) {
+        XCTFail(@"");
+    }];
+    
+    [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
+    
+    [observerMock verify];
+    XCTAssertTrue(didSucceed, @"");
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
+}
+
+- (void)testPaymentQueueRestoreCompletedTransactionsFinished_Queue__TwoTransactions_ExpectRMSKRestoreTransactionsFinished
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    [[queue stub] finishTransaction:[OCMArg any]];
+    id transaction1 = [self mockRestoredPaymentTransaction];
+    id transaction2 = [self mockRestoredPaymentTransaction];
+    NSArray *updatedTransactions = @[transaction1, transaction2];
+    [_store paymentQueue:queue updatedTransactions:updatedTransactions];
+    id observerMock = [self observerMockForNotification:RMSKRestoreTransactionsFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
+        NSArray *transactions = userInfo[RMStoreNotificationTransactions];
+        XCTAssertEqualObjects(transactions, updatedTransactions, @"");
         return YES;
     }];
     
@@ -1039,25 +1033,37 @@ extern NSString* const RMStoreNotificationStoreError;
     [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
 }
 
-- (void)testPaymentQueueUpdatedTransations_Restored_TwoTransactions_Blocks
+- (void)testPaymentQueueRestoreCompletedTransactionsFinished_Queue__TwoTransactions_restoreTransactionsOnSuccess_SuccessBlock
 {
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    
-    id transactionOne = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
-    id originalTransactionOne = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    [[[transactionOne stub] andReturn:originalTransactionOne] originalTransaction];
-    
-    id transactionTwo = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
-    id originalTransactionTwo = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    [[[transactionTwo stub] andReturn:originalTransactionTwo] originalTransaction];
     [[queue stub] finishTransaction:[OCMArg any]];
-
+    id transaction1 = [self mockRestoredPaymentTransaction];
+    id transaction2 = [self mockRestoredPaymentTransaction];
+    NSArray *updatedTransactions = @[transaction1, transaction2];
     [_store restoreTransactionsOnSuccess:^(NSArray* transactions) {
-        XCTAssert([transactions containsObject:transactionOne] && [transactions containsObject:transactionTwo]);
+        XCTAssertEqualObjects(transactions, updatedTransactions, @"");
     } failure:^(NSError *error) {
         XCTFail(@"");
     }];
-    [_store paymentQueue:queue updatedTransactions:@[transactionOne, transactionTwo]];
+    [_store paymentQueue:queue updatedTransactions:@[transaction1, transaction2]];
+    
+    [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
+}
+
+- (void)testPaymentQueueRestoreCompletedTransactionsFinished_Queue__TwoTransactions_restoreTransactionsOfUser_SuccessBlock
+{
+    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
+    [[queue stub] finishTransaction:[OCMArg any]];
+    id transaction1 = [self mockRestoredPaymentTransaction];
+    id transaction2 = [self mockRestoredPaymentTransaction];
+    NSArray *updatedTransactions = @[transaction1, transaction2];
+    [_store restoreTransactionsOfUser:self.name onSuccess:^(NSArray* transactions) {
+        XCTAssertEqualObjects(transactions, updatedTransactions, @"");
+    } failure:^(NSError *error) {
+        XCTFail(@"");
+    }];
+    [_store paymentQueue:queue updatedTransactions:@[transaction1, transaction2]];
+    
     [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
 }
 
@@ -1305,6 +1311,14 @@ extern NSString* const RMStoreNotificationStoreError;
 - (id)mockPaymentTransactionWithState:(SKPaymentTransactionState)state
 {
     return [self mockPaymentTransactionWithState:state downloads:@[]];
+}
+
+- (id)mockRestoredPaymentTransaction
+{
+    id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
+    id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
+    [[[transaction stub] andReturn:originalTransaction] originalTransaction];
+    return transaction;
 }
 
 - (id)mockPaymentTransactionWithState:(SKPaymentTransactionState)state downloads:(NSArray*)downloads
