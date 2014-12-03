@@ -19,7 +19,7 @@ RMStore adds [blocks](#storekit-with-blocks) and [notifications](#notifications)
 Using [CocoaPods](http://cocoapods.org/):
 
 ```ruby
-pod 'RMStore', '~> 0.6'
+pod 'RMStore', '~> 0.7'
 ```
 
 Or add the files from the [RMStore](https://github.com/robotmedia/RMStore/tree/master/RMStore) directory if you're doing it manually.
