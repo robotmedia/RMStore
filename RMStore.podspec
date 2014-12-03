@@ -1,8 +1,8 @@
 Pod::Spec.new do |s|
   s.name = 'RMStore'
-  s.version = '0.7.0'
+  s.version = '0.7.1'
   s.license = 'Apache 2.0'
-  s.summary = 'A lightweight iOS framework for In-App Purchases.'
+  s.summary = 'A lightweight iOS library for In-App Purchases. RMStore add blocks and notifications to StoreKit, plus receipt verification, content downloads and transaction persistence.'
   s.homepage = 'https://github.com/robotmedia/RMStore'
   s.author = 'Hermes Pique'
   s.social_media_url = 'https://twitter.com/hpique'
