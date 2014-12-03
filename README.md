@@ -54,7 +54,7 @@ NSSet *products = [NSSet setWithArray:@[@"fabulousIdol", @"rootBeer", @"rubberCh
 ###Restore transactions
 
 ```objective-c
-[[RMStore defaultStore] restoreTransactionsOnSuccess:^{
+[[RMStore defaultStore] restoreTransactionsOnSuccess:^(NSArray *transactions){
     NSLog(@"Transactions restored");
 } failure:^(NSError *error) {
     NSLog(@"Something went wrong");
@@ -133,7 +133,10 @@ Payment transaction notifications are sent after a payment has been requested or
     NSError *error = notification.rm_storeError;
 }
 
-- (void)storeRestoreTransactionsFinished:(NSNotification*)notification { }
+- (void)storeRestoreTransactionsFinished:(NSNotification*)notification 
+{
+	NSArray *transactions = notification.rm_transactions;
+}
 ```
 
 ###Download notifications (iOS 6+ only)
