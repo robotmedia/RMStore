@@ -277,10 +277,22 @@ typedef void (^RMStoreSuccessBlock)();
 
 + (NSURL*)receiptURL
 {
+#if TARGET_OS_IPHONE
     // The general best practice of weak linking using the respondsToSelector: method cannot be used here. Prior to iOS 7, the method was implemented as private API, but that implementation called the doesNotRecognizeSelector: method.
     NSAssert(floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1, @"appStoreReceiptURL not supported in this iOS version.");
     NSURL *url = [[NSBundle mainBundle] appStoreReceiptURL];
     return url;
+#else
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    if (![mainBundle respondsToSelector:@selector(appStoreReceiptURL)])
+    {
+        NSURL *bundleURL = [mainBundle bundleURL];
+        NSURL *receiptURL = [bundleURL URLByAppendingPathComponent:@"Contents/_MASReceipt/receipt"];
+        return receiptURL;
+    }
+    NSURL *url = [[NSBundle mainBundle] appStoreReceiptURL];
+    return url;
+#endif
 }
 
 - (void)refreshReceipt
@@ -416,7 +428,12 @@ typedef void (^RMStoreSuccessBlock)();
 {
     for (SKDownload *download in downloads)
     {
-        switch (download.downloadState)
+#if TARGET_OS_IPHONE
+        SKDownloadState downloadState = download.downloadState;
+#else
+        SKDownloadState downloadState = download.state;
+#endif
+        switch (downloadState)
         {
             case SKDownloadStateActive:
                 [self didUpdateDownload:download queue:queue];
@@ -444,6 +461,7 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)didCancelDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
 {
+#if TARGET_OS_IPHONE
     SKPaymentTransaction *transaction = download.transaction;
     RMStoreLog(@"download %@ for product %@ canceled", download.contentIdentifier, download.transaction.payment.productIdentifier);
 
@@ -456,10 +474,12 @@ typedef void (^RMStoreSuccessBlock)();
     {
         [self didFailTransaction:transaction queue:queue error:error];
     }
+#endif
 }
 
 - (void)didFailDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
 {
+#if TARGET_OS_IPHONE
     NSError *error = download.error;
     SKPaymentTransaction *transaction = download.transaction;
     RMStoreLog(@"download %@ for product %@ failed with error %@", download.contentIdentifier, transaction.payment.productIdentifier, error.debugDescription);
@@ -472,10 +492,12 @@ typedef void (^RMStoreSuccessBlock)();
     {
         [self didFailTransaction:transaction queue:queue error:error];
     }
+#endif
 }
 
 - (void)didFinishDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
 {
+#if TARGET_OS_IPHONE
     SKPaymentTransaction *transaction = download.transaction;
     RMStoreLog(@"download %@ for product %@ finished", download.contentIdentifier, transaction.payment.productIdentifier);
     
@@ -486,6 +508,7 @@ typedef void (^RMStoreSuccessBlock)();
     {
         [self finishTransaction:download.transaction queue:queue];
     }
+#endif
 }
 
 - (void)didPauseDownload:(SKDownload*)download queue:(SKPaymentQueue*)queue
@@ -503,6 +526,7 @@ typedef void (^RMStoreSuccessBlock)();
 
 + (BOOL)hasPendingDownloadsInTransaction:(SKPaymentTransaction*)transaction
 {
+#if TARGET_OS_IPHONE
     for (SKDownload *download in transaction.downloads)
     {
         switch (download.downloadState)
@@ -517,6 +541,7 @@ typedef void (^RMStoreSuccessBlock)();
                 continue;
         }
     }
+#endif
     return NO;
 }
 
@@ -718,7 +743,11 @@ typedef void (^RMStoreSuccessBlock)();
 {
     NSMutableDictionary *mutableExtras = extras ? [NSMutableDictionary dictionaryWithDictionary:extras] : [NSMutableDictionary dictionary];
     mutableExtras[RMStoreNotificationStoreDownload] = download;
+#if TARGET_OS_IPHONE
     [self postNotificationWithName:notificationName transaction:download.transaction userInfoExtras:mutableExtras];
+#else
+    [self postNotificationWithName:notificationName transaction:nil userInfoExtras:mutableExtras];
+#endif
 }
 
 - (void)postNotificationWithName:(NSString*)notificationName transaction:(SKPaymentTransaction*)transaction userInfoExtras:(NSDictionary*)extras
