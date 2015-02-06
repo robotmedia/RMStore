@@ -1,5 +1,5 @@
 //
-//  RMStoreAppReceiptVerificator.m
+//  RMStoreAppReceiptVerifier.m
 //  RMStore
 //
 //  Created by Hermes on 10/15/13.
@@ -18,10 +18,10 @@
 //  limitations under the License.
 //
 
-#import "RMStoreAppReceiptVerificator.h"
+#import "RMStoreAppReceiptVerifier.h"
 #import "RMAppReceipt.h"
 
-@implementation RMStoreAppReceiptVerificator
+@implementation RMStoreAppReceiptVerifier
 
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
                            success:(void (^)())successBlock

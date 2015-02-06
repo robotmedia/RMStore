@@ -1,5 +1,5 @@
 //
-//  RMStoreAppReceiptVerificator.h
+//  RMStoreAppReceiptVerifier.h
 //  RMStore
 //
 //  Created by Hermes on 10/15/13.
@@ -22,10 +22,10 @@
 #import "RMStore.h"
 
 /**
- Reference implementation of an app receipt verificator. If security is a concern you might want to avoid using a verificator whose code is open source.
+ Reference implementation of an app receipt verifier. If security is a concern you might want to avoid using a verifier whose code is open source.
  */
 __attribute__((availability(ios,introduced=7.0)))
-@interface RMStoreAppReceiptVerificator : NSObject<RMStoreReceiptVerificator>
+@interface RMStoreAppReceiptVerifier : NSObject<RMStoreReceiptVerifier>
 
 /**
  The value that will be used to validate the bundle identifier included in the app receipt. Given that it is possible to modify the app bundle in jailbroken devices, setting this value from a hardcoded string might provide better protection.
