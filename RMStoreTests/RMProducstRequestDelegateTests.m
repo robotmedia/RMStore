@@ -25,8 +25,8 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
 
 @interface RMProductsRequestDelegate : NSObject<SKProductsRequestDelegate>
 
-@property (nonatomic, strong) RMSKProductsRequestSuccessBlock successBlock;
-@property (nonatomic, strong) RMSKProductsRequestFailureBlock failureBlock;
+@property (nonatomic, copy) RMSKProductsRequestSuccessBlock successBlock;
+@property (nonatomic, copy) RMSKProductsRequestFailureBlock failureBlock;
 @property (nonatomic, weak) RMStore *store;
 
 @end
