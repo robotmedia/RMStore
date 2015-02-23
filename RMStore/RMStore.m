@@ -632,7 +632,6 @@ typedef void (^RMStoreSuccessBlock)();
 {
     SKPayment *payment = transaction.payment;
 	NSString* productIdentifier = payment.productIdentifier;
-    [queue finishTransaction:transaction];
     [self.transactionPersistor persistTransaction:transaction];
     
     RMAddPaymentParameters *wrapper = [self popAddPaymentParametersForIdentifier:productIdentifier];
@@ -647,6 +646,8 @@ typedef void (^RMStoreSuccessBlock)();
     {
         [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
     }
+    
+    [queue finishTransaction:transaction];
 }
 
 - (void)notifyRestoreTransactionFinishedIfApplicableAfterTransaction:(SKPaymentTransaction*)transaction
