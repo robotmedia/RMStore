@@ -61,7 +61,7 @@
 {
     if (!_bundleVersion)
     {
-        return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+        return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     }
     return _bundleVersion;
 }
