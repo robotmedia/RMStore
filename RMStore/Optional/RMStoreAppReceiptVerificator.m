@@ -61,7 +61,11 @@
 {
     if (!_bundleVersion)
     {
+#if TARGET_OS_IPHONE
+        return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+#else
         return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+#endif
     }
     return _bundleVersion;
 }
