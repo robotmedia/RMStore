@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage = 'https://github.com/robotmedia/RMStore'
   s.author = 'Hermes Pique'
   s.social_media_url = 'https://twitter.com/hpique'
-  s.source = { :git => 'https://github.com/robotmedia/RMStore.git', :tag => "v#{s.version}" }
+  s.source = { :git => 'https://bitbucket.org/ipnossoft/pod-rm-store.git', :tag => "v#{s.version}" }
   s.platform = :ios, '7.0'
   s.frameworks = 'StoreKit'
   s.requires_arc = true
