@@ -1,5 +1,5 @@
 //
-//  RMStoreTransactionReceiptVerificator.m
+//  RMStoreTransactionReceiptVerifier.m
 //  RMStore
 //
 //  Created by Hermes Pique on 7/31/13.
@@ -18,7 +18,7 @@
 //  limitations under the License.
 //
 
-#import "RMStoreTransactionReceiptVerificator.h"
+#import "RMStoreTransactionReceiptVerifier.h"
 
 #ifdef DEBUG
 #define RMStoreLog(...) NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]);
@@ -91,7 +91,7 @@ static const char _base64EncodingTable[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
 @end
 
 
-@implementation RMStoreTransactionReceiptVerificator
+@implementation RMStoreTransactionReceiptVerifier
 
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
                            success:(void (^)())successBlock

@@ -27,16 +27,16 @@ Pod::Spec.new do |s|
     nsudp.source_files = 'RMStore/Optional/RMStoreUserDefaultsPersistence.{h,m}', 'RMStore/Optional/RMStoreTransaction.{h,m}'
   end
 
-  s.subspec 'AppReceiptVerificator' do |arv|
+  s.subspec 'AppReceiptVerifier' do |arv|
     arv.dependency 'RMStore/Core'
     arv.platform = :ios, '7.0'
-    arv.source_files = 'RMStore/Optional/RMStoreAppReceiptVerificator.{h,m}', 'RMStore/Optional/RMAppReceipt.{h,m}'
+    arv.source_files = 'RMStore/Optional/RMStoreAppReceiptVerifier.{h,m}', 'RMStore/Optional/RMAppReceipt.{h,m}'
     arv.dependency 'OpenSSL', '~> 1.0.1'
   end
 
-  s.subspec 'TransactionReceiptVerificator' do |trv|
+  s.subspec 'TransactionReceiptVerifier' do |trv|
     trv.dependency 'RMStore/Core'
-    trv.source_files = 'RMStore/Optional/RMStoreTransactionReceiptVerificator.{h,m}'
+    trv.source_files = 'RMStore/Optional/RMStoreTransactionReceiptVerifier.{h,m}'
   end
 
 end

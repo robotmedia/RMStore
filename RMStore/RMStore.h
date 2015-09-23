@@ -22,7 +22,7 @@
 #import <StoreKit/StoreKit.h>
 
 @protocol RMStoreContentDownloader;
-@protocol RMStoreReceiptVerificator;
+@protocol RMStoreReceiptVerifier;
 @protocol RMStoreTransactionPersistor;
 @protocol RMStoreObserver;
 
@@ -145,11 +145,11 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  */
 @property (nonatomic, weak) id<RMStoreContentDownloader> contentDownloader;
 
-/** The receipt verificator. You can provide your own or use one of the reference implementations provided by the library.
- @see RMStoreAppReceiptVerificator
- @see RMStoreTransactionReceiptVerificator
+/** The receipt verifier. You can provide your own or use one of the reference implementations provided by the library.
+ @see RMStoreAppReceiptVerifier
+ @see RMStoreTransactionReceiptVerifier
  */
-@property (nonatomic, weak) id<RMStoreReceiptVerificator> receiptVerificator;
+@property (nonatomic, weak) id<RMStoreReceiptVerifier> receiptVerifier;
 
 /**
  The transaction persistor. It is recommended to provide your own obfuscator if piracy is a concern. The store will use weak obfuscation via `NSKeyedArchiver` by default.
@@ -209,7 +209,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 
 @end
 
-@protocol RMStoreReceiptVerificator <NSObject>
+@protocol RMStoreReceiptVerifier <NSObject>
 
 /** Verifies the given transaction and calls the given success or failure block accordingly.
  @param transaction The transaction to be verified.

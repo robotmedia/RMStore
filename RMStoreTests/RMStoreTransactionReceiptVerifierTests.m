@@ -1,5 +1,5 @@
 //
-//  RMStoreTransactionReceiptVerificatorTests.m
+//  RMStoreTransactionReceiptVerifierTests.m
 //  RMStore
 //
 //  Created by Hermes on 9/12/13.
@@ -7,32 +7,32 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "RMStoreTransactionReceiptVerificator.h"
+#import "RMStoreTransactionReceiptVerifier.h"
 #import <OCMock/OCMock.h>
 
-@interface RMStoreTransactionReceiptVerificatorTests : XCTestCase
+@interface RMStoreTransactionReceiptVerifierTests : XCTestCase
 
 @end
 
-@implementation RMStoreTransactionReceiptVerificatorTests {
-    RMStoreTransactionReceiptVerificator *_verificator;
+@implementation RMStoreTransactionReceiptVerifierTests {
+    RMStoreTransactionReceiptVerifier *_verifier;
 }
 
 - (void)setUp
 {
-    _verificator = [[RMStoreTransactionReceiptVerificator alloc] init];
+    _verifier = [[RMStoreTransactionReceiptVerifier alloc] init];
 }
 
 - (void)testVerifyTransaction_NoReceipt_Nil_Nil
 {
     id transaction = [self mockPaymentTransactionWithReceipt:nil];
-    [_verificator verifyTransaction:transaction success:nil failure:nil];
+    [_verifier verifyTransaction:transaction success:nil failure:nil];
 }
 
 - (void)testVerifyTransaction_NoReceipt
 {
     id transaction = [self mockPaymentTransactionWithReceipt:nil];
-    [_verificator verifyTransaction:transaction success:^{
+    [_verifier verifyTransaction:transaction success:^{
         XCTFail(@"");
     } failure:^(NSError *error) {
         XCTAssertNotNil(error, @"");
@@ -43,7 +43,7 @@
 {
     NSData *receipt = [@"receipt" dataUsingEncoding:NSUTF8StringEncoding];
     id transaction = [self mockPaymentTransactionWithReceipt:receipt];
-    [_verificator verifyTransaction:transaction success:^{
+    [_verifier verifyTransaction:transaction success:^{
         XCTFail(@"");
     } failure:^(NSError *error) {
     }];
@@ -53,7 +53,7 @@
 {
     NSData *receipt = [@"receipt" dataUsingEncoding:NSUTF8StringEncoding];
     id transaction = [self mockPaymentTransactionWithReceipt:receipt];
-    [_verificator verifyTransaction:transaction success:nil failure:nil];
+    [_verifier verifyTransaction:transaction success:nil failure:nil];
 }
 
 - (id)mockPaymentTransactionWithReceipt:(NSData*)receipt
