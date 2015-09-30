@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A0AF3D0717A802F300D2E836"
-               BuildableName = "libRMStore.a"
-               BlueprintName = "RMStore"
+               BlueprintIdentifier = "4C44620A1BBB2369003C0D7D"
+               BuildableName = "RMStore.framework"
+               BlueprintName = "RMStoreFramework"
                ReferencedContainer = "container:RMStore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,21 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A0AF3D1817A802F300D2E836"
-               BuildableName = "RMStoreTests.xctest"
-               BlueprintName = "RMStoreTests"
-               ReferencedContainer = "container:RMStore.xcodeproj">
-            </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "RMStoreKeychainPersistenceTests">
-               </Test>
-            </SkippedTests>
-         </TestableReference>
       </Testables>
       <AdditionalOptions>
       </AdditionalOptions>
@@ -60,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A0AF3D0717A802F300D2E836"
-            BuildableName = "libRMStore.a"
-            BlueprintName = "RMStore"
+            BlueprintIdentifier = "4C44620A1BBB2369003C0D7D"
+            BuildableName = "RMStore.framework"
+            BlueprintName = "RMStoreFramework"
             ReferencedContainer = "container:RMStore.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -75,6 +60,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "4C44620A1BBB2369003C0D7D"
+            BuildableName = "RMStore.framework"
+            BlueprintName = "RMStoreFramework"
+            ReferencedContainer = "container:RMStore.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
