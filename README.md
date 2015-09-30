@@ -27,7 +27,7 @@ Or add the files from the [RMStore](https://github.com/robotmedia/RMStore/tree/m
 
 Check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Installation) for more options.
 
-Using [Carthage](https://github.com/Carthage/Carthage)
+Using [Carthage](https://github.com/Carthage/Carthage):
 - add this repo to your [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile)
 - `@import RMStore;` (Objective-C)
 - `import RMStore` (Swift)
