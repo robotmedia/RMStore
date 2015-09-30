@@ -100,6 +100,7 @@
 		4C44620B1BBB2369003C0D7D /* RMStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RMStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C44620D1BBB2369003C0D7D /* RMStoreFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RMStoreFramework.h; sourceTree = "<group>"; };
 		4C44620F1BBB2369003C0D7D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CBA896A1BBCA48100913336 /* RMStore.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = RMStore.modulemap; sourceTree = "<group>"; };
 		8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotification+RMStoreTests.m"; sourceTree = "<group>"; };
 		8700D1CF17DCB011005C8F5D /* NSNotificationCenter+OCMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+OCMAdditions.h"; sourceTree = "<group>"; };
 		8700D1D017DCB011005C8F5D /* OCMArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMArg.h; sourceTree = "<group>"; };
@@ -222,6 +223,7 @@
 			children = (
 				4C44620D1BBB2369003C0D7D /* RMStoreFramework.h */,
 				4C44620F1BBB2369003C0D7D /* Info.plist */,
+				4CBA896A1BBCA48100913336 /* RMStore.modulemap */,
 			);
 			path = RMStoreFramework;
 			sourceTree = "<group>";
@@ -676,6 +678,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				MODULEMAP_FILE = RMStoreFramework/RMStore.modulemap;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = net.robotmedia.RMStoreFramework;
 				PRODUCT_NAME = RMStore;
@@ -716,6 +719,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				MODULEMAP_FILE = RMStoreFramework/RMStore.modulemap;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = net.robotmedia.RMStoreFramework;
 				PRODUCT_NAME = RMStore;
