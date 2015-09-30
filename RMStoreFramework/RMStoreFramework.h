@@ -16,4 +16,4 @@ FOUNDATION_EXPORT const unsigned char RMStoreFrameworkVersionString[];
 
 #import "RMStore.h"
 #import "RMStoreKeychainPersistence.h"
-#import "RMSToreUserDefaultsPersistence.h"
+#import "RMStoreUserDefaultsPersistence.h"
