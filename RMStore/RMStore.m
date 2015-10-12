@@ -736,7 +736,17 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)addProduct:(SKProduct*)product
 {
-    _products[product.productIdentifier] = product;    
+    // No idea why product would be nil. In theory, it shouldn't be,
+    // but it looks like a nil product is causing a crash. In fact, it's
+    // the number 1. So let's be a bit safe and ensure product isn't
+    // nil.
+    //
+    // Crash report:
+    // https://rink.hockeyapp.net/manage/apps/37013/app_versions/8/crash_reasons/41648763
+    //
+    if (product) {
+        _products[product.productIdentifier] = product;
+    }
 }
 
 - (void)postNotificationWithName:(NSString*)notificationName download:(SKDownload*)download userInfoExtras:(NSDictionary*)extras
