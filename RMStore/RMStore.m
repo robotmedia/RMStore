@@ -59,7 +59,7 @@ NSString* const RMStoreNotificationTransactions = @"transactions";
 typedef void (^RMSKPaymentTransactionFailureBlock)(SKPaymentTransaction *transaction, NSError *error);
 typedef void (^RMSKPaymentTransactionSuccessBlock)(SKPaymentTransaction *transaction);
 typedef void (^RMSKProductsRequestFailureBlock)(NSError *error);
-typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *invalidIdentifiers);
+typedef void (^RMSKProductsRequestSuccessBlock)(NSArray<SKProduct *> *products, NSArray<NSString *> *invalidIdentifiers);
 typedef void (^RMStoreFailureBlock)(NSError *error);
 typedef void (^RMStoreSuccessBlock)();
 
@@ -134,7 +134,7 @@ typedef void (^RMStoreSuccessBlock)();
     NSMutableDictionary *_products;
     NSMutableSet *_productsRequestDelegates;
     
-    NSMutableArray *_restoredTransactions;
+    NSMutableArray<SKPaymentTransaction *> *_restoredTransactions;
     
     NSInteger _pendingRestoredTransactionsCount;
     BOOL _restoredCompletedTransactionsFinished;
@@ -224,12 +224,12 @@ typedef void (^RMStoreSuccessBlock)();
     [[SKPaymentQueue defaultQueue] addPayment:payment];
 }
 
-- (void)requestProducts:(NSSet*)identifiers
+- (void)requestProducts:(NSSet<NSString *> *)identifiers
 {
     [self requestProducts:identifiers success:nil failure:nil];
 }
 
-- (void)requestProducts:(NSSet*)identifiers
+- (void)requestProducts:(NSSet<NSString *> *)identifiers
                 success:(RMSKProductsRequestSuccessBlock)successBlock
                 failure:(RMSKProductsRequestFailureBlock)failureBlock
 {
@@ -240,7 +240,7 @@ typedef void (^RMStoreSuccessBlock)();
     [_productsRequestDelegates addObject:delegate];
  
     SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:identifiers];
-	productsRequest.delegate = delegate;
+    productsRequest.delegate = delegate;
     
     [productsRequest start];
 }
@@ -250,7 +250,7 @@ typedef void (^RMStoreSuccessBlock)();
     [self restoreTransactionsOnSuccess:nil failure:nil];
 }
 
-- (void)restoreTransactionsOnSuccess:(void (^)(NSArray *transactions))successBlock
+- (void)restoreTransactionsOnSuccess:(void (^)(NSArray<SKPaymentTransaction *> *transactions))successBlock
                              failure:(void (^)(NSError *error))failureBlock
 {
     _restoredCompletedTransactionsFinished = NO;
@@ -262,7 +262,7 @@ typedef void (^RMStoreSuccessBlock)();
 }
 
 - (void)restoreTransactionsOfUser:(NSString*)userIdentifier
-                        onSuccess:(void (^)(NSArray *transactions))successBlock
+                        onSuccess:(void (^)(NSArray<SKPaymentTransaction *> *transactions))successBlock
                           failure:(void (^)(NSError *error))failureBlock
 {
     NSAssert([[SKPaymentQueue defaultQueue] respondsToSelector:@selector(restoreCompletedTransactionsWithApplicationUsername:)], @"restoreCompletedTransactionsWithApplicationUsername: not supported in this iOS version. Use restoreTransactionsOnSuccess:failure: instead.");
@@ -364,7 +364,7 @@ typedef void (^RMStoreSuccessBlock)();
 
 #pragma mark SKPaymentTransactionObserver
 
-- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions
 {
     for (SKPaymentTransaction *transaction in transactions)
     {
@@ -412,7 +412,7 @@ typedef void (^RMStoreSuccessBlock)();
     [[NSNotificationCenter defaultCenter] postNotificationName:RMSKRestoreTransactionsFailed object:self userInfo:userInfo];
 }
 
-- (void)paymentQueue:(SKPaymentQueue *)queue updatedDownloads:(NSArray *)downloads
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedDownloads:(NSArray<SKDownload *> *)downloads
 {
     for (SKDownload *download in downloads)
     {
@@ -616,7 +616,7 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)didDownloadSelfHostedContentForTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
 {
-    NSArray *downloads = [transaction respondsToSelector:@selector(downloads)] ? transaction.downloads : @[];
+    NSArray<SKDownload *> *downloads = [transaction respondsToSelector:@selector(downloads)] ? transaction.downloads : @[];
     if (downloads.count > 0)
     {
         RMStoreLog(@"starting downloads for product %@ started", transaction.payment.productIdentifier);
@@ -658,7 +658,7 @@ typedef void (^RMStoreSuccessBlock)();
     }
     if (_restoredCompletedTransactionsFinished && _pendingRestoredTransactionsCount == 0)
     { // Wait until all restored transations have been verified
-        NSArray *restoredTransactions = [_restoredTransactions copy];
+        NSArray<SKPaymentTransaction *> *restoredTransactions = [_restoredTransactions copy];
         if (_restoreTransactionsSuccessBlock != nil)
         {
             _restoreTransactionsSuccessBlock(restoredTransactions);
@@ -746,8 +746,8 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response
 {
     RMStoreLog(@"products request received response");
-    NSArray *products = [NSArray arrayWithArray:response.products];
-    NSArray *invalidProductIdentifiers = [NSArray arrayWithArray:response.invalidProductIdentifiers];
+    NSArray<SKProduct *> *products = [NSArray arrayWithArray:response.products];
+    NSArray<NSString *> *invalidProductIdentifiers = [NSArray arrayWithArray:response.invalidProductIdentifiers];
     
     for (SKProduct *product in products)
     {
