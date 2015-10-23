@@ -133,7 +133,9 @@ typedef void (^RMStoreSuccessBlock)();
     NSMutableDictionary *_addPaymentParameters; // HACK: We use a dictionary of product identifiers because the returned SKPayment is different from the one we add to the queue. Bad Apple.
     NSMutableDictionary *_products;
     NSMutableSet *_productsRequestDelegates;
+    
     SKProductsRequest *productsRequest;
+    SKMutablePayment *payment;
     
     NSMutableArray *_restoredTransactions;
     
@@ -211,7 +213,7 @@ typedef void (^RMStoreSuccessBlock)();
         }
         return;
     }
-    SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
+    payment = [SKMutablePayment paymentWithProduct:product];
     if ([payment respondsToSelector:@selector(setApplicationUsername:)])
     {
         payment.applicationUsername = userIdentifier;
