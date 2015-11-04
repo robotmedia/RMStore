@@ -8,15 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		4C44620E1BBB2369003C0D7D /* RMStoreFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C44620D1BBB2369003C0D7D /* RMStoreFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4C4462131BBB2391003C0D7D /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D1217A802F300D2E836 /* RMStore.m */; settings = {ASSET_TAGS = (); }; };
+		4C4462131BBB2391003C0D7D /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D1217A802F300D2E836 /* RMStore.m */; };
 		4C4462141BBB2396003C0D7D /* RMStore.h in Headers */ = {isa = PBXBuildFile; fileRef = A0AF3D1017A802F300D2E836 /* RMStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4C4462151BBB2403003C0D7D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D3317A8059900D2E836 /* StoreKit.framework */; };
 		4C4462161BBB241E003C0D7D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
 		4CBA895B1BBC5A8400913336 /* RMStoreKeychainPersistence.h in Headers */ = {isa = PBXBuildFile; fileRef = 876046471812FB7500C9B78C /* RMStoreKeychainPersistence.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4CBA895C1BBC5A8B00913336 /* RMStoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 876046481812FB7500C9B78C /* RMStoreKeychainPersistence.m */; settings = {ASSET_TAGS = (); }; };
-		4CBA895D1BBC5AB200913336 /* RMStoreTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 876631F8180EEBF40049B368 /* RMStoreTransaction.m */; settings = {ASSET_TAGS = (); }; };
+		4CBA895C1BBC5A8B00913336 /* RMStoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 876046481812FB7500C9B78C /* RMStoreKeychainPersistence.m */; };
+		4CBA895D1BBC5AB200913336 /* RMStoreTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 876631F8180EEBF40049B368 /* RMStoreTransaction.m */; };
 		4CBA895E1BBC5ABF00913336 /* RMStoreTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 876631F7180EEBF40049B368 /* RMStoreTransaction.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4CBA89601BBC5AE400913336 /* RMStoreUserDefaultsPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A3A8180E82BB00376773 /* RMStoreUserDefaultsPersistence.m */; settings = {ASSET_TAGS = (); }; };
+		4CBA89601BBC5AE400913336 /* RMStoreUserDefaultsPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A3A8180E82BB00376773 /* RMStoreUserDefaultsPersistence.m */; };
 		4CBA89611BBC5AE800913336 /* RMStoreUserDefaultsPersistence.h in Headers */ = {isa = PBXBuildFile; fileRef = 87A2A3A7180E82BB00376773 /* RMStoreUserDefaultsPersistence.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8700D1C117DCA548005C8F5D /* NSNotification+RMStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */; };
 		8700D1D717DCB011005C8F5D /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8700D1D617DCB011005C8F5D /* libOCMock.a */; };
@@ -676,7 +676,7 @@
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = RMStoreFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				MODULEMAP_FILE = RMStoreFramework/RMStore.modulemap;
@@ -718,7 +718,7 @@
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = RMStoreFramework/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				MODULEMAP_FILE = RMStoreFramework/RMStore.modulemap;
