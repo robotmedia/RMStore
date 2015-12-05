@@ -82,7 +82,11 @@
     
     NSString *productID = [_products objectAtIndex:indexPath.row];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
+    [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction,  RMStoreFinishTransactionBlock finishBlock) {
+        
+        // Finish transaction
+        finishBlock();
+        
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     } failure:^(SKPaymentTransaction *transaction, NSError *error) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
