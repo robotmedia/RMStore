@@ -48,6 +48,11 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 /// @name Calling StoreKit
 ///---------------------------------------------
 
+/**
+ This block should be called by a user in order to finish transaction
+ */
+typedef void (^RMStoreFinishTransactionBlock)();
+
 /** Returns whether the user is allowed to make payments.
  */
 + (BOOL)canMakePayments;
@@ -63,7 +68,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  @param failureBlock The block to be called if the payment fails or there isn't any product with the given identifier. Can be `nil`.
  */
 - (void)addPayment:(NSString*)productIdentifier
-           success:(void (^)(SKPaymentTransaction *transaction))successBlock
+           success:(void (^)(SKPaymentTransaction *transaction, RMStoreFinishTransactionBlock finishBlock))successBlock
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock;
 
 /** Request payment of the product with the given product identifier. `successBlock` will be called if the payment is successful, `failureBlock` if it isn't.
@@ -75,7 +80,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  */
 - (void)addPayment:(NSString*)productIdentifier
               user:(NSString*)userIdentifier
-           success:(void (^)(SKPaymentTransaction *transaction))successBlock
+           success:(void (^)(SKPaymentTransaction *transaction, RMStoreFinishTransactionBlock finishBlock))successBlock
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock __attribute__((availability(ios,introduced=7.0)));
 
 /** Request localized information about a set of products from the Apple App Store.

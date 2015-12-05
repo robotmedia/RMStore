@@ -57,7 +57,7 @@ NSString* const RMStoreNotificationTransactions = @"transactions";
 #endif
 
 typedef void (^RMSKPaymentTransactionFailureBlock)(SKPaymentTransaction *transaction, NSError *error);
-typedef void (^RMSKPaymentTransactionSuccessBlock)(SKPaymentTransaction *transaction);
+typedef void (^RMSKPaymentTransactionSuccessBlock)(SKPaymentTransaction *transaction, RMStoreFinishTransactionBlock finishBlock);
 typedef void (^RMSKProductsRequestFailureBlock)(NSError *error);
 typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *invalidIdentifiers);
 typedef void (^RMStoreFailureBlock)(NSError *error);
@@ -188,7 +188,7 @@ typedef void (^RMStoreSuccessBlock)();
 }
 
 - (void)addPayment:(NSString*)productIdentifier
-           success:(void (^)(SKPaymentTransaction *transaction))successBlock
+           success:(void (^)(SKPaymentTransaction *transaction, RMStoreFinishTransactionBlock finishBlock))successBlock
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
 {
     [self addPayment:productIdentifier user:nil success:successBlock failure:failureBlock];
@@ -196,7 +196,7 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)addPayment:(NSString*)productIdentifier
               user:(NSString*)userIdentifier
-           success:(void (^)(SKPaymentTransaction *transaction))successBlock
+           success:(void (^)(SKPaymentTransaction *transaction, RMStoreFinishTransactionBlock finishBlock))successBlock
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
 {
     SKProduct *product = [self productForIdentifier:productIdentifier];
@@ -631,14 +631,21 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)finishTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
 {
     SKPayment *payment = transaction.payment;
-	NSString* productIdentifier = payment.productIdentifier;
-    [queue finishTransaction:transaction];
-    [self.transactionPersistor persistTransaction:transaction];
+    NSString* productIdentifier = payment.productIdentifier;
+    
+    RMStoreFinishTransactionBlock finishBlock = ^{
+        [queue finishTransaction:transaction];
+        [self.transactionPersistor persistTransaction:transaction];
+    };
     
     RMAddPaymentParameters *wrapper = [self popAddPaymentParametersForIdentifier:productIdentifier];
     if (wrapper.successBlock != nil)
     {
-        wrapper.successBlock(transaction);
+        wrapper.successBlock(transaction, finishBlock);
+    }
+    else
+    {
+        finishBlock();
     }
     
     [self postNotificationWithName:RMSKPaymentTransactionFinished transaction:transaction userInfoExtras:nil];

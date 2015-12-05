@@ -143,10 +143,11 @@
 - (void)testAddPayment_UnknownProduct_Block_Block
 {
     __block BOOL failureBlockCalled;
-    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction) {
+    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction, RMStoreFinishTransactionBlock finishBlock) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warc-retain-cycles"
         XCTFail(@"Success block");
+        finishBlock();
 #pragma GCC diagnostic pop
     } failure:^(SKPaymentTransaction *transaction, NSError *error) {
         failureBlockCalled = YES;
@@ -275,7 +276,7 @@
 - (void)testPaymentQueueUpdatedDownloads_Active
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_5_1)
     id download = [self mockDownloadWithState:SKDownloadStateActive];
-    [[[download stub] andReturnValue:OCMOCK_VALUE(0.5f)] progress];
+    [(SKDownload *)[[download stub] andReturnValue:OCMOCK_VALUE(0.5f)] progress];
     
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased downloads:@[download]];
     NSString *productID = [[transaction payment] productIdentifier];
@@ -288,7 +289,7 @@
         XCTAssertEqualObjects(download, returnedDownload);
         XCTAssertEqualObjects(transaction, returnedTransaction);
         XCTAssertTrue([productID isEqualToString:returnedProductID]);
-        XCTAssertTrue([download progress] == downloadProgress);
+        XCTAssertTrue([(SKDownload *)download progress] == downloadProgress);
         return YES;
     }]];
     [_store addStoreObserver:_observer];
@@ -691,7 +692,8 @@
     id product = [OCMockObject mockForClass:[SKProduct class]];
     [[[product stub] andReturn:@"test"] productIdentifier];
     (_store.products)[@"test"] = product;
-    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction) {
+    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction, RMStoreFinishTransactionBlock finishBlock) {
+        finishBlock();
        XCTAssertEqualObjects(transaction, originalTransaction, @"");
     } failure:^(SKPaymentTransaction *transaction, NSError *error) {
         XCTFail(@"");
@@ -926,7 +928,8 @@
     id product = [OCMockObject mockForClass:[SKProduct class]];
     [[[product stub] andReturn:@"test"] productIdentifier];
     (_store.products)[@"test"] = product;
-    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction) {
+    [_store addPayment:@"test" success:^(SKPaymentTransaction *transaction,RMStoreFinishTransactionBlock finishBlock) {
+        finishBlock();
         XCTFail(@"");
     } failure:^(SKPaymentTransaction *transaction, NSError *error) {
         XCTAssertEqualObjects(transaction, originalTransaction, @"");
