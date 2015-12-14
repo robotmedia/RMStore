@@ -403,7 +403,7 @@
 			name = RMStoreTests;
 			productName = RMStoreTests;
 			productReference = A0AF3D1917A802F300D2E836 /* RMStoreTests.xctest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		A0AF3D7117A8085900D2E836 /* RMStoreDemo */ = {
 			isa = PBXNativeTarget;
@@ -428,7 +428,7 @@
 		A0AF3D0017A802F300D2E836 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Robot Media";
 			};
 			buildConfigurationList = A0AF3D0317A802F300D2E836 /* Build configuration list for PBXProject "RMStore" */;
@@ -566,6 +566,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -677,6 +678,7 @@
 					"\"$(SRCROOT)/RMStoreTests/usr/lib\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.robotmedia.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -702,6 +704,7 @@
 					"\"$(SRCROOT)/RMStoreTests/usr/lib\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.robotmedia.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -727,6 +730,7 @@
 					"$(inherited)",
 					"RMStore/Optional/openssl-1.0.1e/lib",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.robotmedia.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -753,6 +757,7 @@
 					"RMStore/Optional/openssl-1.0.1e/lib",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PRODUCT_BUNDLE_IDENTIFIER = net.robotmedia.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
