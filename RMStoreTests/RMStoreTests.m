@@ -275,7 +275,8 @@
 - (void)testPaymentQueueUpdatedDownloads_Active
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_5_1)
     id download = [self mockDownloadWithState:SKDownloadStateActive];
-    [[[download stub] andReturnValue:OCMOCK_VALUE(0.5f)] progress];
+    const float progress = 0.5f;
+    [(SKDownload *)[[download stub] andReturnValue:OCMOCK_VALUE(progress)] progress];
     
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased downloads:@[download]];
     NSString *productID = [[transaction payment] productIdentifier];
@@ -288,7 +289,7 @@
         XCTAssertEqualObjects(download, returnedDownload);
         XCTAssertEqualObjects(transaction, returnedTransaction);
         XCTAssertTrue([productID isEqualToString:returnedProductID]);
-        XCTAssertTrue([download progress] == downloadProgress);
+        XCTAssertEqual(downloadProgress, progress);
         return YES;
     }]];
     [_store addStoreObserver:_observer];
