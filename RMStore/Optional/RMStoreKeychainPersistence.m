@@ -140,7 +140,7 @@ NSData* RMKeychainGetValue(NSString *key)
 - (NSSet*)purchasedProductIdentifiers
 {
     NSDictionary *transactions = [self transactionsDictionary];
-    NSArray *productIdentifiers = [transactions allKeys];
+    NSArray *productIdentifiers = transactions.allKeys;
     return [NSSet setWithArray:productIdentifiers];
 }
 

@@ -52,7 +52,7 @@
 {
     if (!_bundleIdentifier)
     {
-        return [[NSBundle mainBundle] bundleIdentifier];
+        return [NSBundle mainBundle].bundleIdentifier;
     }
     return _bundleIdentifier;
 }

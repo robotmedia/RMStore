@@ -50,6 +50,6 @@
 
 /** Returns the product identifiers of all products whose transactions have been persisted.
  */
-- (NSSet*)purchasedProductIdentifiers;
+@property (nonatomic, readonly, copy) NSSet *purchasedProductIdentifiers;
 
 @end

@@ -30,7 +30,7 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
 
 @implementation RMStoreTransaction
 
-- (id)initWithPaymentTransaction:(SKPaymentTransaction*)paymentTransaction
+- (instancetype)initWithPaymentTransaction:(SKPaymentTransaction*)paymentTransaction
 {
     if (self = [super init])
     {
@@ -44,7 +44,7 @@ NSString* const RMStoreCoderTransactionReceiptKey = @"transactionReceipt";
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)decoder
+- (instancetype)initWithCoder:(NSCoder *)decoder
 {
     if (self = [super init])
     {
