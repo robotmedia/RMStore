@@ -1042,32 +1042,6 @@
     [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
 }
 
-- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Queue_Nil
-{
-    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    [[_observer expect] storeRestoreTransactionsFailed:[OCMArg isNotNil]];
-    [_store addStoreObserver:_observer];
-
-    [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:nil];
-    
-    [_observer verify];
-}
-
-- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Queue_Nil__Blocks
-{
-    __block BOOL didFail = NO;
-    [_store restoreTransactionsOnSuccess:^(NSArray* transactions){
-        XCTFail(@"");
-    } failure:^(NSError *error) {
-        didFail = YES;
-        XCTAssertNil(error, @"");
-    }];
-    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:nil];
-
-    XCTAssertTrue(didFail, @"");
-}
-
 - (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Queue_Error
 {
     NSError *originalError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
