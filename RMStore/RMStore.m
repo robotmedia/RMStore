@@ -108,16 +108,16 @@ typedef void (^RMStoreSuccessBlock)();
 
 @interface RMProductsRequestDelegate : NSObject<SKProductsRequestDelegate>
 
-@property (nonatomic, strong) RMSKProductsRequestSuccessBlock successBlock;
-@property (nonatomic, strong) RMSKProductsRequestFailureBlock failureBlock;
+@property (nonatomic, copy) RMSKProductsRequestSuccessBlock successBlock;
+@property (nonatomic, copy) RMSKProductsRequestFailureBlock failureBlock;
 @property (nonatomic, weak) RMStore *store;
 
 @end
 
 @interface RMAddPaymentParameters : NSObject
 
-@property (nonatomic, strong) RMSKPaymentTransactionSuccessBlock successBlock;
-@property (nonatomic, strong) RMSKPaymentTransactionFailureBlock failureBlock;
+@property (nonatomic, copy) RMSKPaymentTransactionSuccessBlock successBlock;
+@property (nonatomic, copy) RMSKPaymentTransactionFailureBlock failureBlock;
 
 @end
 
