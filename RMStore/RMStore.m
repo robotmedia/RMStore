@@ -559,7 +559,6 @@ typedef void (^RMStoreSuccessBlock)();
 
     NSDictionary *extras = error ? @{RMStoreNotificationStoreError : error} : nil;
     [self postNotificationWithName:RMSKPaymentTransactionFailed transaction:transaction userInfoExtras:extras];
-
     if (transaction.transactionState == SKPaymentTransactionStateRestored)
     {
         [self notifyRestoreTransactionFinishedIfApplicableAfterTransaction:transaction];
@@ -759,7 +758,6 @@ typedef void (^RMStoreSuccessBlock)();
     [invalidProductIdentifiers enumerateObjectsUsingBlock:^(NSString *invalid, NSUInteger idx, BOOL *stop) {
         RMStoreLog(@"invalid product with id %@", invalid);
     }];
-
     if (self.successBlock)
     {
         self.successBlock(products, invalidProductIdentifiers);
