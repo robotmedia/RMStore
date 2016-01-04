@@ -1287,6 +1287,7 @@
 
 - (void)storeProductsRequestFailed:(NSNotification*)notification {}
 - (void)storeProductsRequestFinished:(NSNotification*)notification {}
+- (void)storePaymentTransactionStartedPurchasing:(NSNotification*)notification {}
 - (void)storePaymentTransactionFailed:(NSNotification*)notification {}
 - (void)storePaymentTransactionFinished:(NSNotification*)notification {}
 - (void)storeRestoreTransactionsFailed:(NSNotification*)notification {}
