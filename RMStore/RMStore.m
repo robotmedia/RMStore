@@ -185,16 +185,16 @@ typedef void (^RMStoreSuccessBlock)();
 }
 
 - (void)addPayment:(NSString*)productIdentifier
-        success:(void (^)(SKPaymentTransaction *transaction))successBlock
-        failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
+           success:(void (^)(SKPaymentTransaction *transaction))successBlock
+           failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
 {
     [self addPayment:productIdentifier user:nil success:successBlock failure:failureBlock];
 }
 
 - (void)addPayment:(NSString*)productIdentifier
-        user:(NSString*)userIdentifier
-        success:(void (^)(SKPaymentTransaction *transaction))successBlock
-        failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
+              user:(NSString*)userIdentifier
+           success:(void (^)(SKPaymentTransaction *transaction))successBlock
+           failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
 {
     SKProduct *product = [self productForIdentifier:productIdentifier];
     if (product == nil)
@@ -225,8 +225,8 @@ typedef void (^RMStoreSuccessBlock)();
 }
 
 - (void)requestProducts:(NSSet*)identifiers
-        success:(RMSKProductsRequestSuccessBlock)successBlock
-        failure:(RMSKProductsRequestFailureBlock)failureBlock
+                success:(RMSKProductsRequestSuccessBlock)successBlock
+                failure:(RMSKProductsRequestFailureBlock)failureBlock
 {
     RMProductsRequestDelegate *delegate = [[RMProductsRequestDelegate alloc] init];
     delegate.store = self;
@@ -244,7 +244,7 @@ typedef void (^RMStoreSuccessBlock)();
 }
 
 - (void)restoreTransactionsOnSuccess:(void (^)(NSArray *transactions))successBlock
-        failure:(void (^)(NSError *error))failureBlock
+                             failure:(void (^)(NSError *error))failureBlock
 {
     _restoredCompletedTransactionsFinished = NO;
     [_pendingRestoredTransactionIds removeAllObjects];
@@ -255,8 +255,8 @@ typedef void (^RMStoreSuccessBlock)();
 }
 
 - (void)restoreTransactionsOfUser:(NSString*)userIdentifier
-        onSuccess:(void (^)(NSArray *transactions))successBlock
-        failure:(void (^)(NSError *error))failureBlock
+                        onSuccess:(void (^)(NSArray *transactions))successBlock
+                          failure:(void (^)(NSError *error))failureBlock
 {
     NSAssert([[SKPaymentQueue defaultQueue] respondsToSelector:@selector(restoreCompletedTransactionsWithApplicationUsername:)], @"restoreCompletedTransactionsWithApplicationUsername: not supported in this iOS version. Use restoreTransactionsOnSuccess:failure: instead.");
     _restoredCompletedTransactionsFinished = NO;
@@ -282,7 +282,7 @@ typedef void (^RMStoreSuccessBlock)();
 }
 
 - (void)refreshReceiptOnSuccess:(RMStoreSuccessBlock)successBlock
-        failure:(RMStoreFailureBlock)failureBlock
+                        failure:(RMStoreFailureBlock)failureBlock
 {
     _refreshReceiptFailureBlock = failureBlock;
     _refreshReceiptSuccessBlock = successBlock;
