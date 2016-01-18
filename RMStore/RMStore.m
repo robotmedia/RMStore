@@ -526,7 +526,7 @@ typedef void (^RMStoreSuccessBlock)();
 {
     RMStoreLog(@"transaction purchased with product %@", transaction.payment.productIdentifier);
 
-    if (self.receiptVerificator != nil)
+    if (self.receiptVerifier != nil)
     {
         [self.receiptVerifier verifyTransaction:transaction success:^{
             [self didVerifyTransaction:transaction queue:queue];
@@ -569,12 +569,13 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)didRestoreTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
 {
-    RMStoreLog(@"transaction restored with product %@", transaction.originalTransaction.payment.productIdentifier);
+    NSString *productIdentifier = transaction.originalTransaction.payment.productIdentifier;
+    RMStoreLog(@"transaction restored with product %@", productIdentifier);
 
     if(productIdentifier) {
         [_pendingRestoredTransactionIds addObject:productIdentifier];
     }
-    if (self.receiptVerificator != nil)
+    if (self.receiptVerifier != nil)
     {
         [self.receiptVerifier verifyTransaction:transaction success:^{
             [self didVerifyTransaction:transaction queue:queue];
