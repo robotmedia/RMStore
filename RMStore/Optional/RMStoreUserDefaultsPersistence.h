@@ -26,6 +26,10 @@
  */
 @interface RMStoreUserDefaultsPersistence : NSObject<RMStoreTransactionPersistor>
 
+/** Returns the user defaults used to store transaction data
+ */
+- (NSUserDefaults*)userDefaults;
+
 /** Remove all transactions from user defaults.
  */
 - (void)removeTransactions;
