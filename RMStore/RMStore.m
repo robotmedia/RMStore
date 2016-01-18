@@ -544,7 +544,7 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)didFailTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue error:(NSError*)error
 {
     SKPayment *payment = transaction.payment;
-	NSString* productIdentifier = payment.productIdentifier;
+    NSString* productIdentifier = payment.productIdentifier;
     RMStoreLog(@"transaction failed with product %@ and error %@", productIdentifier, error.debugDescription);
 
     if (error.code != RMStoreErrorCodeUnableToCompleteVerification)
