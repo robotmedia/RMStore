@@ -42,7 +42,7 @@
     RMStore *store = [RMStore defaultStore];
     [store addStoreObserver:self];
     _persistence = store.transactionPersistor;
-    _productIdentifiers = [[_persistence purchasedProductIdentifiers] allObjects];
+    _productIdentifiers = _persistence.purchasedProductIdentifiers.allObjects;
 }
 
 - (void)dealloc
@@ -72,7 +72,7 @@
 - (void)trashAction
 {
     [_persistence removeTransactions];
-    _productIdentifiers = [[_persistence purchasedProductIdentifiers] allObjects];
+    _productIdentifiers = _persistence.purchasedProductIdentifiers.allObjects;
     [self.tableView reloadData];
 }
 
@@ -91,7 +91,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
     }
     RMStore *store = [RMStore defaultStore];
-    NSString *productID = [_productIdentifiers objectAtIndex:indexPath.row];
+    NSString *productID = _productIdentifiers[indexPath.row];
     SKProduct *product = [store productForIdentifier:productID];
     cell.textLabel.text = product ? product.localizedTitle : productID;
     cell.detailTextLabel.text = [NSString stringWithFormat:@"%ld", (long)[_persistence countProductOfdentifier:productID]];
@@ -102,7 +102,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *productID = [_productIdentifiers objectAtIndex:indexPath.row];
+    NSString *productID = _productIdentifiers[indexPath.row];
     const BOOL consumed = [_persistence consumeProductOfIdentifier:productID];
     if (consumed)
     {
@@ -119,7 +119,7 @@
 
 - (void)storePaymentTransactionFinished:(NSNotification*)notification
 {
-    _productIdentifiers = [[_persistence purchasedProductIdentifiers] allObjects];
+    _productIdentifiers = _persistence.purchasedProductIdentifiers.allObjects;
     [self.tableView reloadData];
 }
 

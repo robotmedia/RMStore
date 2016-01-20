@@ -155,23 +155,6 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray<SKProduct *> *products, 
     [_object requestDidFinish:request];
 }
 
-- (void)testRequestDidFailWithError_Nil
-{
-    id request = [OCMockObject mockForClass:[SKProductsRequest class]];
-    _object.successBlock = ^(NSArray *products, NSArray *invalidIdentifiers) {
-        XCTFail(@"");
-    };
-    _object.failureBlock = ^(NSError *error) {
-        XCTAssertNil(error, @"");
-    };
-    OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFailed];
-
-    [_object request:request didFailWithError:nil];
-    
-    [observerMock verify];
-    [[NSNotificationCenter defaultCenter] removeObserver:observerMock];
-}
-
 - (void)testRequestDidFailWithError_Error
 {
     id request = [OCMockObject mockForClass:[SKProductsRequest class]];

@@ -147,7 +147,7 @@ typedef void (^RMStoreSuccessBlock)();
     void (^_restoreTransactionsSuccessBlock)(NSArray* transactions);
 }
 
-- (id) init
+- (instancetype) init
 {
     if (self = [super init])
     {
@@ -279,7 +279,7 @@ typedef void (^RMStoreSuccessBlock)();
 {
     // The general best practice of weak linking using the respondsToSelector: method cannot be used here. Prior to iOS 7, the method was implemented as private API, but that implementation called the doesNotRecognizeSelector: method.
     NSAssert(floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1, @"appStoreReceiptURL not supported in this iOS version.");
-    NSURL *url = [[NSBundle mainBundle] appStoreReceiptURL];
+    NSURL *url = [NSBundle mainBundle].appStoreReceiptURL;
     return url;
 }
 
