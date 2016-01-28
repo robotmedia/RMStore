@@ -53,6 +53,15 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
     [defaults synchronize];
 }
 
+- (void)removeTransactionsForProductIdentifier:(NSString *)productIdentifier{
+    NSUserDefaults *defaults = [self userDefaults];
+    NSDictionary *purchases = [defaults objectForKey:RMStoreTransactionsUserDefaultsKey] ? : @{};
+    NSMutableDictionary *updatedPurchases = [NSMutableDictionary dictionaryWithDictionary:purchases];
+    [updatedPurchases removeObjectForKey:productIdentifier];
+    [defaults setObject:updatedPurchases forKey:RMStoreTransactionsUserDefaultsKey];
+    [defaults synchronize];
+}
+
 - (BOOL)consumeProductOfIdentifier:(NSString*)productIdentifier
 {
     NSUserDefaults *defaults = [self userDefaults];
