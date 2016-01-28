@@ -30,6 +30,10 @@
  */
 - (void)removeTransactions;
 
+/** Remove transactions from user defaults via specific ProductIdentifier.
+ */
+- (void)removeTransactionsForProductIdentifier:(NSString *)productIdentifier;
+
 /** Consume the given product if available. Intended for consumable products.
  @param productIdentifier Identifier of the product to be consumed.
  @return YES if the product was consumed, NO otherwise.
