@@ -27,10 +27,10 @@ Pod::Spec.new do |s|
     nsudp.source_files = 'RMStore/Optional/RMStoreUserDefaultsPersistence.{h,m}', 'RMStore/Optional/RMStoreTransaction.{h,m}'
   end
 
-  s.subspec 'AppReceiptVerificator' do |arv|
+  s.subspec 'AppReceiptVerifier' do |arv|
     arv.dependency 'RMStore/Core'
     arv.platform = :ios, '7.0'
-    arv.source_files = 'RMStore/Optional/RMStoreAppReceiptVerificator.{h,m}', 'RMStore/Optional/RMAppReceipt.{h,m}'
+    arv.source_files = 'RMStore/Optional/RMStoreAppReceiptVerifier.{h,m}', 'RMStore/Optional/RMAppReceipt.{h,m}'
     arv.dependency 'OpenSSL-iOS'
 
     arv.vendored_libraries = '${PODS_ROOT}/OpenSSL-iOS/libcrypto.a', '${PODS_ROOT}/OpenSSL-iOS/libssl.a'
