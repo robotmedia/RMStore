@@ -744,8 +744,13 @@ typedef void (^RMStoreSuccessBlock)();
     // Crash report:
     // https://rink.hockeyapp.net/manage/apps/37013/app_versions/8/crash_reasons/41648763
     //
-    if (product) {
-        _products[product.productIdentifier] = product;
+    if (product)
+    {
+        NSString *productIdentifier = [[product productIdentifier] copy];
+        if (productIdentifier)
+        {
+            _products[productIdentifier] = product;
+        }
     }
 }
 
