@@ -21,7 +21,7 @@ extern NSString* const RMStoreNotificationInvalidProductIdentifiers;
 extern NSString* const RMStoreNotificationStoreError;
 
 typedef void (^RMSKProductsRequestFailureBlock)(NSError *error);
-typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *invalidIdentifiers);
+typedef void (^RMSKProductsRequestSuccessBlock)(NSArray<SKProduct *> *products, NSArray<NSString *> *invalidIdentifiers);
 
 @interface RMProductsRequestDelegate : NSObject<SKProductsRequestDelegate>
 
@@ -51,7 +51,7 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
     id response = [OCMockObject mockForClass:[SKProductsResponse class]];
     [[[response stub] andReturn:@[]] products];
     [[[response stub] andReturn:@[]] invalidProductIdentifiers];
-    _object.successBlock = ^(NSArray *products, NSArray *invalidIdentifiers) {
+    _object.successBlock = ^(NSArray<SKProduct *> *products, NSArray<NSString *> *invalidIdentifiers) {
         XCTAssertNotNil(products, @"");
         XCTAssertNotNil(invalidIdentifiers, @"");
         XCTAssertTrue(products.count == 0, @"");
@@ -61,8 +61,8 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
         XCTFail(@"");
     };
     OCMockObject *observerMock = [self observerMockForNotification:RMSKProductsRequestFinished checkUserInfoWithBlock:^BOOL(NSDictionary *userInfo) {
-        NSArray *products = userInfo[RMStoreNotificationProducts];
-        NSArray *invalidIdentifiers = userInfo[RMStoreNotificationInvalidProductIdentifiers];
+        NSArray<SKProduct *> *products = userInfo[RMStoreNotificationProducts];
+        NSArray<NSString *> *invalidIdentifiers = userInfo[RMStoreNotificationInvalidProductIdentifiers];
         
         XCTAssertNotNil(products, @"");
         XCTAssertNotNil(invalidIdentifiers, @"");
@@ -87,7 +87,7 @@ typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *inva
 
     [[[response stub] andReturn:@[product]] products];
     [[[response stub] andReturn:@[]] invalidProductIdentifiers];
-    _object.successBlock = ^(NSArray *products, NSArray *invalidIdentifiers) {
+    _object.successBlock = ^(NSArray<SKProduct *> *products, NSArray<NSString *> *invalidIdentifiers) {
         XCTAssertNotNil(products, @"");
         XCTAssertNotNil(invalidIdentifiers, @"");
         XCTAssertTrue(products.count == 1, @"");
