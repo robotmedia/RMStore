@@ -143,20 +143,20 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  The content downloader. Required to download product content from your own server.
  @discussion Hosted content from Apple’s server (SKDownload) is handled automatically. You don't need to provide a content downloader for it.
  */
-@property (nonatomic, weak) id<RMStoreContentDownloader> contentDownloader;
+@property (nonatomic, weak, nullable) id<RMStoreContentDownloader> contentDownloader;
 
 /** The receipt verifier. You can provide your own or use one of the reference implementations provided by the library.
  @see RMStoreAppReceiptVerifier
  @see RMStoreTransactionReceiptVerifier
  */
-@property (nonatomic, weak) id<RMStoreReceiptVerifier> receiptVerifier;
+@property (nonatomic, weak, nullable) id<RMStoreReceiptVerifier> receiptVerifier;
 
 /**
  The transaction persistor. It is recommended to provide your own obfuscator if piracy is a concern. The store will use weak obfuscation via `NSKeyedArchiver` by default.
  @see RMStoreKeychainPersistence
  @see RMStoreUserDefaultsPersistence
  */
-@property (nonatomic, weak) id<RMStoreTransactionPersistor> transactionPersistor;
+@property (nonatomic, weak, nullable) id<RMStoreTransactionPersistor> transactionPersistor;
 
 
 #pragma mark Product management
