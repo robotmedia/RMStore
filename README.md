@@ -1,6 +1,8 @@
 #RMStore
-[![Version](https://cocoapod-badges.herokuapp.com/v/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore) [![Platform](https://cocoapod-badges.herokuapp.com/p/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore)
+
+[![CocoaPods Version](https://cocoapod-badges.herokuapp.com/v/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore) [![Platform](https://cocoapod-badges.herokuapp.com/p/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore)
 [![Build Status](https://travis-ci.org/robotmedia/RMStore.png)](https://travis-ci.org/robotmedia/RMStore)
+[![Join the chat at https://gitter.im/robotmedia/RMStore](https://badges.gitter.im/robotmedia/RMStore.svg)](https://gitter.im/robotmedia/RMStore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A lightweight iOS library for In-App Purchases.
 
@@ -133,7 +135,7 @@ Payment transaction notifications are sent after a payment has been requested or
     NSError *error = notification.rm_storeError;
 }
 
-- (void)storeRestoreTransactionsFinished:(NSNotification*)notification 
+- (void)storeRestoreTransactionsFinished:(NSNotification*)notification
 {
 	NSArray *transactions = notification.rm_transactions;
 }
@@ -199,30 +201,30 @@ Only for Apple-hosted downloads:
 
 ##Receipt verification
 
-RMStore doesn't perform receipt verification by default but provides reference implementations. You can implement your own custom verification or use the reference verificators provided by the library.
+RMStore doesn't perform receipt verification by default but provides reference implementations. You can implement your own custom verification or use the reference verifiers provided by the library.
 
 Both options are outlined below. For more info, check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Receipt-verification).
 
-###Reference verificators
+###Reference verifiers
 
-RMStore provides receipt verification via `RMStoreAppReceiptVerificator` (for iOS 7 or higher) and `RMStoreTransactionReceiptVerificator` (for iOS 6 or lower). To use any of them, add the corresponding files from [RMStore/Optional](https://github.com/robotmedia/RMStore/tree/master/RMStore/Optional) into your project and set the verificator delegate (`receiptVerificator`) at startup. For example:
+RMStore provides receipt verification via `RMStoreAppReceiptVerifier` (for iOS 7 or higher) and `RMStoreTransactionReceiptVerifier` (for iOS 6 or lower). To use any of them, add the corresponding files from [RMStore/Optional](https://github.com/robotmedia/RMStore/tree/master/RMStore/Optional) into your project and set the verifier delegate (`receiptVerifier`) at startup. For example:
 
 ```objective-c
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     const BOOL iOS7OrHigher = floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1;
-    _receiptVerificator = iOS7OrHigher ? [[RMStoreAppReceiptVerificator alloc] init] : [[RMStoreTransactionReceiptVerificator alloc] init];
-    [RMStore defaultStore].receiptVerificator = _receiptVerificator;
+    _receiptVerifier = iOS7OrHigher ? [[RMStoreAppReceiptVerifier alloc] init] : [[RMStoreTransactionReceiptVerifier alloc] init];
+    [RMStore defaultStore].receiptVerifier = _receiptVerifier;
     // Your code
     return YES;
 }
 ```
 
-If security is a concern you might want to avoid using an open source verification logic, and provide your own custom verificator instead.
+If security is a concern you might want to avoid using an open source verification logic, and provide your own custom verifier instead.
 
-###Custom verificator
+###Custom verifier
 
-RMStore delegates receipt verification, enabling you to provide your own implementation using  the `RMStoreReceiptVerificator` protocol:
+RMStore delegates receipt verification, enabling you to provide your own implementation using  the `RMStoreReceiptVerifier` protocol:
 
 ```objective-c
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
@@ -232,7 +234,7 @@ RMStore delegates receipt verification, enabling you to provide your own impleme
 
 Call `successBlock` if the receipt passes verification, and `failureBlock` if it doesn't. If verification could not be completed (e.g., due to connection issues), then `error` must be of code `RMStoreErrorCodeUnableToCompleteVerification` to prevent RMStore to finish the transaction.
 
-You will also need to set the `receiptVerificator` delegate at startup, as indicated above.
+You will also need to set the `receiptVerifier` delegate at startup, as indicated above.
 
 ##Downloading content
 

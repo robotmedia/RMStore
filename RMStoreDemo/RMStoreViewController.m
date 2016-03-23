@@ -67,7 +67,7 @@
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
     }
-    NSString *productID = [_products objectAtIndex:indexPath.row];
+    NSString *productID = _products[indexPath.row];
     SKProduct *product = [[RMStore defaultStore] productForIdentifier:productID];
     cell.textLabel.text = product.localizedTitle;
     cell.detailTextLabel.text = [RMStore localizedPriceOfProduct:product];
@@ -80,7 +80,7 @@
 {
     if (![RMStore canMakePayments]) return;
     
-    NSString *productID = [_products objectAtIndex:indexPath.row];
+    NSString *productID = _products[indexPath.row];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [[RMStore defaultStore] addPayment:productID success:^(SKPaymentTransaction *transaction) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;

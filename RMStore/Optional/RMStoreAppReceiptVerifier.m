@@ -1,5 +1,5 @@
 //
-//  RMStoreAppReceiptVerificator.m
+//  RMStoreAppReceiptVerifier.m
 //  RMStore
 //
 //  Created by Hermes on 10/15/13.
@@ -18,10 +18,10 @@
 //  limitations under the License.
 //
 
-#import "RMStoreAppReceiptVerificator.h"
+#import "RMStoreAppReceiptVerifier.h"
 #import "RMAppReceipt.h"
 
-@implementation RMStoreAppReceiptVerificator
+@implementation RMStoreAppReceiptVerifier
 
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
                            success:(void (^)())successBlock
@@ -52,7 +52,7 @@
 {
     if (!_bundleIdentifier)
     {
-        return [[NSBundle mainBundle] bundleIdentifier];
+        return [NSBundle mainBundle].bundleIdentifier;
     }
     return _bundleIdentifier;
 }
@@ -61,7 +61,11 @@
 {
     if (!_bundleVersion)
     {
+#if TARGET_OS_IPHONE
         return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+#else
+        return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+#endif
     }
     return _bundleVersion;
 }
