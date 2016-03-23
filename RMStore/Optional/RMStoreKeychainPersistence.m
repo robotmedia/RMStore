@@ -150,18 +150,20 @@ NSData* RMKeychainGetValue(NSString *key)
 {
     if (!_transactionsDictionary)
     { // Reading the keychain is slow so we cache its values in memory
-        NSData *data = RMKeychainGetValue(RMStoreTransactionsKeychainKey);
-        NSDictionary *transactions = @{};
-        if (data)
-        {
-            NSError *error;
-            transactions = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-            if (!transactions)
+        @synchronized (_transactionsDictionary) {
+            NSData *data = RMKeychainGetValue(RMStoreTransactionsKeychainKey);
+            NSDictionary *transactions = @{};
+            if (data)
             {
-                RMStoreLog(@"RMStoreKeychainPersistence: failed to read JSON data with error %@", error);
+                NSError *error;
+                transactions = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+                if (!transactions)
+                {
+                    RMStoreLog(@"RMStoreKeychainPersistence: failed to read JSON data with error %@", error);
+                }
             }
+            _transactionsDictionary = transactions;
         }
-        _transactionsDictionary = transactions;
     }
     return _transactionsDictionary;
     
@@ -169,18 +171,20 @@ NSData* RMKeychainGetValue(NSString *key)
 
 - (void)setTransactionsDictionary:(NSDictionary*)dictionary
 {
-    _transactionsDictionary = dictionary;
-    NSData *data = nil;
-    if (dictionary)
-    {
-        NSError *error;
-        data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:&error];
-        if (!data)
+    @synchronized (_transactionsDictionary) {
+        _transactionsDictionary = dictionary;
+        NSData *data = nil;
+        if (dictionary)
         {
-            RMStoreLog(@"RMStoreKeychainPersistence: failed to write JSON data with error %@", error);
+            NSError *error;
+            data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:&error];
+            if (!data)
+            {
+                RMStoreLog(@"RMStoreKeychainPersistence: failed to write JSON data with error %@", error);
+            }
         }
+        RMKeychainSetValue(data, RMStoreTransactionsKeychainKey);
     }
-    RMKeychainSetValue(data, RMStoreTransactionsKeychainKey);
 }
 
 @end
