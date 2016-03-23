@@ -57,23 +57,10 @@ NSString* const RMStoreNotificationTransactions = @"transactions";
 #endif*/
 
 NSMutableString *RMStoreLogger = nil;
-static dispatch_once_t RMStoreLoggerOnceToken;
-static NSDateFormatter *RMStoreLoggerDateFormatter;
+dispatch_once_t RMStoreLoggerOnceToken = 0;
+NSDateFormatter *RMStoreLoggerDateFormatter = nil;
 
-#define RMStoreLog(...) \
-    do { \
-        dispatch_once(&RMStoreLoggerOnceToken, ^{ \
-            RMStoreLogger = [NSMutableString string]; \
-            RMStoreLoggerDateFormatter = [[NSDateFormatter alloc] init]; \
-            [RMStoreLoggerDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"]; \
-        }); \
-        @synchronized(RMStoreLogger) { \
-            [RMStoreLogger appendString:[RMStoreLoggerDateFormatter stringFromDate:[NSDate date]]]; \
-            [RMStoreLogger appendString:@" "]; \
-            [RMStoreLogger appendFormat:__VA_ARGS__]; \
-            [RMStoreLogger appendString:@"\n"]; \
-        } \
-    } while (0);
+
 
 typedef void (^RMSKPaymentTransactionFailureBlock)(SKPaymentTransaction *transaction, NSError *error);
 typedef void (^RMSKPaymentTransactionSuccessBlock)(SKPaymentTransaction *transaction);

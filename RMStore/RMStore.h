@@ -31,7 +31,28 @@ extern NSInteger const RMStoreErrorCodeDownloadCanceled;
 extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 
+
+
 extern NSMutableString *RMStoreLogger;
+extern dispatch_once_t RMStoreLoggerOnceToken;
+extern NSDateFormatter *RMStoreLoggerDateFormatter;
+
+#define RMStoreLog(...) \
+    do { \
+        dispatch_once(&RMStoreLoggerOnceToken, ^{ \
+            RMStoreLogger = [NSMutableString string]; \
+            RMStoreLoggerDateFormatter = [[NSDateFormatter alloc] init]; \
+            [RMStoreLoggerDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"]; \
+        }); \
+        @synchronized(RMStoreLogger) { \
+            [RMStoreLogger appendString:[RMStoreLoggerDateFormatter stringFromDate:[NSDate date]]]; \
+            [RMStoreLogger appendString:@" "]; \
+            [RMStoreLogger appendFormat:__VA_ARGS__]; \
+            [RMStoreLogger appendString:@"\n"]; \
+        } \
+    } while (0);
+
+
 
 
 /** A StoreKit wrapper that adds blocks and notifications, plus optional receipt verification and purchase management.
