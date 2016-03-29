@@ -31,19 +31,6 @@ extern NSInteger const RMStoreErrorCodeDownloadCanceled;
 extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 
-/**
- This gets posted globally when:
- Nobody has requested this transaction, which would indicate that the app has died after purchase (or at least sometime after beeing added) but before finishTransaction was called.
- This regularly happens on older devices if credit cards are denied or old, then the user needs to update their card info and switch away from the app. When coming back the app might have been killed and the success-block is gone (since it was living in RAM).
- */
-extern NSString* const RMSKPaymentTransactionOrphanFinished;
-
-///Same as RMSKPaymentTransactionOrphanFinished but for failed purchases.
-extern NSString* const RMSKPaymentTransactionOrphanFailed;
-
-///The key in the userInfo dictionary where the transaction can be found.
-extern NSString* const RMStoreNotificationTransaction;
-
 /** A StoreKit wrapper that adds blocks and notifications, plus optional receipt verification and purchase management.
  */
 @interface RMStore : NSObject<SKPaymentTransactionObserver>
@@ -274,6 +261,8 @@ extern NSString* const RMStoreNotificationTransaction;
 - (void)storeRefreshReceiptFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
 - (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
+- (void)storeTransactionsOrphanFinished:(NSNotification*)notification;
+- (void)storeTransactionsOrphanFailed:(NSNotification*)notification;
 
 @end
 

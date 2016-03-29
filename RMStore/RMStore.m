@@ -334,6 +334,9 @@ typedef void (^RMStoreSuccessBlock)();
     [self addStoreObserver:observer selector:@selector(storeRefreshReceiptFinished:) notificationName:RMSKRefreshReceiptFinished];
     [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFailed:) notificationName:RMSKRestoreTransactionsFailed];
     [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFinished:) notificationName:RMSKRestoreTransactionsFinished];
+	[self addStoreObserver:observer selector:@selector(storeTransactionsOrphanFinished:) notificationName:RMSKPaymentTransactionOrphanFinished];
+	[self addStoreObserver:observer selector:@selector(storeTransactionsOrphanFailed:) notificationName:RMSKPaymentTransactionOrphanFailed];
+	
 }
 
 - (void)removeStoreObserver:(id<RMStoreObserver>)observer
@@ -352,6 +355,8 @@ typedef void (^RMStoreSuccessBlock)();
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRefreshReceiptFinished object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFinished object:self];
+	[[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionOrphanFinished object:self];
+	[[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionOrphanFailed object:self];
 }
 
 // Private
