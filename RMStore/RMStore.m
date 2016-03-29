@@ -40,6 +40,7 @@ NSString* const RMSKRefreshReceiptFinished = @"RMSKRefreshReceiptFinished";
 NSString* const RMSKRestoreTransactionsFailed = @"RMSKRestoreTransactionsFailed";
 NSString* const RMSKRestoreTransactionsFinished = @"RMSKRestoreTransactionsFinished";
 NSString* const RMSKPaymentTransactionOrhanFinished = @"RMSKPaymentTransactionOrhanFinished";
+NSString* const RMSKPaymentTransactionOrhanFailed = @"RMSKPaymentTransactionOrhanFailed";
 
 NSString* const RMStoreNotificationInvalidProductIdentifiers = @"invalidProductIdentifiers";
 NSString* const RMStoreNotificationDownloadProgress = @"downloadProgress";
@@ -558,6 +559,10 @@ typedef void (^RMStoreSuccessBlock)();
     {
         parameters.failureBlock(transaction, error);
     }
+	else
+	{
+		[self postNotificationWithName:RMSKPaymentTransactionOrhanFailed transaction:transaction userInfoExtras:nil];
+	}
     
     NSDictionary *extras = error ? @{RMStoreNotificationStoreError : error} : nil;
     [self postNotificationWithName:RMSKPaymentTransactionFailed transaction:transaction userInfoExtras:extras];
