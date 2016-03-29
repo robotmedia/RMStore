@@ -41,6 +41,9 @@ extern NSString* const RMSKPaymentTransactionOrphanFinished;
 ///Same as RMSKPaymentTransactionOrphanFinished but for failed purchases.
 extern NSString* const RMSKPaymentTransactionOrphanFailed;
 
+///The key in the userInfo dictionary where the transaction can be found.
+extern NSString* const RMStoreNotificationTransaction;
+
 /** A StoreKit wrapper that adds blocks and notifications, plus optional receipt verification and purchase management.
  */
 @interface RMStore : NSObject<SKPaymentTransactionObserver>
