@@ -30,6 +30,7 @@ extern NSString *const RMStoreErrorDomain;
 extern NSInteger const RMStoreErrorCodeDownloadCanceled;
 extern NSInteger const RMStoreErrorCodeUnknownProductIdentifier;
 extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
+extern NSString* const RMSKPaymentTransactionOrhanFinished;
 
 /** A StoreKit wrapper that adds blocks and notifications, plus optional receipt verification and purchase management.
  */

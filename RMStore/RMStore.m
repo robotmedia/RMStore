@@ -39,6 +39,7 @@ NSString* const RMSKRefreshReceiptFailed = @"RMSKRefreshReceiptFailed";
 NSString* const RMSKRefreshReceiptFinished = @"RMSKRefreshReceiptFinished";
 NSString* const RMSKRestoreTransactionsFailed = @"RMSKRestoreTransactionsFailed";
 NSString* const RMSKRestoreTransactionsFinished = @"RMSKRestoreTransactionsFinished";
+NSString* const RMSKPaymentTransactionOrhanFinished = @"RMSKPaymentTransactionOrhanFinished";
 
 NSString* const RMStoreNotificationInvalidProductIdentifiers = @"invalidProductIdentifiers";
 NSString* const RMStoreNotificationDownloadProgress = @"downloadProgress";
@@ -640,6 +641,14 @@ typedef void (^RMStoreSuccessBlock)();
     {
         wrapper.successBlock(transaction);
     }
+	else
+	{
+		/*
+		 Nobody has requested this transaction, which would indicate that the app has died after purchase (or at least sometime after beeing added) but before finishTransaction was called.
+		 This regularly happens on older devices if credit cards are denied or old, then the user needs to update their card info and switch away from the app. When coming back the app might have been killed and the success-block is gone (since it was living in RAM).
+		 */
+		[self postNotificationWithName:RMSKPaymentTransactionOrhanFinished transaction:transaction userInfoExtras:nil];
+	}
     
     [self postNotificationWithName:RMSKPaymentTransactionFinished transaction:transaction userInfoExtras:nil];
     
