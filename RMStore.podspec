@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.author = 'Hermes Pique'
   s.social_media_url = 'https://twitter.com/hpique'
   s.source = { :git => 'https://github.com/robotmedia/RMStore.git', :tag => "v#{s.version}" }
-  s.platforms = { :ios => "7.0", :tvos => "9.0" }
+  s.platforms = { :ios => "7.0", :tvos => "9.0", , :osx => "10.8" }
   s.frameworks = 'StoreKit'
   s.requires_arc = true
   s.default_subspec = 'Core'
