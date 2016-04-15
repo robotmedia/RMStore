@@ -39,6 +39,8 @@ NSString* const RMSKRefreshReceiptFailed = @"RMSKRefreshReceiptFailed";
 NSString* const RMSKRefreshReceiptFinished = @"RMSKRefreshReceiptFinished";
 NSString* const RMSKRestoreTransactionsFailed = @"RMSKRestoreTransactionsFailed";
 NSString* const RMSKRestoreTransactionsFinished = @"RMSKRestoreTransactionsFinished";
+NSString* const RMSKPaymentTransactionOrphanFinished = @"RMSKPaymentTransactionOrphanFinished";
+NSString* const RMSKPaymentTransactionOrphanFailed = @"RMSKPaymentTransactionOrphanFailed";
 
 NSString* const RMStoreNotificationInvalidProductIdentifiers = @"invalidProductIdentifiers";
 NSString* const RMStoreNotificationDownloadProgress = @"downloadProgress";
@@ -129,7 +131,8 @@ typedef void (^RMStoreSuccessBlock)();
 
 @end
 
-@implementation RMStore {
+@implementation RMStore
+{
     NSMutableDictionary *_addPaymentParameters; // HACK: We use a dictionary of product identifiers because the returned SKPayment is different from the one we add to the queue. Bad Apple.
     NSMutableDictionary *_products;
     NSMutableSet *_productsRequestDelegates;
@@ -293,7 +296,7 @@ typedef void (^RMStoreSuccessBlock)();
 {
     _refreshReceiptFailureBlock = failureBlock;
     _refreshReceiptSuccessBlock = successBlock;
-    _refreshReceiptRequest = [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:@{}];
+	_refreshReceiptRequest = [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:@{}];
     _refreshReceiptRequest.delegate = self;
     [_refreshReceiptRequest start];
 }
@@ -332,6 +335,9 @@ typedef void (^RMStoreSuccessBlock)();
     [self addStoreObserver:observer selector:@selector(storeRefreshReceiptFinished:) notificationName:RMSKRefreshReceiptFinished];
     [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFailed:) notificationName:RMSKRestoreTransactionsFailed];
     [self addStoreObserver:observer selector:@selector(storeRestoreTransactionsFinished:) notificationName:RMSKRestoreTransactionsFinished];
+	[self addStoreObserver:observer selector:@selector(storeTransactionsOrphanFinished:) notificationName:RMSKPaymentTransactionOrphanFinished];
+	[self addStoreObserver:observer selector:@selector(storeTransactionsOrphanFailed:) notificationName:RMSKPaymentTransactionOrphanFailed];
+	
 }
 
 - (void)removeStoreObserver:(id<RMStoreObserver>)observer
@@ -350,6 +356,8 @@ typedef void (^RMStoreSuccessBlock)();
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRefreshReceiptFinished object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFailed object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKRestoreTransactionsFinished object:self];
+	[[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionOrphanFinished object:self];
+	[[NSNotificationCenter defaultCenter] removeObserver:observer name:RMSKPaymentTransactionOrphanFailed object:self];
 }
 
 // Private
@@ -557,6 +565,10 @@ typedef void (^RMStoreSuccessBlock)();
     {
         parameters.failureBlock(transaction, error);
     }
+	else
+	{
+		[self postNotificationWithName:RMSKPaymentTransactionOrphanFailed transaction:transaction userInfoExtras:nil];
+	}
     
     NSDictionary *extras = error ? @{RMStoreNotificationStoreError : error} : nil;
     [self postNotificationWithName:RMSKPaymentTransactionFailed transaction:transaction userInfoExtras:extras];
@@ -640,6 +652,14 @@ typedef void (^RMStoreSuccessBlock)();
     {
         wrapper.successBlock(transaction);
     }
+	else
+	{
+		/*
+		 Nobody has requested this transaction, which would indicate that the app has died after purchase (or at least sometime after beeing added) but before finishTransaction was called.
+		 This regularly happens on older devices if credit cards are denied or old, then the user needs to update their card info and switch away from the app. When coming back the app might have been killed and the success-block is gone (since it was living in RAM).
+		 */
+		[self postNotificationWithName:RMSKPaymentTransactionOrphanFinished transaction:transaction userInfoExtras:nil];
+	}
     
     [self postNotificationWithName:RMSKPaymentTransactionFinished transaction:transaction userInfoExtras:nil];
     
@@ -751,7 +771,7 @@ typedef void (^RMStoreSuccessBlock)();
     
     for (SKProduct *product in products)
     {
-        RMStoreLog(@"received product with id %@", product.productIdentifier);
+        //RMStoreLog(@"received product with id %@", product.productIdentifier);
         [self.store addProduct:product];
     }
     
