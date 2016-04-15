@@ -131,7 +131,8 @@ typedef void (^RMStoreSuccessBlock)();
 
 @end
 
-@implementation RMStore {
+@implementation RMStore
+{
     NSMutableDictionary *_addPaymentParameters; // HACK: We use a dictionary of product identifiers because the returned SKPayment is different from the one we add to the queue. Bad Apple.
     NSMutableDictionary *_products;
     NSMutableSet *_productsRequestDelegates;
@@ -295,7 +296,7 @@ typedef void (^RMStoreSuccessBlock)();
 {
     _refreshReceiptFailureBlock = failureBlock;
     _refreshReceiptSuccessBlock = successBlock;
-    _refreshReceiptRequest = [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:@{}];
+	_refreshReceiptRequest = [[SKReceiptRefreshRequest alloc] initWithReceiptProperties:@{}];
     _refreshReceiptRequest.delegate = self;
     [_refreshReceiptRequest start];
 }
@@ -770,7 +771,7 @@ typedef void (^RMStoreSuccessBlock)();
     
     for (SKProduct *product in products)
     {
-        RMStoreLog(@"received product with id %@", product.productIdentifier);
+        //RMStoreLog(@"received product with id %@", product.productIdentifier);
         [self.store addProduct:product];
     }
     
