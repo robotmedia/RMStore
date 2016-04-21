@@ -48,7 +48,7 @@
 
 - (void)testBundleIdentifier_default
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
-    NSString *expected = [[NSBundle mainBundle] bundleIdentifier];
+    NSString *expected = [NSBundle mainBundle].bundleIdentifier;
     NSString *result = _verifier.bundleIdentifier;
     XCTAssertEqualObjects(expected, result, @"");
 }

@@ -65,7 +65,8 @@ __attribute__((availability(ios,introduced=7.0)))
  @param asn1Data ASN1 data
  @return An initialized app receipt from the given data.
  */
-- (id)initWithASN1Data:(NSData*)asn1Data;
+- (instancetype)initWithASN1Data:(NSData*)asn1Data NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
 
 /** Returns whether there is an in-app purchase in the receipt for the given product.
  @param productIdentifier The identifier of the product.
@@ -163,7 +164,8 @@ __attribute__((availability(ios,introduced=7.0)))
  @param asn1Data ASN1 data
  @return An initialized in-app purchase from the given data.
  */
-- (id)initWithASN1Data:(NSData*)asn1Data;
+- (instancetype)initWithASN1Data:(NSData*)asn1Data NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
 
 /** Returns whether the auto renewable subscription is active for the given date.
  @param date The date in which the auto-renewable subscription should be active. If you are using the current date, you might not want to take it from the device in case the user has changed it.

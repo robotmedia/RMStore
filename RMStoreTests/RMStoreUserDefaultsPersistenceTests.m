@@ -41,7 +41,7 @@
     SKPaymentTransaction *paymentTransaction = [self persistMockTransactionOfProductIdentifer:@"test"];
     
     NSArray *transactions = [_persistor transactionsForProductOfIdentifier:@"test"];
-    RMStoreTransaction *transaction = [transactions firstObject];
+    RMStoreTransaction *transaction = transactions.firstObject;
     SKPayment *payment = paymentTransaction.payment;
     XCTAssertNotNil(transaction, @"");
     XCTAssertEqualObjects(transaction.productIdentifier, payment.productIdentifier, @"");
