@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C44620E1BBB2369003C0D7D /* RMStoreFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C44620D1BBB2369003C0D7D /* RMStoreFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4C4462131BBB2391003C0D7D /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D1217A802F300D2E836 /* RMStore.m */; };
+		4C4462141BBB2396003C0D7D /* RMStore.h in Headers */ = {isa = PBXBuildFile; fileRef = A0AF3D1017A802F300D2E836 /* RMStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4C4462151BBB2403003C0D7D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D3317A8059900D2E836 /* StoreKit.framework */; };
+		4C4462161BBB241E003C0D7D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0AF3D0B17A802F300D2E836 /* Foundation.framework */; };
+		4CBA895B1BBC5A8400913336 /* RMStoreKeychainPersistence.h in Headers */ = {isa = PBXBuildFile; fileRef = 876046471812FB7500C9B78C /* RMStoreKeychainPersistence.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4CBA895C1BBC5A8B00913336 /* RMStoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 876046481812FB7500C9B78C /* RMStoreKeychainPersistence.m */; };
+		4CBA895D1BBC5AB200913336 /* RMStoreTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 876631F8180EEBF40049B368 /* RMStoreTransaction.m */; };
+		4CBA895E1BBC5ABF00913336 /* RMStoreTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 876631F7180EEBF40049B368 /* RMStoreTransaction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4CBA89601BBC5AE400913336 /* RMStoreUserDefaultsPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A3A8180E82BB00376773 /* RMStoreUserDefaultsPersistence.m */; };
+		4CBA89611BBC5AE800913336 /* RMStoreUserDefaultsPersistence.h in Headers */ = {isa = PBXBuildFile; fileRef = 87A2A3A7180E82BB00376773 /* RMStoreUserDefaultsPersistence.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8700D1C117DCA548005C8F5D /* NSNotification+RMStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */; };
 		8700D1D717DCB011005C8F5D /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8700D1D617DCB011005C8F5D /* libOCMock.a */; };
 		876046491812FB7500C9B78C /* RMStoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 876046481812FB7500C9B78C /* RMStoreKeychainPersistence.m */; };
@@ -84,6 +95,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4C44620B1BBB2369003C0D7D /* RMStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RMStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C44620D1BBB2369003C0D7D /* RMStoreFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RMStoreFramework.h; sourceTree = "<group>"; };
+		4C44620F1BBB2369003C0D7D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CBA896A1BBCA48100913336 /* RMStore.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = RMStore.modulemap; sourceTree = "<group>"; };
 		8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotification+RMStoreTests.m"; sourceTree = "<group>"; };
 		8700D1CF17DCB011005C8F5D /* NSNotificationCenter+OCMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+OCMAdditions.h"; sourceTree = "<group>"; };
 		8700D1D017DCB011005C8F5D /* OCMArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMArg.h; sourceTree = "<group>"; };
@@ -147,6 +162,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4C4462071BBB2369003C0D7D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C4462161BBB241E003C0D7D /* Foundation.framework in Frameworks */,
+				4C4462151BBB2403003C0D7D /* StoreKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0AF3D0517A802F300D2E836 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -189,6 +213,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4C44620C1BBB2369003C0D7D /* RMStoreFramework */ = {
+			isa = PBXGroup;
+			children = (
+				4C44620D1BBB2369003C0D7D /* RMStoreFramework.h */,
+				4C44620F1BBB2369003C0D7D /* Info.plist */,
+				4CBA896A1BBCA48100913336 /* RMStore.modulemap */,
+			);
+			path = RMStoreFramework;
+			sourceTree = "<group>";
+		};
 		8700D1CC17DCB011005C8F5D /* usr */ = {
 			isa = PBXGroup;
 			children = (
@@ -253,6 +287,7 @@
 				A0AF3D0D17A802F300D2E836 /* RMStore */,
 				A0AF3D2217A802F300D2E836 /* RMStoreTests */,
 				A0AF3D7617A8085900D2E836 /* RMStoreDemo */,
+				4C44620C1BBB2369003C0D7D /* RMStoreFramework */,
 				A0AF3D0A17A802F300D2E836 /* Frameworks */,
 				A0AF3D0917A802F300D2E836 /* Products */,
 			);
@@ -264,6 +299,7 @@
 				A0AF3D0817A802F300D2E836 /* libRMStore.a */,
 				A0AF3D1917A802F300D2E836 /* RMStoreTests.xctest */,
 				A0AF3D7217A8085900D2E836 /* RMStoreDemo.app */,
+				4C44620B1BBB2369003C0D7D /* RMStore.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -361,7 +397,40 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		4C4462081BBB2369003C0D7D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CBA89611BBC5AE800913336 /* RMStoreUserDefaultsPersistence.h in Headers */,
+				4CBA895B1BBC5A8400913336 /* RMStoreKeychainPersistence.h in Headers */,
+				4C44620E1BBB2369003C0D7D /* RMStoreFramework.h in Headers */,
+				4CBA895E1BBC5ABF00913336 /* RMStoreTransaction.h in Headers */,
+				4C4462141BBB2396003C0D7D /* RMStore.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		4C44620A1BBB2369003C0D7D /* RMStoreFramework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C4462101BBB2369003C0D7D /* Build configuration list for PBXNativeTarget "RMStoreFramework" */;
+			buildPhases = (
+				4C4462061BBB2369003C0D7D /* Sources */,
+				4C4462071BBB2369003C0D7D /* Frameworks */,
+				4C4462081BBB2369003C0D7D /* Headers */,
+				4C4462091BBB2369003C0D7D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RMStoreFramework;
+			productName = RMStoreFramework;
+			productReference = 4C44620B1BBB2369003C0D7D /* RMStore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		A0AF3D0717A802F300D2E836 /* RMStore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A0AF3D2D17A802F300D2E836 /* Build configuration list for PBXNativeTarget "RMStore" */;
@@ -422,6 +491,11 @@
 			attributes = {
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "Robot Media";
+				TargetAttributes = {
+					4C44620A1BBB2369003C0D7D = {
+						CreatedOnToolsVersion = 7.0;
+					};
+				};
 			};
 			buildConfigurationList = A0AF3D0317A802F300D2E836 /* Build configuration list for PBXProject "RMStore" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -438,11 +512,19 @@
 				A0AF3D0717A802F300D2E836 /* RMStore */,
 				A0AF3D1817A802F300D2E836 /* RMStoreTests */,
 				A0AF3D7117A8085900D2E836 /* RMStoreDemo */,
+				4C44620A1BBB2369003C0D7D /* RMStoreFramework */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4C4462091BBB2369003C0D7D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0AF3D1617A802F300D2E836 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -466,6 +548,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4C4462061BBB2369003C0D7D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CBA895D1BBC5AB200913336 /* RMStoreTransaction.m in Sources */,
+				4CBA895C1BBC5A8B00913336 /* RMStoreKeychainPersistence.m in Sources */,
+				4C4462131BBB2391003C0D7D /* RMStore.m in Sources */,
+				4CBA89601BBC5AE400913336 /* RMStoreUserDefaultsPersistence.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0AF3D0417A802F300D2E836 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -543,6 +636,92 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4C4462111BBB2369003C0D7D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BITCODE_GENERATION_MODE = marker;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = RMStoreFramework/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				MODULEMAP_FILE = RMStoreFramework/RMStore.modulemap;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = net.robotmedia.RMStoreFramework;
+				PRODUCT_NAME = RMStore;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		4C4462121BBB2369003C0D7D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BITCODE_GENERATION_MODE = bitcode;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = RMStoreFramework/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				MODULEMAP_FILE = RMStoreFramework/RMStore.modulemap;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = net.robotmedia.RMStoreFramework;
+				PRODUCT_NAME = RMStore;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 		A0AF3D2B17A802F300D2E836 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -756,6 +935,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4C4462101BBB2369003C0D7D /* Build configuration list for PBXNativeTarget "RMStoreFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C4462111BBB2369003C0D7D /* Debug */,
+				4C4462121BBB2369003C0D7D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A0AF3D0317A802F300D2E836 /* Build configuration list for PBXProject "RMStore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

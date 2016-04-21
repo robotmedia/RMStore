@@ -2,6 +2,7 @@
 
 [![CocoaPods Version](https://cocoapod-badges.herokuapp.com/v/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore) [![Platform](https://cocoapod-badges.herokuapp.com/p/RMStore/badge.png)](http://cocoadocs.org/docsets/RMStore)
 [![Build Status](https://travis-ci.org/robotmedia/RMStore.png)](https://travis-ci.org/robotmedia/RMStore)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Join the chat at https://gitter.im/robotmedia/RMStore](https://badges.gitter.im/robotmedia/RMStore.svg)](https://gitter.im/robotmedia/RMStore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A lightweight iOS library for In-App Purchases.
@@ -27,6 +28,13 @@ pod 'RMStore', '~> 0.7'
 Or add the files from the [RMStore](https://github.com/robotmedia/RMStore/tree/master/RMStore) directory if you're doing it manually.
 
 Check out the [wiki](https://github.com/robotmedia/RMStore/wiki/Installation) for more options.
+
+Using [Carthage](https://github.com/Carthage/Carthage):
+- add this repo to your [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile)
+- `@import RMStore;` (Objective-C)
+- `import RMStore` (Swift)
+
+Note that the Carthage framework target does not include [Receipt Verification](https://github.com/robotmedia/RMStore/wiki/Receipt-verification) code as this code should always be linked directly into your application and not be in a dynamic framework for security reasons.
 
 ##StoreKit with blocks
 
