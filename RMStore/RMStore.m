@@ -215,11 +215,11 @@ typedef void (^RMStoreSuccessBlock)();
     {
         payment.applicationUsername = userIdentifier;
     }
-    
+    payment.applicationUsername=[NSUUID UUID].UUIDString;
     RMAddPaymentParameters *parameters = [[RMAddPaymentParameters alloc] init];
     parameters.successBlock = successBlock;
     parameters.failureBlock = failureBlock;
-    _addPaymentParameters[productIdentifier] = parameters;
+    _addPaymentParameters[payment.applicationUsername] = parameters;
     
     [[SKPaymentQueue defaultQueue] addPayment:payment];
 }
@@ -547,12 +547,12 @@ typedef void (^RMStoreSuccessBlock)();
 	NSString* productIdentifier = payment.productIdentifier;
     RMStoreLog(@"transaction failed with product %@ and error %@", productIdentifier, error.debugDescription);
     
-    if (error.code != RMStoreErrorCodeUnableToCompleteVerification)
+    if (error.code == RMStoreErrorCodeUnableToCompleteVerification)
     { // If we were unable to complete the verification we want StoreKit to keep reminding us of the transaction
         [queue finishTransaction:transaction];
     }
     
-    RMAddPaymentParameters *parameters = [self popAddPaymentParametersForIdentifier:productIdentifier];
+    RMAddPaymentParameters *parameters = [self popAddPaymentParametersForIdentifier:payment.applicationUsername];
     if (parameters.failureBlock != nil)
     {
         parameters.failureBlock(transaction, error);
@@ -631,7 +631,7 @@ typedef void (^RMStoreSuccessBlock)();
 - (void)finishTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
 {
     SKPayment *payment = transaction.payment;
-	NSString* productIdentifier = payment.productIdentifier;
+	NSString* productIdentifier = payment.applicationUsername;
     [queue finishTransaction:transaction];
     [self.transactionPersistor persistTransaction:transaction];
     
