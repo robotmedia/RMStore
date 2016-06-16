@@ -96,7 +96,7 @@ RMStore sends notifications of StoreKit related events and extends `NSNotificati
 - (void)storeProductsRequestFinished:(NSNotification*)notification
 {
     NSArray *products = notification.rm_products;
-    NSArray *invalidProductIdentifiers = notification.rm_invalidProductIdentififers;
+    NSArray *invalidProductIdentifiers = notification.rm_invalidProductIdentifiers;
 }
 ```
 
