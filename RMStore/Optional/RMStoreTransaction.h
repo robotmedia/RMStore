@@ -31,6 +31,6 @@
 @property(nonatomic, strong) NSData *transactionReceipt;
 #endif
 
-- (id)initWithPaymentTransaction:(SKPaymentTransaction*)paymentTransaction;
+- (instancetype)initWithPaymentTransaction:(SKPaymentTransaction*)paymentTransaction;
 
 @end

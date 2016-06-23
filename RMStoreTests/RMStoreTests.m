@@ -207,7 +207,7 @@
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_6_1)
     
     NSURL *result = [RMStore receiptURL];
-    NSURL *expected = [[NSBundle mainBundle] appStoreReceiptURL];
+    NSURL *expected = [NSBundle mainBundle].appStoreReceiptURL;
     XCTAssertEqualObjects(result, expected, @"");
 }
 
@@ -275,10 +275,11 @@
 - (void)testPaymentQueueUpdatedDownloads_Active
 { SKIP_IF_VERSION(NSFoundationVersionNumber_iOS_5_1)
     id download = [self mockDownloadWithState:SKDownloadStateActive];
-    [[[download stub] andReturnValue:OCMOCK_VALUE(0.5f)] progress];
+    const float progress = 0.5f;
+    [(SKDownload *)[[download stub] andReturnValue:OCMOCK_VALUE(progress)] progress];
     
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased downloads:@[download]];
-    NSString *productID = [[transaction payment] productIdentifier];
+    NSString *productID = [transaction payment].productIdentifier;
     
     [[_observer expect] storeDownloadUpdated:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
         SKDownload *returnedDownload = notification.rm_storeDownload;
@@ -288,7 +289,7 @@
         XCTAssertEqualObjects(download, returnedDownload);
         XCTAssertEqualObjects(transaction, returnedTransaction);
         XCTAssertTrue([productID isEqualToString:returnedProductID]);
-        XCTAssertTrue([download progress] == downloadProgress);
+        XCTAssertEqual(downloadProgress, progress);
         return YES;
     }]];
     [_store addStoreObserver:_observer];
@@ -305,7 +306,7 @@
     id download = [self mockDownloadWithState:SKDownloadStateCancelled];
     
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased downloads:@[download]];
-    NSString *productID = [[transaction payment] productIdentifier];
+    NSString *productID = [transaction payment].productIdentifier;
     
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
     [[queue expect] finishTransaction:transaction];
@@ -336,7 +337,7 @@
     id anotherDownload = [self mockDownloadWithState:SKDownloadStateFinished];
     
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased downloads:@[download, anotherDownload]];
-    NSString *productID = [[transaction payment] productIdentifier];
+    NSString *productID = [transaction payment].productIdentifier;
     
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
     [[queue expect] finishTransaction:transaction];
@@ -555,7 +556,7 @@
     id download = [self mockDownloadWithState:SKDownloadStatePaused];
     
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased downloads:@[download]];
-    NSString *productID = [[transaction payment] productIdentifier];
+    NSString *productID = [transaction payment].productIdentifier;
     
     [[_observer expect] storeDownloadPaused:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
         SKDownload *returnedDownload = notification.rm_storeDownload;
@@ -631,7 +632,7 @@
     
     id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
-    NSString *productID = [[transaction payment] productIdentifier];
+    NSString *productID = [transaction payment].productIdentifier;
 
     [[_observer expect] storeDownloadUpdated:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
         SKPaymentTransaction *returnedTransaction = notification.rm_transaction;
@@ -780,7 +781,7 @@
     id transaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStateRestored];
     id originalTransaction = [self mockPaymentTransactionWithState:SKPaymentTransactionStatePurchased];
     [[[transaction stub] andReturn:originalTransaction] originalTransaction];
-    NSString *productID = [[transaction payment] productIdentifier];
+    NSString *productID = [transaction payment].productIdentifier;
     
     [[_observer expect] storeDownloadUpdated:[OCMArg checkWithBlock:^BOOL(NSNotification *notification) {
         SKPaymentTransaction *returnedTransaction = notification.rm_transaction;
@@ -1039,32 +1040,6 @@
     [_store paymentQueue:queue updatedTransactions:@[transaction1, transaction2]];
     
     [_store paymentQueueRestoreCompletedTransactionsFinished:queue];
-}
-
-- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Queue_Nil
-{
-    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    [[_observer expect] storeRestoreTransactionsFailed:[OCMArg isNotNil]];
-    [_store addStoreObserver:_observer];
-
-    [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:nil];
-    
-    [_observer verify];
-}
-
-- (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Queue_Nil__Blocks
-{
-    __block BOOL didFail = NO;
-    [_store restoreTransactionsOnSuccess:^(NSArray* transactions){
-        XCTFail(@"");
-    } failure:^(NSError *error) {
-        didFail = YES;
-        XCTAssertNil(error, @"");
-    }];
-    id queue = [OCMockObject mockForClass:[SKPaymentQueue class]];
-    [_store paymentQueue:queue restoreCompletedTransactionsFailedWithError:nil];
-
-    XCTAssertTrue(didFail, @"");
 }
 
 - (void)testPaymentQueueRestoreCompletedTransactionsFailedWithError_Queue_Error

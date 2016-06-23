@@ -35,7 +35,7 @@
 {
     [self configureStore];
     
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     UIViewController *storeVC = [[RMStoreViewController alloc] initWithNibName:@"RMStoreViewController" bundle:nil];
     UINavigationController *vc1 = [[UINavigationController alloc] initWithRootViewController:storeVC];
     
