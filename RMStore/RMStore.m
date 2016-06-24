@@ -134,6 +134,9 @@ typedef void (^RMStoreSuccessBlock)();
     NSMutableDictionary *_products;
     NSMutableSet *_productsRequestDelegates;
     
+    SKProductsRequest *productsRequest;
+    SKMutablePayment *payment;
+    
     NSMutableArray *_restoredTransactions;
     
     NSInteger _pendingRestoredTransactionsCount;
@@ -210,7 +213,7 @@ typedef void (^RMStoreSuccessBlock)();
         }
         return;
     }
-    SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
+    payment = [SKMutablePayment paymentWithProduct:product];
     if ([payment respondsToSelector:@selector(setApplicationUsername:)])
     {
         payment.applicationUsername = userIdentifier;
@@ -239,7 +242,7 @@ typedef void (^RMStoreSuccessBlock)();
     delegate.failureBlock = failureBlock;
     [_productsRequestDelegates addObject:delegate];
  
-    SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:identifiers];
+    productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:identifiers];
 	productsRequest.delegate = delegate;
     
     [productsRequest start];
