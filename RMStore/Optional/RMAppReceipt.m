@@ -289,6 +289,7 @@ static NSURL *_appleRootCertificateURL = nil;
     
     NSData *data;
     NSURL *certificateURL = _appleRootCertificateURL ? : [[NSBundle mainBundle] URLForResource:@"AppleIncRootCertificate" withExtension:@"cer"];
+    NSAssert(certificateURL != nil, @"Certificate AppleIncRootCertificate.cer is missed, add it to the bundle");
     NSData *certificateData = [NSData dataWithContentsOfURL:certificateURL];
     if (!certificateData || [self verifyPCKS7:p7 withCertificateData:certificateData])
     {
