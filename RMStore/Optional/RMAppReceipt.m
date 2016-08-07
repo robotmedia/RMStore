@@ -24,6 +24,10 @@
 #import <openssl/sha.h>
 #import <openssl/x509.h>
 
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#endif
+
 // From https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ReceiptFields.html#//apple_ref/doc/uid/TP40010573-CH106-SW1
 NSInteger const RMAppReceiptASN1TypeBundleIdentifier = 2;
 NSInteger const RMAppReceiptASN1TypeAppVersion = 3;
@@ -150,7 +154,6 @@ static CFDataRef copy_mac_address(void)
     return macAddress;
 }
 
-
 static NSURL *_appleRootCertificateURL = nil;
 
 @implementation RMAppReceipt
@@ -230,15 +233,18 @@ static NSURL *_appleRootCertificateURL = nil;
 - (BOOL)verifyReceiptHash
 {
     // TODO: Getting the uuid in Mac is different. See: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW5
+    
+    // Order taken from: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW5
+
+    NSMutableData *data = [NSMutableData data];
+#if TARGET_OS_IPHONE
     NSUUID *uuid = [UIDevice currentDevice].identifierForVendor;
     unsigned char uuidBytes[16];
     [uuid getUUIDBytes:uuidBytes];
-    
-    // Order taken from: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW5
-    NSMutableData *data = [NSMutableData data];
     [data appendBytes:uuidBytes length:sizeof(uuidBytes)];
-    
+#elif TARGET_OS_MAC
     [data appendData:(__bridge NSData * _Nonnull)(copy_mac_address())];
+#endif
     
     [data appendData:self.opaqueValue];
     [data appendData:self.bundleIdentifierData];

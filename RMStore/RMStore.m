@@ -278,7 +278,6 @@ typedef void (^RMStoreSuccessBlock)();
 + (NSURL*)receiptURL
 {
     // The general best practice of weak linking using the respondsToSelector: method cannot be used here. Prior to iOS 7, the method was implemented as private API, but that implementation called the doesNotRecognizeSelector: method.
-    NSAssert(floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1, @"appStoreReceiptURL not supported in this iOS version.");
     NSURL *url = [NSBundle mainBundle].appStoreReceiptURL;
     return url;
 }
@@ -416,7 +415,11 @@ typedef void (^RMStoreSuccessBlock)();
 {
     for (SKDownload *download in downloads)
     {
+#if TARGET_OS_IPHONE
         switch (download.downloadState)
+#elif TARGET_OS_MAC
+        switch (download.state)
+#endif
         {
             case SKDownloadStateActive:
                 [self didUpdateDownload:download queue:queue];
@@ -505,7 +508,11 @@ typedef void (^RMStoreSuccessBlock)();
 {
     for (SKDownload *download in transaction.downloads)
     {
+#if TARGET_OS_IPHONE
         switch (download.downloadState)
+#elif TARGET_OS_MAC
+        switch (download.state)
+#endif
         {
             case SKDownloadStateActive:
             case SKDownloadStatePaused:

@@ -24,7 +24,6 @@
 /**
  Reference implementation of an app receipt verifier. If security is a concern you might want to avoid using a verifier whose code is open source.
  */
-__attribute__((availability(ios,introduced=7.0)))
 @interface RMStoreAppReceiptVerifier : NSObject<RMStoreReceiptVerifier>
 
 /**
