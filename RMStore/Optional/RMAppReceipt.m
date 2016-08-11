@@ -376,7 +376,7 @@ static NSURL *_appleRootCertificateURL = nil;
     NSAssert(certificateData != nil, @"Certificate AppleRootCA is missed, add it to the bundle (ios) or provide access to keychain (osx) or specify url `setAppleRootCertificateURL`");
     
     NSData *data = nil;
-    if (certificateData && [self verifyPCKS7:p7 withCertificateData:certificateData])
+    if (certificateData && [self verifyPKCS7:p7 withCertificateData:certificateData])
     {
         struct pkcs7_st *contents = p7->d.sign->contents;
         if (PKCS7_type_is_data(contents))
@@ -389,7 +389,7 @@ static NSURL *_appleRootCertificateURL = nil;
     return data;
 }
 
-+ (BOOL)verifyPCKS7:(PKCS7*)container withCertificateData:(NSData*)certificateData
++ (BOOL)verifyPKCS7:(PKCS7*)container withCertificateData:(NSData*)certificateData
 {
     // Based on: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW17
     static int verified = 1;
