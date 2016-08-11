@@ -26,6 +26,14 @@
 
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
+#elif TARGET_OS_MAC
+#import <Security/SecKeychainItem.h>
+#endif
+
+#if DEBUG
+#define RMAppReceiptLog(...) NSLog(@"RMAppReceipt: %@", [NSString stringWithFormat:__VA_ARGS__]);
+#else
+#define RMAppReceiptLog(...)
 #endif
 
 // From https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ReceiptFields.html#//apple_ref/doc/uid/TP40010573-CH106-SW1
@@ -104,8 +112,10 @@ static NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     return RMASN1ReadString(pp, omax, V_ASN1_IA5STRING, NSASCIIStringEncoding);
 }
 
+#if TARGET_OS_MAC
+
 // Returns a CFData object, containing the computer's GUID.
-static CFDataRef copy_mac_address(void)
+static CFDataRef CopyMACAddressData()
 {
     kern_return_t             kernResult;
     mach_port_t               master_port;
@@ -116,19 +126,19 @@ static CFDataRef copy_mac_address(void)
     
     kernResult = IOMasterPort(MACH_PORT_NULL, &master_port);
     if (kernResult != KERN_SUCCESS) {
-        printf("IOMasterPort returned %d\n", kernResult);
+        RMAppReceiptLog(@"IOMasterPort returned %d", kernResult);
         return nil;
     }
     
     matchingDict = IOBSDNameMatching(master_port, 0, "en0");
     if (!matchingDict) {
-        printf("IOBSDNameMatching returned empty dictionary\n");
+        RMAppReceiptLog(@"IOBSDNameMatching returned empty dictionary");
         return nil;
     }
     
     kernResult = IOServiceGetMatchingServices(master_port, matchingDict, &iterator);
     if (kernResult != KERN_SUCCESS) {
-        printf("IOServiceGetMatchingServices returned %d\n", kernResult);
+        RMAppReceiptLog(@"IOServiceGetMatchingServices returned %d", kernResult);
         return nil;
     }
     
@@ -144,7 +154,7 @@ static CFDataRef copy_mac_address(void)
                                                                      CFSTR("IOMACAddress"), kCFAllocatorDefault, 0);
             IOObjectRelease(parentService);
         } else {
-            printf("IORegistryEntryGetParentEntry returned %d\n", kernResult);
+            RMAppReceiptLog(@"IORegistryEntryGetParentEntry returned %d", kernResult);
         }
         
         IOObjectRelease(service);
@@ -153,6 +163,62 @@ static CFDataRef copy_mac_address(void)
     
     return macAddress;
 }
+
+static inline SecCertificateRef AppleRootCAFromKeychain( void )
+{
+    SecKeychainRef roots = NULL;
+    SecKeychainSearchRef search = NULL;
+    SecCertificateRef cert = NULL;
+    BOOL cfReleaseKeychain = YES;
+    
+    // there's a GC bug with this guy it seems
+    OSStatus err = SecKeychainOpen( "/System/Library/Keychains/SystemRootCertificates.keychain", &roots );
+    
+    if ( err != noErr )
+    {
+        CFStringRef errStr = SecCopyErrorMessageString( err, NULL );
+        RMAppReceiptLog( @"Error: %d (%@)", err, errStr );
+        CFRelease( errStr );
+        return NULL;
+    }
+    
+    SecKeychainAttribute labelAttr = { .tag = kSecLabelItemAttr, .length = 13, .data = (void *)"Apple Root CA" };
+    SecKeychainAttributeList attrs = { .count = 1, .attr = &labelAttr };
+    
+    err = SecKeychainSearchCreateFromAttributes( roots, kSecCertificateItemClass, &attrs, &search );
+    if ( err != noErr )
+    {
+        CFStringRef errStr = SecCopyErrorMessageString( err, NULL );
+        RMAppReceiptLog( @"Error: %d (%@)", err, errStr );
+        CFRelease( errStr );
+        if ( cfReleaseKeychain )
+            CFRelease( roots );
+        return NULL;
+    }
+    
+    SecKeychainItemRef item = NULL;
+    err = SecKeychainSearchCopyNext( search, &item );
+    if ( err != noErr )
+    {
+        CFStringRef errStr = SecCopyErrorMessageString( err, NULL );
+        RMAppReceiptLog( @"Error: %d (%@)", err, errStr );
+        CFRelease( errStr );
+        if ( cfReleaseKeychain )
+            CFRelease( roots );
+        
+        return NULL;
+    }
+    
+    cert = (SecCertificateRef)item;
+    CFRelease( search );
+    
+    if ( cfReleaseKeychain )
+        CFRelease( roots );
+    
+    return ( cert );
+}
+
+#endif
 
 static NSURL *_appleRootCertificateURL = nil;
 
@@ -243,7 +309,7 @@ static NSURL *_appleRootCertificateURL = nil;
     [uuid getUUIDBytes:uuidBytes];
     [data appendBytes:uuidBytes length:sizeof(uuidBytes)];
 #elif TARGET_OS_MAC
-    [data appendData:(__bridge NSData * _Nonnull)(copy_mac_address())];
+    [data appendData:(__bridge NSData * _Nonnull)(CopyMACAddressData())];
 #endif
     
     [data appendData:self.opaqueValue];
@@ -287,11 +353,30 @@ static NSURL *_appleRootCertificateURL = nil;
     
     if (!p7) return nil;
     
-    NSData *data;
+    NSData *certificateData = nil;
+#if TARGET_OS_IPHONE
     NSURL *certificateURL = _appleRootCertificateURL ? : [[NSBundle mainBundle] URLForResource:@"AppleIncRootCertificate" withExtension:@"cer"];
-    NSAssert(certificateURL != nil, @"Certificate AppleIncRootCertificate.cer is missed, add it to the bundle");
-    NSData *certificateData = [NSData dataWithContentsOfURL:certificateURL];
-    if (!certificateData || [self verifyPCKS7:p7 withCertificateData:certificateData])
+    certificateData = [NSData dataWithContentsOfURL:certificateURL];
+#elif TARGET_OS_MAC
+    if (_appleRootCertificateURL)
+    {
+        certificateData = [NSData dataWithContentsOfURL:_appleRootCertificateURL];
+    }
+    else
+    {
+        // get the Apple root CA from http://www.apple.com/certificateauthority and load it into b_X509
+        //NSData * root = [NSData dataWithContentsOfURL: [NSURL URLWithString: @"http://www.apple.com/certificateauthority/AppleComputerRootCertificate.cer"]];
+        SecCertificateRef cert = AppleRootCAFromKeychain();
+        NSAssert(cert != NULL, @"Failed to load Apple Root CA from keychain");
+        certificateData = CFBridgingRelease(SecCertificateCopyData(cert));
+        CFRelease(cert);
+    }
+#endif
+    
+    NSAssert(certificateData != nil, @"Certificate AppleRootCA is missed, add it to the bundle (ios) or provide access to keychain (osx) or specify url `setAppleRootCertificateURL`");
+    
+    NSData *data = nil;
+    if (certificateData && [self verifyPCKS7:p7 withCertificateData:certificateData])
     {
         struct pkcs7_st *contents = p7->d.sign->contents;
         if (PKCS7_type_is_data(contents))
@@ -305,7 +390,8 @@ static NSURL *_appleRootCertificateURL = nil;
 }
 
 + (BOOL)verifyPCKS7:(PKCS7*)container withCertificateData:(NSData*)certificateData
-{ // Based on: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW17
+{
+    // Based on: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW17
     static int verified = 1;
     int result = 0;
     OpenSSL_add_all_digests(); // Required for PKCS7_verify to work
