@@ -25,6 +25,10 @@
  */
 @interface RMStoreKeychainPersistence : NSObject<RMStoreTransactionPersistor>
 
+/** Returns the singleton store instance.
+ */
++ (RMStoreKeychainPersistence*)defaultPersistence;
+
 /** Remove all persisted transactions from the keychain.
  */
 - (void)removeTransactions;

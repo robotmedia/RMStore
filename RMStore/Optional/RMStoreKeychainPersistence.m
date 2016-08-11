@@ -84,7 +84,20 @@ NSData* RMKeychainGetValue(NSString *key)
 }
 
 @implementation RMStoreKeychainPersistence {
+@private
     NSDictionary *_transactionsDictionary;
+}
+
+#pragma mark - Lifecycle
+
++ (RMStoreKeychainPersistence *)defaultPersistence
+{
+    static RMStoreKeychainPersistence *_defaultPersistence = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _defaultPersistence = [[RMStoreKeychainPersistence alloc] init];
+    });
+    return _defaultPersistence;
 }
 
 #pragma mark - RMStoreTransactionPersistor
