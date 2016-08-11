@@ -27,6 +27,7 @@
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #elif TARGET_OS_MAC
+#import <IOKit/IOKitLib.h>
 #import <Security/SecKeychainItem.h>
 #endif
 
