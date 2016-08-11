@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		52E207651D5CE26100E89C8F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52E207641D5CE26100E89C8F /* IOKit.framework */; };
 		52FE63A41D3531B00050814B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 52FE63A31D3531B00050814B /* AppDelegate.m */; };
 		52FE63A71D3531B00050814B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 52FE63A61D3531B00050814B /* main.m */; };
 		52FE63AA1D3531B00050814B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52FE63A91D3531B00050814B /* ViewController.m */; };
@@ -97,6 +98,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		52E207641D5CE26100E89C8F /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		52FE63A01D3531B00050814B /* RMStoreDemo_OSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RMStoreDemo_OSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52FE63A21D3531B00050814B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		52FE63A31D3531B00050814B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52E207651D5CE26100E89C8F /* IOKit.framework in Frameworks */,
 				52FE63BB1D3534450050814B /* Security.framework in Frameworks */,
 				52FE63B91D3534390050814B /* StoreKit.framework in Frameworks */,
 				52FE63B41D35333F0050814B /* libcrypto.a in Frameworks */,
@@ -327,6 +330,7 @@
 		A0AF3D0A17A802F300D2E836 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				52E207641D5CE26100E89C8F /* IOKit.framework */,
 				52FE63BA1D3534450050814B /* Security.framework */,
 				52FE63B81D3534390050814B /* StoreKit.framework */,
 				C90EF0F019A20C8200A9E738 /* XCTest.framework */,
@@ -686,7 +690,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/RMStore/Optional/openssl-1.0.1e/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.robotmedia.RMStoreDemo-OSX";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -727,7 +731,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/RMStore/Optional/openssl-1.0.1e/lib",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.robotmedia.RMStoreDemo-OSX";
 				PRODUCT_NAME = "$(TARGET_NAME)";
