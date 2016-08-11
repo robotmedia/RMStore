@@ -130,6 +130,7 @@ typedef void (^RMStoreSuccessBlock)();
 @end
 
 @implementation RMStore {
+@private
     NSMutableDictionary *_addPaymentParameters; // HACK: We use a dictionary of product identifiers because the returned SKPayment is different from the one we add to the queue. Bad Apple.
     NSMutableDictionary *_products;
     NSMutableSet *_productsRequestDelegates;
