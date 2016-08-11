@@ -21,6 +21,13 @@
 #import "RMStoreKeychainPersistence.h"
 #import <Security/Security.h>
 
+#if DEBUG
+#define RMStoreKeychainPersistenceLog(...) NSLog(@"RMStoreKeychainPersistence: %@", [NSString stringWithFormat:__VA_ARGS__]);
+#else
+#define RMStoreKeychainPersistenceLog(...)
+#endif
+
+
 NSString* const RMStoreTransactionsKeychainKey = @"RMStoreTransactions";
 
 #pragma mark - Keychain
@@ -64,7 +71,7 @@ void RMKeychainSetValue(NSData *value, NSString *key)
     }
     if (status != errSecSuccess)
     {
-        NSLog(@"RMStoreKeychainPersistence: failed to set key %@ with error %ld.", key, (long)status);
+        RMStoreKeychainPersistenceLog(@"failed to set key %@ with error %ld.", key, (long)status);
     }
 }
 
@@ -78,7 +85,7 @@ NSData* RMKeychainGetValue(NSString *key)
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)searchDictionary, (CFTypeRef *)&value);
     if (status != errSecSuccess && status != errSecItemNotFound)
     {
-        NSLog(@"RMStoreKeychainPersistence: failed to get key %@ with error %ld.", key, (long)status);
+        RMStoreKeychainPersistenceLog(@"failed to get key %@ with error %ld.", key, (long)status);
     }
     return (__bridge NSData*)value;
 }
@@ -171,7 +178,7 @@ NSData* RMKeychainGetValue(NSString *key)
             transactions = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
             if (!transactions)
             {
-                NSLog(@"RMStoreKeychainPersistence: failed to read JSON data with error %@", error);
+                RMStoreKeychainPersistenceLog(@"failed to read JSON data with error %@", error);
             }
         }
         _transactionsDictionary = transactions;
@@ -190,7 +197,7 @@ NSData* RMKeychainGetValue(NSString *key)
         data = [NSJSONSerialization dataWithJSONObject:dictionary options:0 error:&error];
         if (!data)
         {
-            NSLog(@"RMStoreKeychainPersistence: failed to write JSON data with error %@", error);
+            RMStoreKeychainPersistenceLog(@"failed to write JSON data with error %@", error);
         }
     }
     RMKeychainSetValue(data, RMStoreTransactionsKeychainKey);
