@@ -274,11 +274,12 @@ RMStore requires iOS 5.0 or above and ARC.
 
 RMStore is in initial development and its public API should not be considered stable. Future enhancements will include:
 
-* [Better OS X support](https://github.com/robotmedia/RMStore/issues/4)
+* Tests for OS X
+* Example app for OS X
 
 ##License
 
- Copyright 2013-2014 [Robot Media SL](http://www.robotmedia.net)
+ Copyright 2013-2016 [Robot Media SL](http://www.robotmedia.net)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
