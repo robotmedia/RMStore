@@ -162,19 +162,12 @@ static NSURL *_appleRootCertificateURL = nil;
 
 -(BOOL)containsActiveAutoRenewableSubscriptionOfProductIdentifier:(NSString *)productIdentifier forDate:(NSDate *)date
 {
-    RMAppReceiptIAP *lastTransaction = nil;
-    
     for (RMAppReceiptIAP *iap in self.inAppPurchases)
     {
-        if (![iap.productIdentifier isEqualToString:productIdentifier]) continue;
-        
-        if (!lastTransaction || [iap.subscriptionExpirationDate compare:lastTransaction.subscriptionExpirationDate] == NSOrderedDescending)
-        {
-            lastTransaction = iap;
-        }
+        if ([iap.productIdentifier isEqualToString:productIdentifier] && [iap isActiveAutoRenewableSubscriptionForDate:date]) return YES;
     }
     
-    return [lastTransaction isActiveAutoRenewableSubscriptionForDate:date];
+    return NO;
 }
 
 - (BOOL)verifyReceiptHash
