@@ -103,6 +103,8 @@ static NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
 
 static NSURL *_appleRootCertificateURL = nil;
 
+static NSData *_appleRootCertificateData = nil;
+
 @implementation RMAppReceipt
 
 - (instancetype)initWithASN1Data:(NSData*)asn1Data
@@ -215,6 +217,11 @@ static NSURL *_appleRootCertificateURL = nil;
     _appleRootCertificateURL = url;
 }
 
++ (void)setAppleRootCertificateData:(NSData*)data
+{
+  _appleRootCertificateData = data;
+}
+
 #pragma mark - Utils
 
 + (NSData*)dataFromPCKS7Path:(NSString*)path
@@ -229,8 +236,13 @@ static NSURL *_appleRootCertificateURL = nil;
     if (!p7) return nil;
     
     NSData *data;
-    NSURL *certificateURL = _appleRootCertificateURL ? : [[NSBundle mainBundle] URLForResource:@"AppleIncRootCertificate" withExtension:@"cer"];
-    NSData *certificateData = [NSData dataWithContentsOfURL:certificateURL];
+    NSData *certificateData = _appleRootCertificateData;
+  
+    if( certificateData.length == 0 ) {
+        NSURL *certificateURL = _appleRootCertificateURL ? : [[NSBundle mainBundle] URLForResource:@"AppleIncRootCertificate" withExtension:@"cer"];
+        certificateData = [NSData dataWithContentsOfURL:certificateURL];
+    }
+  
     if (!certificateData || [self verifyPCKS7:p7 withCertificateData:certificateData])
     {
         struct pkcs7_st *contents = p7->d.sign->contents;
