@@ -102,6 +102,12 @@ __attribute__((availability(ios,introduced=7.0)))
  */
 + (void)setAppleRootCertificateURL:(NSURL*)url;
 
+/**
+ Sets the data of the Apple Root certificate that will be used to verifiy the signature of the bundle receipt. This takes precedence over AppleRootCertificateURL if both are set. If none is provided, AppleRootCertificateURL will be used. If no certificate is available, no signature verification will be performed. 
+ @param data containing the Apple Root certificate.
+ */
++ (void)setAppleRootCertificateData:(NSData*)data;
+
 @end
 
 /** Represents an in-app purchase in the app receipt.
