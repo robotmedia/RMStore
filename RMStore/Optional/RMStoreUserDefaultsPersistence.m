@@ -41,7 +41,10 @@ NSString* const RMStoreTransactionsUserDefaultsKey = @"RMStoreTransactions";
     RMStoreTransaction *transaction = [[RMStoreTransaction alloc] initWithPaymentTransaction:paymentTransaction];
     NSData *data = [self dataWithTransaction:transaction];
     [updatedTransactions addObject:data];
-    [self setTransactions:updatedTransactions forProductIdentifier:productIdentifier];
+    
+    if (productIdentifier) {
+        [self setTransactions:updatedTransactions forProductIdentifier:productIdentifier];
+    }
 }
 
 #pragma mark - Public
