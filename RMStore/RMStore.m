@@ -200,8 +200,16 @@ typedef void (^RMStoreSuccessBlock)();
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
 {
     SKProduct *product = [self productForIdentifier:productIdentifier];
-    if (product == nil)
-    {
+    if(product == nil) {
+        if(self.downloadProductsIfNotAvailable) {
+            [self requestProducts:[NSSet setWithObject:productIdentifier] success:^(NSArray *products, NSArray *invalidProductIdentifiers) {
+                [self addPayment:productIdentifier user:userIdentifier success:successBlock failure:failureBlock];
+            } failure:^(NSError *error) {
+                failureBlock(nil, error);
+            }];
+            return;
+        }
+        
         RMStoreLog(@"unknown product id %@", productIdentifier)
         if (failureBlock != nil)
         {
