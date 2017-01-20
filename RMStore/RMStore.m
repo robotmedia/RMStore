@@ -379,9 +379,11 @@ typedef void (^RMStoreSuccessBlock)();
             case SKPaymentTransactionStateRestored:
                 [self didRestoreTransaction:transaction queue:queue];
                 break;
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
             case SKPaymentTransactionStateDeferred:
                 [self didDeferTransaction:transaction];
                 break;
+#endif
             default:
                 break;
         }
