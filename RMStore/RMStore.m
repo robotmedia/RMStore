@@ -199,18 +199,24 @@ typedef void (^RMStoreSuccessBlock)();
            success:(void (^)(SKPaymentTransaction *transaction))successBlock
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
 {
+    SKMutablePayment *payment = nil;
     SKProduct *product = [self productForIdentifier:productIdentifier];
     if (product == nil)
     {
-        RMStoreLog(@"unknown product id %@", productIdentifier)
-        if (failureBlock != nil)
-        {
-            NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnknownProductIdentifier userInfo:@{NSLocalizedDescriptionKey: NSLocalizedStringFromTable(@"Unknown product identifier", @"RMStore", @"Error description")}];
-            failureBlock(nil, error);
+        payment = [SKMutablePayment paymentWithProductIdentifier:productIdentifier];
+        if (payment == nil) {
+            RMStoreLog(@"unknown product id %@", productIdentifier)
+            if (failureBlock != nil)
+            {
+                NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnknownProductIdentifier userInfo:@{NSLocalizedDescriptionKey: NSLocalizedStringFromTable(@"Unknown product identifier", @"RMStore", @"Error description")}];
+                failureBlock(nil, error);
+            }
+            return;
         }
-        return;
+    } else {
+        payment = [SKMutablePayment paymentWithProduct:product];
     }
-    SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
+    
     if ([payment respondsToSelector:@selector(setApplicationUsername:)])
     {
         payment.applicationUsername = userIdentifier;
