@@ -50,6 +50,8 @@ NSString* const RMStoreNotificationStoreReceipt = @"storeReceipt";
 NSString* const RMStoreNotificationTransaction = @"transaction";
 NSString* const RMStoreNotificationTransactions = @"transactions";
 
+NSString* const RMStoreNotificationExtraUserInfo = @"extraData";
+
 #if DEBUG
 #define RMStoreLog(...) NSLog(@"RMStore: %@", [NSString stringWithFormat:__VA_ARGS__]);
 #else
@@ -199,18 +201,24 @@ typedef void (^RMStoreSuccessBlock)();
            success:(void (^)(SKPaymentTransaction *transaction))successBlock
            failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock
 {
+    SKMutablePayment *payment = nil;
     SKProduct *product = [self productForIdentifier:productIdentifier];
     if (product == nil)
     {
-        RMStoreLog(@"unknown product id %@", productIdentifier)
-        if (failureBlock != nil)
-        {
-            NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnknownProductIdentifier userInfo:@{NSLocalizedDescriptionKey: NSLocalizedStringFromTable(@"Unknown product identifier", @"RMStore", @"Error description")}];
-            failureBlock(nil, error);
+        payment = [SKMutablePayment paymentWithProductIdentifier:productIdentifier];
+        if (payment == nil) {
+            RMStoreLog(@"unknown product id %@", productIdentifier)
+            if (failureBlock != nil)
+            {
+                NSError *error = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnknownProductIdentifier userInfo:@{NSLocalizedDescriptionKey: NSLocalizedStringFromTable(@"Unknown product identifier", @"RMStore", @"Error description")}];
+                failureBlock(nil, error);
+            }
+            return;
         }
-        return;
+    } else {
+        payment = [SKMutablePayment paymentWithProduct:product];
     }
-    SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
+    
     if ([payment respondsToSelector:@selector(setApplicationUsername:)])
     {
         payment.applicationUsername = userIdentifier;
@@ -484,7 +492,7 @@ typedef void (^RMStoreSuccessBlock)();
     const BOOL hasPendingDownloads = [self.class hasPendingDownloadsInTransaction:transaction];
     if (!hasPendingDownloads)
     {
-        [self finishTransaction:download.transaction queue:queue];
+        [self finishTransaction:download.transaction queue:queue extraData:nil];
     }
 }
 
@@ -528,8 +536,8 @@ typedef void (^RMStoreSuccessBlock)();
     
     if (self.receiptVerifier != nil)
     {
-        [self.receiptVerifier verifyTransaction:transaction success:^{
-            [self didVerifyTransaction:transaction queue:queue];
+        [self.receiptVerifier verifyTransaction:transaction success:^(id successData){
+            [self didVerifyTransaction:transaction queue:queue extraData:successData];
         } failure:^(NSError *error) {
             [self didFailTransaction:transaction queue:queue error:error];
         }];
@@ -537,7 +545,7 @@ typedef void (^RMStoreSuccessBlock)();
     else
     {
         RMStoreLog(@"WARNING: no receipt verification");
-        [self didVerifyTransaction:transaction queue:queue];
+        [self didVerifyTransaction:transaction queue:queue extraData:nil];
     }
 }
 
@@ -574,8 +582,8 @@ typedef void (^RMStoreSuccessBlock)();
     _pendingRestoredTransactionsCount++;
     if (self.receiptVerifier != nil)
     {
-        [self.receiptVerifier verifyTransaction:transaction success:^{
-            [self didVerifyTransaction:transaction queue:queue];
+        [self.receiptVerifier verifyTransaction:transaction success:^(id successData){
+            [self didVerifyTransaction:transaction queue:queue extraData:successData];
         } failure:^(NSError *error) {
             [self didFailTransaction:transaction queue:queue error:error];
         }];
@@ -583,7 +591,7 @@ typedef void (^RMStoreSuccessBlock)();
     else
     {
         RMStoreLog(@"WARNING: no receipt verification");
-        [self didVerifyTransaction:transaction queue:queue];
+        [self didVerifyTransaction:transaction queue:queue extraData:nil];
     }
 }
 
@@ -592,13 +600,13 @@ typedef void (^RMStoreSuccessBlock)();
     [self postNotificationWithName:RMSKPaymentTransactionDeferred transaction:transaction userInfoExtras:nil];
 }
 
-- (void)didVerifyTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
+- (void)didVerifyTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue extraData:(id)extraData
 {
     if (self.contentDownloader != nil)
     {
         [self.contentDownloader downloadContentForTransaction:transaction success:^{
             [self postNotificationWithName:RMSKDownloadFinished transaction:transaction userInfoExtras:nil];
-            [self didDownloadSelfHostedContentForTransaction:transaction queue:queue];
+            [self didDownloadSelfHostedContentForTransaction:transaction queue:queue extraData:extraData];
         } progress:^(float progress) {
             NSDictionary *extras = @{RMStoreNotificationDownloadProgress : @(progress)};
             [self postNotificationWithName:RMSKDownloadUpdated transaction:transaction userInfoExtras:extras];
@@ -610,11 +618,11 @@ typedef void (^RMStoreSuccessBlock)();
     }
     else
     {
-        [self didDownloadSelfHostedContentForTransaction:transaction queue:queue];
+        [self didDownloadSelfHostedContentForTransaction:transaction queue:queue extraData:extraData];
     }
 }
 
-- (void)didDownloadSelfHostedContentForTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
+- (void)didDownloadSelfHostedContentForTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue extraData:(id)extraData
 {
     NSArray *downloads = [transaction respondsToSelector:@selector(downloads)] ? transaction.downloads : @[];
     if (downloads.count > 0)
@@ -624,11 +632,11 @@ typedef void (^RMStoreSuccessBlock)();
     }
     else
     {
-        [self finishTransaction:transaction queue:queue];
+        [self finishTransaction:transaction queue:queue extraData:extraData];
     }
 }
 
-- (void)finishTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue
+- (void)finishTransaction:(SKPaymentTransaction *)transaction queue:(SKPaymentQueue*)queue extraData:(id)extraData
 {
     SKPayment *payment = transaction.payment;
 	NSString* productIdentifier = payment.productIdentifier;
@@ -641,7 +649,12 @@ typedef void (^RMStoreSuccessBlock)();
         wrapper.successBlock(transaction);
     }
     
-    [self postNotificationWithName:RMSKPaymentTransactionFinished transaction:transaction userInfoExtras:nil];
+    NSDictionary *extraInfo = nil;
+    if (extraData) {
+        extraInfo = @{RMStoreNotificationExtraUserInfo:extraData};
+    }
+    
+    [self postNotificationWithName:RMSKPaymentTransactionFinished transaction:transaction userInfoExtras:extraInfo];
     
     if (transaction.transactionState == SKPaymentTransactionStateRestored)
     {
