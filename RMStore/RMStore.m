@@ -217,7 +217,9 @@ typedef void (^RMStoreSuccessBlock)(void);
     }
     
 #ifdef DEBUG
-    payment.simulatesAskToBuyInSandbox = YES;
+    if (@available(iOS 8.3, *)) {
+        payment.simulatesAskToBuyInSandbox = YES;
+    }
 #endif
     
     RMAddPaymentParameters *parameters = [[RMAddPaymentParameters alloc] init];
