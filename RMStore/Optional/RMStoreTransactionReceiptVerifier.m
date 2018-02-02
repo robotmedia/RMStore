@@ -94,7 +94,7 @@ static const char _base64EncodingTable[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
 @implementation RMStoreTransactionReceiptVerifier
 
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
-                           success:(void (^)())successBlock
+                           success:(void (^)(void))successBlock
                            failure:(void (^)(NSError *error))failureBlock
 {    
     NSString *receipt = [transaction.transactionReceipt rm_stringByBase64Encoding];
@@ -129,7 +129,7 @@ static const char _base64EncodingTable[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
 
 - (void)verifyRequestData:(NSData*)requestData
                       url:(NSString*)urlString
-                  success:(void (^)())successBlock
+                  success:(void (^)(void))successBlock
                   failure:(void (^)(NSError *error))failureBlock
 {
     NSURL *url = [NSURL URLWithString:urlString];
@@ -137,64 +137,66 @@ static const char _base64EncodingTable[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
     request.HTTPBody = requestData;
     static NSString *requestMethod = @"POST";
     request.HTTPMethod = requestMethod;
-
+    
     dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSError *error;
-        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:&error];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (!data)
-            {
-                RMStoreLog(@"Server Connection Failed");
-                NSError *wrapperError = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnableToCompleteVerification userInfo:@{NSUnderlyingErrorKey : error, NSLocalizedDescriptionKey : NSLocalizedStringFromTable(@"Connection to Apple failed. Check the underlying error for more info.", @"RMStore", @"Error description")}];
-                if (failureBlock != nil)
+        NSURLSessionDataTask* task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (!data)
                 {
-                    failureBlock(wrapperError);
+                    RMStoreLog(@"Server Connection Failed");
+                    NSError *wrapperError = [NSError errorWithDomain:RMStoreErrorDomain code:RMStoreErrorCodeUnableToCompleteVerification userInfo:@{NSUnderlyingErrorKey : error, NSLocalizedDescriptionKey : NSLocalizedStringFromTable(@"Connection to Apple failed. Check the underlying error for more info.", @"RMStore", @"Error description")}];
+                    if (failureBlock != nil)
+                    {
+                        failureBlock(wrapperError);
+                    }
+                    return;
                 }
-                return;
-            }
-            NSError *jsonError;
-            NSDictionary *responseJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
-            if (!responseJSON)
-            {
-                RMStoreLog(@"Failed To Parse Server Response");
-                if (failureBlock != nil)
+                NSError *jsonError;
+                NSDictionary *responseJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
+                if (!responseJSON)
                 {
-                    failureBlock(jsonError);
+                    RMStoreLog(@"Failed To Parse Server Response");
+                    if (failureBlock != nil)
+                    {
+                        failureBlock(jsonError);
+                    }
                 }
-            }
-            
-            static NSString *statusKey = @"status";
-            NSInteger statusCode = [responseJSON[statusKey] integerValue];
-            
-            static NSInteger successCode = 0;
-            static NSInteger sandboxCode = 21007;
-            if (statusCode == successCode)
-            {
-                if (successBlock != nil)
-                {
-                    successBlock();
-                }
-            }
-            else if (statusCode == sandboxCode)
-            {
-                RMStoreLog(@"Verifying Sandbox Receipt");
-                // From: https://developer.apple.com/library/ios/#technotes/tn2259/_index.html
-                // See also: http://stackoverflow.com/questions/9677193/ios-storekit-can-i-detect-when-im-in-the-sandbox
-                // Always verify your receipt first with the production URL; proceed to verify with the sandbox URL if you receive a 21007 status code. Following this approach ensures that you do not have to switch between URLs while your application is being tested or reviewed in the sandbox or is live in the App Store.
                 
-                static NSString *sandboxURL = @"https://sandbox.itunes.apple.com/verifyReceipt";
-                [self verifyRequestData:requestData url:sandboxURL success:successBlock failure:failureBlock];
-            }
-            else
-            {
-                RMStoreLog(@"Verification Failed With Code %ld", (long)statusCode);
-                NSError *serverError = [NSError errorWithDomain:RMStoreErrorDomain code:statusCode userInfo:nil];
-                if (failureBlock != nil)
+                static NSString *statusKey = @"status";
+                NSInteger statusCode = [responseJSON[statusKey] integerValue];
+                
+                static NSInteger successCode = 0;
+                static NSInteger sandboxCode = 21007;
+                if (statusCode == successCode)
                 {
-                    failureBlock(serverError);
+                    if (successBlock != nil)
+                    {
+                        successBlock();
+                    }
                 }
-            }
-        });
+                else if (statusCode == sandboxCode)
+                {
+                    RMStoreLog(@"Verifying Sandbox Receipt");
+                    // From: https://developer.apple.com/library/ios/#technotes/tn2259/_index.html
+                    // See also: http://stackoverflow.com/questions/9677193/ios-storekit-can-i-detect-when-im-in-the-sandbox
+                    // Always verify your receipt first with the production URL; proceed to verify with the sandbox URL if you receive a 21007 status code. Following this approach ensures that you do not have to switch between URLs while your application is being tested or reviewed in the sandbox or is live in the App Store.
+                    
+                    static NSString *sandboxURL = @"https://sandbox.itunes.apple.com/verifyReceipt";
+                    [self verifyRequestData:requestData url:sandboxURL success:successBlock failure:failureBlock];
+                }
+                else
+                {
+                    RMStoreLog(@"Verification Failed With Code %ld", (long)statusCode);
+                    NSError *serverError = [NSError errorWithDomain:RMStoreErrorDomain code:statusCode userInfo:nil];
+                    if (failureBlock != nil)
+                    {
+                        failureBlock(serverError);
+                    }
+                }
+            });
+        }];
+        
+        [task resume];
     });
 }
 

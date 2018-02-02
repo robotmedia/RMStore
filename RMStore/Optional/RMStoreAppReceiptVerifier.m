@@ -24,7 +24,7 @@
 @implementation RMStoreAppReceiptVerifier
 
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
-                           success:(void (^)())successBlock
+                           success:(void (^)(void))successBlock
                            failure:(void (^)(NSError *error))failureBlock
 {
     RMAppReceipt *receipt = [RMAppReceipt bundleReceipt];
@@ -87,7 +87,7 @@
 
 - (BOOL)verifyTransaction:(SKPaymentTransaction*)transaction
                 inReceipt:(RMAppReceipt*)receipt
-                           success:(void (^)())successBlock
+                           success:(void (^)(void))successBlock
                            failure:(void (^)(NSError *error))failureBlock
 {
     const BOOL receiptVerified = [self verifyAppReceipt:receipt];
