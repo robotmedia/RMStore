@@ -132,7 +132,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  @param successBlock The block to be called if the refresh receipt request is sucessful. Can be `nil`.
  @param failureBlock The block to be called if the refresh receipt request fails. Can be `nil`.
  */
-- (void)refreshReceiptOnSuccess:(void (^)())successBlock
+- (void)refreshReceiptOnSuccess:(void (^)(void))successBlock
                         failure:(void (^)(NSError *error))failureBlock;
 
 ///---------------------------------------------
@@ -197,7 +197,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  @discussion Hosted content from Apple’s server (@c SKDownload) is handled automatically by RMStore.
  */
 - (void)downloadContentForTransaction:(SKPaymentTransaction*)transaction
-                              success:(void (^)())successBlock
+                              success:(void (^)(void))successBlock
                              progress:(void (^)(float progress))progressBlock
                               failure:(void (^)(NSError *error))failureBlock;
 
@@ -217,7 +217,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  @param failureBlock Called if the transaction failed verification. If verification could not be completed (e.g., due to connection issues), then error must be of code RMStoreErrorCodeUnableToCompleteVerification to prevent RMStore to finish the transaction. Must be called in the main queu.
  */
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
-                  success:(void (^)())successBlock
+                  success:(void (^)(void))successBlock
                   failure:(void (^)(NSError *error))failureBlock;
 
 @end
@@ -291,7 +291,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 
 /** Used in @c storeDownload*:.
  */
-@property (nonatomic, readonly) SKDownload *rm_storeDownload;
+@property (nonatomic, readonly) SKDownload *rm_storeDownload NS_AVAILABLE(10_8, 6_0);
 
 /** Used in @c storeDownloadFailed:, @c storePaymentTransactionFailed:, @c storeProductsRequestFailed:, @c storeRefreshReceiptFailed: and @c storeRestoreTransactionsFailed:.
  */

@@ -61,13 +61,13 @@ typedef void (^RMSKPaymentTransactionSuccessBlock)(SKPaymentTransaction *transac
 typedef void (^RMSKProductsRequestFailureBlock)(NSError *error);
 typedef void (^RMSKProductsRequestSuccessBlock)(NSArray *products, NSArray *invalidIdentifiers);
 typedef void (^RMStoreFailureBlock)(NSError *error);
-typedef void (^RMStoreSuccessBlock)();
+typedef void (^RMStoreSuccessBlock)(void);
 
 @implementation NSNotification(RMStore)
 
 - (float)rm_downloadProgress
 {
-    return [self.userInfo[RMStoreNotificationDownloadProgress] floatValue];
+    return [[self.userInfo objectForKey:RMStoreNotificationDownloadProgress] floatValue];
 }
 
 - (NSArray*)rm_invalidProductIdentifiers
@@ -129,7 +129,8 @@ typedef void (^RMStoreSuccessBlock)();
 
 @end
 
-@implementation RMStore {
+@implementation RMStore
+{
 @private
     NSMutableDictionary *_addPaymentParameters; // HACK: We use a dictionary of product identifiers because the returned SKPayment is different from the one we add to the queue. Bad Apple.
     NSMutableDictionary *_products;
@@ -142,7 +143,7 @@ typedef void (^RMStoreSuccessBlock)();
     
     SKReceiptRefreshRequest *_refreshReceiptRequest;
     void (^_refreshReceiptFailureBlock)(NSError* error);
-    void (^_refreshReceiptSuccessBlock)();
+    void (^_refreshReceiptSuccessBlock)(void);
     
     void (^_restoreTransactionsFailureBlock)(NSError* error);
     void (^_restoreTransactionsSuccessBlock)(NSArray* transactions);
@@ -214,7 +215,10 @@ typedef void (^RMStoreSuccessBlock)();
     SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
     if ([payment respondsToSelector:@selector(setApplicationUsername:)])
     {
-        payment.applicationUsername = userIdentifier;
+        if (@available(macOS 10.9, *))
+        {
+            payment.applicationUsername = userIdentifier;
+        }
     }
     
     RMAddPaymentParameters *parameters = [[RMAddPaymentParameters alloc] init];
@@ -271,7 +275,10 @@ typedef void (^RMStoreSuccessBlock)();
     _pendingRestoredTransactionsCount = 0;
     _restoreTransactionsSuccessBlock = successBlock;
     _restoreTransactionsFailureBlock = failureBlock;
-    [[SKPaymentQueue defaultQueue] restoreCompletedTransactionsWithApplicationUsername:userIdentifier];
+    if (@available(macOS 10.9, *))
+    {
+        [[SKPaymentQueue defaultQueue] restoreCompletedTransactionsWithApplicationUsername:userIdentifier];
+    }
 }
 
 #pragma mark Receipt
@@ -679,7 +686,7 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (RMAddPaymentParameters*)popAddPaymentParametersForIdentifier:(NSString*)identifier
 {
-    RMAddPaymentParameters *parameters = _addPaymentParameters[identifier];
+    RMAddPaymentParameters *parameters = [_addPaymentParameters objectForKey:identifier];
     [_addPaymentParameters removeObjectForKey:identifier];
     return parameters;
 }
@@ -719,22 +726,25 @@ typedef void (^RMStoreSuccessBlock)();
 
 - (void)addProduct:(SKProduct*)product
 {
-    _products[product.productIdentifier] = product;    
+    [_products setObject:product forKey:product.productIdentifier];
 }
 
-- (void)postNotificationWithName:(NSString*)notificationName download:(SKDownload*)download userInfoExtras:(NSDictionary*)extras
+- (void)postNotificationWithName:(NSString*)notificationName download:(SKDownload *)download userInfoExtras:(NSDictionary*)extras API_AVAILABLE(macos(10.8))
 {
     NSMutableDictionary *mutableExtras = extras ? [NSMutableDictionary dictionaryWithDictionary:extras] : [NSMutableDictionary dictionary];
     mutableExtras[RMStoreNotificationStoreDownload] = download;
-    [self postNotificationWithName:notificationName transaction:download.transaction userInfoExtras:mutableExtras];
+    if (@available(macOS 10.11, *))
+    {
+        [self postNotificationWithName:notificationName transaction:download.transaction userInfoExtras:mutableExtras];
+    }
 }
 
 - (void)postNotificationWithName:(NSString*)notificationName transaction:(SKPaymentTransaction*)transaction userInfoExtras:(NSDictionary*)extras
 {
     NSString *productIdentifier = transaction.payment.productIdentifier;
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    userInfo[RMStoreNotificationTransaction] = transaction;
-    userInfo[RMStoreNotificationProductIdentifier] = productIdentifier;
+    [userInfo setObject:transaction forKey:RMStoreNotificationTransaction];
+    [userInfo setObject:productIdentifier forKey:RMStoreNotificationProductIdentifier];
     if (extras)
     {
         [userInfo addEntriesFromDictionary:extras];
