@@ -141,7 +141,7 @@ typedef void (^RMStoreSuccessBlock)(void);
     NSInteger _pendingRestoredTransactionsCount;
     BOOL _restoredCompletedTransactionsFinished;
     
-    SKReceiptRefreshRequest *_refreshReceiptRequest NS_AVAILABLE(10_9, *);
+    SKReceiptRefreshRequest *_refreshReceiptRequest NS_AVAILABLE(10_9, 7_0);
     void (^_refreshReceiptFailureBlock)(NSError* error);
     void (^_refreshReceiptSuccessBlock)(void);
     
