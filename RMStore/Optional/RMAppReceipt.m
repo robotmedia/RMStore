@@ -19,11 +19,23 @@
 //
 
 #import "RMAppReceipt.h"
-#import <UIKit/UIKit.h>
 #import <openssl/pkcs7.h>
 #import <openssl/objects.h>
 #import <openssl/sha.h>
 #import <openssl/x509.h>
+
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h>
+#elif TARGET_OS_MAC
+#import <IOKit/IOKitLib.h>
+#import <Security/SecKeychainItem.h>
+#endif
+
+#if DEBUG
+#define RMAppReceiptLog(...) NSLog(@"RMAppReceipt: %@", [NSString stringWithFormat:__VA_ARGS__]);
+#else
+#define RMAppReceiptLog(...)
+#endif
 
 // From https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ReceiptFields.html#//apple_ref/doc/uid/TP40010573-CH106-SW1
 NSInteger const RMAppReceiptASN1TypeBundleIdentifier = 2;
@@ -101,6 +113,114 @@ static NSString* RMASN1ReadIA5SString(const uint8_t **pp, long omax)
     return RMASN1ReadString(pp, omax, V_ASN1_IA5STRING, NSASCIIStringEncoding);
 }
 
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+
+// Returns a CFData object, containing the computer's GUID.
+static CFDataRef CopyMACAddressData()
+{
+    kern_return_t             kernResult;
+    mach_port_t               master_port;
+    CFMutableDictionaryRef    matchingDict;
+    io_iterator_t             iterator;
+    io_object_t               service;
+    CFDataRef                 macAddress = nil;
+    
+    kernResult = IOMasterPort(MACH_PORT_NULL, &master_port);
+    if (kernResult != KERN_SUCCESS) {
+        RMAppReceiptLog(@"IOMasterPort returned %d", kernResult);
+        return nil;
+    }
+    
+    matchingDict = IOBSDNameMatching(master_port, 0, "en0");
+    if (!matchingDict) {
+        RMAppReceiptLog(@"IOBSDNameMatching returned empty dictionary");
+        return nil;
+    }
+    
+    kernResult = IOServiceGetMatchingServices(master_port, matchingDict, &iterator);
+    if (kernResult != KERN_SUCCESS) {
+        RMAppReceiptLog(@"IOServiceGetMatchingServices returned %d", kernResult);
+        return nil;
+    }
+    
+    while((service = IOIteratorNext(iterator)) != 0) {
+        io_object_t parentService;
+        
+        kernResult = IORegistryEntryGetParentEntry(service, kIOServicePlane,
+                                                   &parentService);
+        if (kernResult == KERN_SUCCESS) {
+            if (macAddress) CFRelease(macAddress);
+            
+            macAddress = (CFDataRef) IORegistryEntryCreateCFProperty(parentService,
+                                                                     CFSTR("IOMACAddress"), kCFAllocatorDefault, 0);
+            IOObjectRelease(parentService);
+        } else {
+            RMAppReceiptLog(@"IORegistryEntryGetParentEntry returned %d", kernResult);
+        }
+        
+        IOObjectRelease(service);
+    }
+    IOObjectRelease(iterator);
+    
+    return macAddress;
+}
+
+static inline SecCertificateRef AppleRootCAFromKeychain( void )
+{
+    SecKeychainRef roots = NULL;
+    SecKeychainSearchRef search = NULL;
+    SecCertificateRef cert = NULL;
+    BOOL cfReleaseKeychain = YES;
+    
+    // there's a GC bug with this guy it seems
+    OSStatus err = SecKeychainOpen( "/System/Library/Keychains/SystemRootCertificates.keychain", &roots );
+    
+    if ( err != noErr )
+    {
+        CFStringRef errStr = SecCopyErrorMessageString( err, NULL );
+        RMAppReceiptLog( @"Error: %d (%@)", err, errStr );
+        CFRelease( errStr );
+        return NULL;
+    }
+    
+    SecKeychainAttribute labelAttr = { .tag = kSecLabelItemAttr, .length = 13, .data = (void *)"Apple Root CA" };
+    SecKeychainAttributeList attrs = { .count = 1, .attr = &labelAttr };
+    
+    err = SecKeychainSearchCreateFromAttributes( roots, kSecCertificateItemClass, &attrs, &search );
+    if ( err != noErr )
+    {
+        CFStringRef errStr = SecCopyErrorMessageString( err, NULL );
+        RMAppReceiptLog( @"Error: %d (%@)", err, errStr );
+        CFRelease( errStr );
+        if ( cfReleaseKeychain )
+            CFRelease( roots );
+        return NULL;
+    }
+    
+    SecKeychainItemRef item = NULL;
+    err = SecKeychainSearchCopyNext( search, &item );
+    if ( err != noErr )
+    {
+        CFStringRef errStr = SecCopyErrorMessageString( err, NULL );
+        RMAppReceiptLog( @"Error: %d (%@)", err, errStr );
+        CFRelease( errStr );
+        if ( cfReleaseKeychain )
+            CFRelease( roots );
+        
+        return NULL;
+    }
+    
+    cert = (SecCertificateRef)item;
+    CFRelease( search );
+    
+    if ( cfReleaseKeychain )
+        CFRelease( roots );
+    
+    return ( cert );
+}
+
+#endif
+
 static NSURL *_appleRootCertificateURL = nil;
 
 @implementation RMAppReceipt
@@ -117,17 +237,17 @@ static NSURL *_appleRootCertificateURL = nil;
             switch (type)
             {
                 case RMAppReceiptASN1TypeBundleIdentifier:
-                    _bundleIdentifierData = data;
-                    _bundleIdentifier = RMASN1ReadUTF8String(&s, length);
+                    self->_bundleIdentifierData = data;
+                    self->_bundleIdentifier = RMASN1ReadUTF8String(&s, length);
                     break;
                 case RMAppReceiptASN1TypeAppVersion:
-                    _appVersion = RMASN1ReadUTF8String(&s, length);
+                    self->_appVersion = RMASN1ReadUTF8String(&s, length);
                     break;
                 case RMAppReceiptASN1TypeOpaqueValue:
-                    _opaqueValue = data;
+                    self->_opaqueValue = data;
                     break;
                 case RMAppReceiptASN1TypeHash:
-                    _receiptHash = data;
+                    self->_receiptHash = data;
                     break;
                 case RMAppReceiptASN1TypeInAppPurchaseReceipt:
                 {
@@ -136,12 +256,12 @@ static NSURL *_appleRootCertificateURL = nil;
                     break;
                 }
                 case RMAppReceiptASN1TypeOriginalAppVersion:
-                    _originalAppVersion = RMASN1ReadUTF8String(&s, length);
+                    self->_originalAppVersion = RMASN1ReadUTF8String(&s, length);
                     break;
                 case RMAppReceiptASN1TypeExpirationDate:
                 {
                     NSString *string = RMASN1ReadIA5SString(&s, length);
-                    _expirationDate = [RMAppReceipt formatRFC3339String:string];
+                    self->_expirationDate = [RMAppReceipt formatRFC3339String:string];
                     break;
                 }
             }
@@ -180,13 +300,19 @@ static NSURL *_appleRootCertificateURL = nil;
 - (BOOL)verifyReceiptHash
 {
     // TODO: Getting the uuid in Mac is different. See: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW5
+    
+    // Order taken from: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW5
+
+    NSMutableData *data = [NSMutableData data];
+#if TARGET_OS_IPHONE
     NSUUID *uuid = [UIDevice currentDevice].identifierForVendor;
     unsigned char uuidBytes[16];
     [uuid getUUIDBytes:uuidBytes];
-    
-    // Order taken from: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW5
-    NSMutableData *data = [NSMutableData data];
     [data appendBytes:uuidBytes length:sizeof(uuidBytes)];
+#elif TARGET_OS_MAC
+    [data appendData:(__bridge NSData * _Nonnull)(CopyMACAddressData())];
+#endif
+    
     [data appendData:self.opaqueValue];
     [data appendData:self.bundleIdentifierData];
     
@@ -228,10 +354,30 @@ static NSURL *_appleRootCertificateURL = nil;
     
     if (!p7) return nil;
     
-    NSData *data;
+    NSData *certificateData = nil;
+#if TARGET_OS_IPHONE
     NSURL *certificateURL = _appleRootCertificateURL ? : [[NSBundle mainBundle] URLForResource:@"AppleIncRootCertificate" withExtension:@"cer"];
-    NSData *certificateData = [NSData dataWithContentsOfURL:certificateURL];
-    if (!certificateData || [self verifyPCKS7:p7 withCertificateData:certificateData])
+    certificateData = [NSData dataWithContentsOfURL:certificateURL];
+#elif TARGET_OS_MAC
+    if (_appleRootCertificateURL)
+    {
+        certificateData = [NSData dataWithContentsOfURL:_appleRootCertificateURL];
+    }
+    else
+    {
+        // get the Apple root CA from http://www.apple.com/certificateauthority and load it into b_X509
+        //NSData * root = [NSData dataWithContentsOfURL: [NSURL URLWithString: @"http://www.apple.com/certificateauthority/AppleComputerRootCertificate.cer"]];
+        SecCertificateRef cert = AppleRootCAFromKeychain();
+        NSAssert(cert != NULL, @"Failed to load Apple Root CA from keychain");
+        certificateData = CFBridgingRelease(SecCertificateCopyData(cert));
+        CFRelease(cert);
+    }
+#endif
+    
+    NSAssert(certificateData != nil, @"Certificate AppleRootCA is missed, add it to the bundle (ios) or provide access to keychain (osx) or specify url `setAppleRootCertificateURL`");
+    
+    NSData *data = nil;
+    if (certificateData && [self verifyPKCS7:p7 withCertificateData:certificateData])
     {
         struct pkcs7_st *contents = p7->d.sign->contents;
         if (PKCS7_type_is_data(contents))
@@ -244,8 +390,9 @@ static NSURL *_appleRootCertificateURL = nil;
     return data;
 }
 
-+ (BOOL)verifyPCKS7:(PKCS7*)container withCertificateData:(NSData*)certificateData
-{ // Based on: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW17
++ (BOOL)verifyPKCS7:(PKCS7*)container withCertificateData:(NSData*)certificateData
+{
+    // Based on: https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#//apple_ref/doc/uid/TP40010573-CH1-SW17
     static int verified = 1;
     int result = 0;
     OpenSSL_add_all_digests(); // Required for PKCS7_verify to work
@@ -336,42 +483,42 @@ static NSURL *_appleRootCertificateURL = nil;
             switch (type)
             {
                 case RMAppReceiptASN1TypeQuantity:
-                    _quantity = RMASN1ReadInteger(&p, length);
+                    self->_quantity = RMASN1ReadInteger(&p, length);
                     break;
                 case RMAppReceiptASN1TypeProductIdentifier:
-                    _productIdentifier = RMASN1ReadUTF8String(&p, length);
+                    self->_productIdentifier = RMASN1ReadUTF8String(&p, length);
                     break;
                 case RMAppReceiptASN1TypeTransactionIdentifier:
-                    _transactionIdentifier = RMASN1ReadUTF8String(&p, length);
+                    self->_transactionIdentifier = RMASN1ReadUTF8String(&p, length);
                     break;
                 case RMAppReceiptASN1TypePurchaseDate:
                 {
                     NSString *string = RMASN1ReadIA5SString(&p, length);
-                    _purchaseDate = [RMAppReceipt formatRFC3339String:string];
+                    self->_purchaseDate = [RMAppReceipt formatRFC3339String:string];
                     break;
                 }
                 case RMAppReceiptASN1TypeOriginalTransactionIdentifier:
-                    _originalTransactionIdentifier = RMASN1ReadUTF8String(&p, length);
+                    self->_originalTransactionIdentifier = RMASN1ReadUTF8String(&p, length);
                     break;
                 case RMAppReceiptASN1TypeOriginalPurchaseDate:
                 {
                     NSString *string = RMASN1ReadIA5SString(&p, length);
-                    _originalPurchaseDate = [RMAppReceipt formatRFC3339String:string];
+                    self->_originalPurchaseDate = [RMAppReceipt formatRFC3339String:string];
                     break;
                 }
                 case RMAppReceiptASN1TypeSubscriptionExpirationDate:
                 {
                     NSString *string = RMASN1ReadIA5SString(&p, length);
-                    _subscriptionExpirationDate = [RMAppReceipt formatRFC3339String:string];
+                    self->_subscriptionExpirationDate = [RMAppReceipt formatRFC3339String:string];
                     break;
                 }
                 case RMAppReceiptASN1TypeWebOrderLineItemID:
-                    _webOrderLineItemID = RMASN1ReadInteger(&p, length);
+                    self->_webOrderLineItemID = RMASN1ReadInteger(&p, length);
                     break;
                 case RMAppReceiptASN1TypeCancellationDate:
                 {
                     NSString *string = RMASN1ReadIA5SString(&p, length);
-                    _cancellationDate = [RMAppReceipt formatRFC3339String:string];
+                    self->_cancellationDate = [RMAppReceipt formatRFC3339String:string];
                     break;
                 }
             }

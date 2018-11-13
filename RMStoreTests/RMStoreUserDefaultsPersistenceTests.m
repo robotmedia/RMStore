@@ -202,9 +202,7 @@
     XCTAssertEqualObjects(transaction1.productIdentifier, transaction2.productIdentifier, @"");
     XCTAssertEqualObjects(transaction1.transactionDate, transaction2.transactionDate, @"");
     XCTAssertEqualObjects(transaction1.transactionIdentifier, transaction2.transactionIdentifier, @"");
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-    XCTAssertEqualObjects(transaction1.transactionReceipt, transaction2.transactionReceipt, @"");
-#endif
+
     XCTAssertEqual(transaction1.consumed, transaction2.consumed, @"");
 }
 
@@ -215,9 +213,7 @@
     transaction.productIdentifier = @"test";
     transaction.transactionDate = [NSDate date];
     transaction.transactionIdentifier = @"transaction";
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-    transaction.transactionReceipt = [NSData data];
-#endif
+
     transaction.consumed = YES;
     return transaction;
 }

@@ -7,6 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		52E207651D5CE26100E89C8F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52E207641D5CE26100E89C8F /* IOKit.framework */; };
+		52FE63A41D3531B00050814B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 52FE63A31D3531B00050814B /* AppDelegate.m */; };
+		52FE63A71D3531B00050814B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 52FE63A61D3531B00050814B /* main.m */; };
+		52FE63AA1D3531B00050814B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52FE63A91D3531B00050814B /* ViewController.m */; };
+		52FE63AC1D3531B00050814B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52FE63AB1D3531B00050814B /* Assets.xcassets */; };
+		52FE63AF1D3531B00050814B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52FE63AD1D3531B00050814B /* Main.storyboard */; };
+		52FE63B41D35333F0050814B /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8793E797180C2ABE005D7A66 /* libcrypto.a */; };
+		52FE63B51D35333F0050814B /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8793E798180C2ABE005D7A66 /* libssl.a */; };
+		52FE63B91D3534390050814B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52FE63B81D3534390050814B /* StoreKit.framework */; };
+		52FE63BB1D3534450050814B /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52FE63BA1D3534450050814B /* Security.framework */; };
+		52FE63BE1D3535A00050814B /* RMAppReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 8793E801180D512E005D7A66 /* RMAppReceipt.m */; };
+		52FE63C01D3535A00050814B /* RMStoreAppReceiptVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 8793E803180D512E005D7A66 /* RMStoreAppReceiptVerifier.m */; };
+		52FE63C21D3535A00050814B /* RMStoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 876046481812FB7500C9B78C /* RMStoreKeychainPersistence.m */; };
+		52FE63C41D3535A00050814B /* RMStoreTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 876631F8180EEBF40049B368 /* RMStoreTransaction.m */; };
+		52FE63C81D3535A00050814B /* RMStoreUserDefaultsPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A3A8180E82BB00376773 /* RMStoreUserDefaultsPersistence.m */; };
+		52FE63CA1D3535A00050814B /* RMStore.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF3D1217A802F300D2E836 /* RMStore.m */; };
 		8700D1C117DCA548005C8F5D /* NSNotification+RMStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */; };
 		8700D1D717DCB011005C8F5D /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8700D1D617DCB011005C8F5D /* libOCMock.a */; };
 		876046491812FB7500C9B78C /* RMStoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 876046481812FB7500C9B78C /* RMStoreKeychainPersistence.m */; };
@@ -14,7 +30,6 @@
 		8760464D18130DD400C9B78C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8760464C18130DD400C9B78C /* Security.framework */; };
 		8760464E18130DD800C9B78C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8760464C18130DD400C9B78C /* Security.framework */; };
 		8760465018131B2600C9B78C /* RMStoreKeychainPersistence.m in Sources */ = {isa = PBXBuildFile; fileRef = 876046481812FB7500C9B78C /* RMStoreKeychainPersistence.m */; };
-		8760465118131B4800C9B78C /* RMStoreTransactionReceiptVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 8793E805180D512E005D7A66 /* RMStoreTransactionReceiptVerifier.m */; };
 		876631F9180EEBF40049B368 /* RMStoreTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 876631F8180EEBF40049B368 /* RMStoreTransaction.m */; };
 		8793E799180C2ABE005D7A66 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8793E797180C2ABE005D7A66 /* libcrypto.a */; };
 		8793E79A180C2ABE005D7A66 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8793E798180C2ABE005D7A66 /* libssl.a */; };
@@ -22,10 +37,8 @@
 		8793E79E180C2C90005D7A66 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8793E797180C2ABE005D7A66 /* libcrypto.a */; };
 		8793E808180D512E005D7A66 /* RMAppReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 8793E801180D512E005D7A66 /* RMAppReceipt.m */; };
 		8793E809180D512E005D7A66 /* RMStoreAppReceiptVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 8793E803180D512E005D7A66 /* RMStoreAppReceiptVerifier.m */; };
-		8793E80A180D512E005D7A66 /* RMStoreTransactionReceiptVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 8793E805180D512E005D7A66 /* RMStoreTransactionReceiptVerifier.m */; };
 		8793E80B180D5133005D7A66 /* RMAppReceipt.m in Sources */ = {isa = PBXBuildFile; fileRef = 8793E801180D512E005D7A66 /* RMAppReceipt.m */; };
 		8793E80C180D5136005D7A66 /* RMStoreAppReceiptVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 8793E803180D512E005D7A66 /* RMStoreAppReceiptVerifier.m */; };
-		87950C2317E127A4001DF541 /* RMStoreTransactionReceiptVerifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87950C2217E127A4001DF541 /* RMStoreTransactionReceiptVerifierTests.m */; };
 		87A2A3A0180D7B0400376773 /* RMAppReceiptTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A39F180D7B0400376773 /* RMAppReceiptTests.m */; };
 		87A2A3A3180D817600376773 /* RMAppReceiptIAPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A3A2180D817600376773 /* RMAppReceiptIAPTests.m */; };
 		87A2A3A5180D82EF00376773 /* RMStoreAppReceiptVerifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 87A2A3A4180D82EF00376773 /* RMStoreAppReceiptVerifierTests.m */; };
@@ -84,6 +97,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		52E207641D5CE26100E89C8F /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
+		52FE63A01D3531B00050814B /* RMStoreDemo_OSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RMStoreDemo_OSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		52FE63A21D3531B00050814B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		52FE63A31D3531B00050814B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		52FE63A61D3531B00050814B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		52FE63A81D3531B00050814B /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		52FE63A91D3531B00050814B /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		52FE63AB1D3531B00050814B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		52FE63AE1D3531B00050814B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		52FE63B01D3531B00050814B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		52FE63B81D3534390050814B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/StoreKit.framework; sourceTree = DEVELOPER_DIR; };
+		52FE63BA1D3534450050814B /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		8700D1C017DCA548005C8F5D /* NSNotification+RMStoreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotification+RMStoreTests.m"; sourceTree = "<group>"; };
 		8700D1CF17DCB011005C8F5D /* NSNotificationCenter+OCMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+OCMAdditions.h"; sourceTree = "<group>"; };
 		8700D1D017DCB011005C8F5D /* OCMArg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCMArg.h; sourceTree = "<group>"; };
@@ -104,9 +129,6 @@
 		8793E801180D512E005D7A66 /* RMAppReceipt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAppReceipt.m; sourceTree = "<group>"; };
 		8793E802180D512E005D7A66 /* RMStoreAppReceiptVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMStoreAppReceiptVerifier.h; sourceTree = "<group>"; };
 		8793E803180D512E005D7A66 /* RMStoreAppReceiptVerifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreAppReceiptVerifier.m; sourceTree = "<group>"; };
-		8793E804180D512E005D7A66 /* RMStoreTransactionReceiptVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMStoreTransactionReceiptVerifier.h; sourceTree = "<group>"; };
-		8793E805180D512E005D7A66 /* RMStoreTransactionReceiptVerifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreTransactionReceiptVerifier.m; sourceTree = "<group>"; };
-		87950C2217E127A4001DF541 /* RMStoreTransactionReceiptVerifierTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMStoreTransactionReceiptVerifierTests.m; sourceTree = "<group>"; };
 		87A2A39F180D7B0400376773 /* RMAppReceiptTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAppReceiptTests.m; sourceTree = "<group>"; };
 		87A2A3A1180D7E2900376773 /* RMStoreTests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RMStoreTests-Prefix.pch"; sourceTree = "<group>"; };
 		87A2A3A2180D817600376773 /* RMAppReceiptIAPTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RMAppReceiptIAPTests.m; sourceTree = "<group>"; };
@@ -147,6 +169,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		52FE639D1D3531B00050814B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52E207651D5CE26100E89C8F /* IOKit.framework in Frameworks */,
+				52FE63BB1D3534450050814B /* Security.framework in Frameworks */,
+				52FE63B91D3534390050814B /* StoreKit.framework in Frameworks */,
+				52FE63B41D35333F0050814B /* libcrypto.a in Frameworks */,
+				52FE63B51D35333F0050814B /* libssl.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0AF3D0517A802F300D2E836 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -189,6 +223,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		52FE63A11D3531B00050814B /* RMStoreDemo_OSX */ = {
+			isa = PBXGroup;
+			children = (
+				52FE63A21D3531B00050814B /* AppDelegate.h */,
+				52FE63A31D3531B00050814B /* AppDelegate.m */,
+				52FE63A81D3531B00050814B /* ViewController.h */,
+				52FE63A91D3531B00050814B /* ViewController.m */,
+				52FE63AB1D3531B00050814B /* Assets.xcassets */,
+				52FE63AD1D3531B00050814B /* Main.storyboard */,
+				52FE63B01D3531B00050814B /* Info.plist */,
+				52FE63A51D3531B00050814B /* Supporting Files */,
+			);
+			path = RMStoreDemo_OSX;
+			sourceTree = "<group>";
+		};
+		52FE63A51D3531B00050814B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				52FE63A61D3531B00050814B /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		8700D1CC17DCB011005C8F5D /* usr */ = {
 			isa = PBXGroup;
 			children = (
@@ -239,8 +296,6 @@
 				876046481812FB7500C9B78C /* RMStoreKeychainPersistence.m */,
 				876631F7180EEBF40049B368 /* RMStoreTransaction.h */,
 				876631F8180EEBF40049B368 /* RMStoreTransaction.m */,
-				8793E804180D512E005D7A66 /* RMStoreTransactionReceiptVerifier.h */,
-				8793E805180D512E005D7A66 /* RMStoreTransactionReceiptVerifier.m */,
 				87A2A3A7180E82BB00376773 /* RMStoreUserDefaultsPersistence.h */,
 				87A2A3A8180E82BB00376773 /* RMStoreUserDefaultsPersistence.m */,
 			);
@@ -253,6 +308,7 @@
 				A0AF3D0D17A802F300D2E836 /* RMStore */,
 				A0AF3D2217A802F300D2E836 /* RMStoreTests */,
 				A0AF3D7617A8085900D2E836 /* RMStoreDemo */,
+				52FE63A11D3531B00050814B /* RMStoreDemo_OSX */,
 				A0AF3D0A17A802F300D2E836 /* Frameworks */,
 				A0AF3D0917A802F300D2E836 /* Products */,
 			);
@@ -264,6 +320,7 @@
 				A0AF3D0817A802F300D2E836 /* libRMStore.a */,
 				A0AF3D1917A802F300D2E836 /* RMStoreTests.xctest */,
 				A0AF3D7217A8085900D2E836 /* RMStoreDemo.app */,
+				52FE63A01D3531B00050814B /* RMStoreDemo_OSX.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -271,6 +328,9 @@
 		A0AF3D0A17A802F300D2E836 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				52E207641D5CE26100E89C8F /* IOKit.framework */,
+				52FE63BA1D3534450050814B /* Security.framework */,
+				52FE63B81D3534390050814B /* StoreKit.framework */,
 				C90EF0F019A20C8200A9E738 /* XCTest.framework */,
 				A0AF3D3D17A807FF00D2E836 /* CoreGraphics.framework */,
 				A0AF3D0B17A802F300D2E836 /* Foundation.framework */,
@@ -312,7 +372,6 @@
 				87A2A3A4180D82EF00376773 /* RMStoreAppReceiptVerifierTests.m */,
 				8760464A18130CBB00C9B78C /* RMStoreKeychainPersistenceTests.m */,
 				A0AF3D2917A802F300D2E836 /* RMStoreTests.m */,
-				87950C2217E127A4001DF541 /* RMStoreTransactionReceiptVerifierTests.m */,
 				87B7853E18105E6A00B5E54E /* RMStoreTransactionTests.m */,
 				87A2A3AB180E8AF500376773 /* RMStoreUserDefaultsPersistenceTests.m */,
 				A0AF3D2317A802F300D2E836 /* Supporting Files */,
@@ -362,6 +421,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		52FE639F1D3531B00050814B /* RMStoreDemo_OSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 52FE63B31D3531B00050814B /* Build configuration list for PBXNativeTarget "RMStoreDemo_OSX" */;
+			buildPhases = (
+				52FE639C1D3531B00050814B /* Sources */,
+				52FE639D1D3531B00050814B /* Frameworks */,
+				52FE639E1D3531B00050814B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RMStoreDemo_OSX;
+			productName = RMStoreDemo_OSX;
+			productReference = 52FE63A01D3531B00050814B /* RMStoreDemo_OSX.app */;
+			productType = "com.apple.product-type.application";
+		};
 		A0AF3D0717A802F300D2E836 /* RMStore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A0AF3D2D17A802F300D2E836 /* Build configuration list for PBXNativeTarget "RMStore" */;
@@ -422,6 +498,11 @@
 			attributes = {
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "Robot Media";
+				TargetAttributes = {
+					52FE639F1D3531B00050814B = {
+						CreatedOnToolsVersion = 7.3;
+					};
+				};
 			};
 			buildConfigurationList = A0AF3D0317A802F300D2E836 /* Build configuration list for PBXProject "RMStore" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -429,6 +510,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = A0AF3CFF17A802F300D2E836;
 			productRefGroup = A0AF3D0917A802F300D2E836 /* Products */;
@@ -438,11 +520,21 @@
 				A0AF3D0717A802F300D2E836 /* RMStore */,
 				A0AF3D1817A802F300D2E836 /* RMStoreTests */,
 				A0AF3D7117A8085900D2E836 /* RMStoreDemo */,
+				52FE639F1D3531B00050814B /* RMStoreDemo_OSX */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		52FE639E1D3531B00050814B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52FE63AC1D3531B00050814B /* Assets.xcassets in Resources */,
+				52FE63AF1D3531B00050814B /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0AF3D1617A802F300D2E836 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -466,13 +558,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		52FE639C1D3531B00050814B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52FE63BE1D3535A00050814B /* RMAppReceipt.m in Sources */,
+				52FE63C01D3535A00050814B /* RMStoreAppReceiptVerifier.m in Sources */,
+				52FE63C21D3535A00050814B /* RMStoreKeychainPersistence.m in Sources */,
+				52FE63C41D3535A00050814B /* RMStoreTransaction.m in Sources */,
+				52FE63C81D3535A00050814B /* RMStoreUserDefaultsPersistence.m in Sources */,
+				52FE63CA1D3535A00050814B /* RMStore.m in Sources */,
+				52FE63AA1D3531B00050814B /* ViewController.m in Sources */,
+				52FE63A71D3531B00050814B /* main.m in Sources */,
+				52FE63A41D3531B00050814B /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A0AF3D0417A802F300D2E836 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				A0AF3D1317A802F300D2E836 /* RMStore.m in Sources */,
 				876046491812FB7500C9B78C /* RMStoreKeychainPersistence.m in Sources */,
-				8793E80A180D512E005D7A66 /* RMStoreTransactionReceiptVerifier.m in Sources */,
 				8793E809180D512E005D7A66 /* RMStoreAppReceiptVerifier.m in Sources */,
 				87A2A3A9180E82BB00376773 /* RMStoreUserDefaultsPersistence.m in Sources */,
 				8793E808180D512E005D7A66 /* RMAppReceipt.m in Sources */,
@@ -490,7 +597,6 @@
 				8700D1C117DCA548005C8F5D /* NSNotification+RMStoreTests.m in Sources */,
 				87B7853F18105E6A00B5E54E /* RMStoreTransactionTests.m in Sources */,
 				87D5A74217DE893E000E2B6C /* RMProducstRequestDelegateTests.m in Sources */,
-				87950C2317E127A4001DF541 /* RMStoreTransactionReceiptVerifierTests.m in Sources */,
 				87A2A3A0180D7B0400376773 /* RMAppReceiptTests.m in Sources */,
 				87A2A3A3180D817600376773 /* RMAppReceiptIAPTests.m in Sources */,
 				87A2A3AC180E8AF500376773 /* RMStoreUserDefaultsPersistenceTests.m in Sources */,
@@ -507,7 +613,6 @@
 				A0AF3DA217A8094600D2E836 /* RMStoreViewController.m in Sources */,
 				8793E80C180D5136005D7A66 /* RMStoreAppReceiptVerifier.m in Sources */,
 				A0AF3DA717A8095F00D2E836 /* RMPurchasesViewController.m in Sources */,
-				8760465118131B4800C9B78C /* RMStoreTransactionReceiptVerifier.m in Sources */,
 				A0AF3DA917A80B2F00D2E836 /* RMStore.m in Sources */,
 				8793E80B180D5133005D7A66 /* RMAppReceipt.m in Sources */,
 			);
@@ -524,6 +629,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		52FE63AD1D3531B00050814B /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				52FE63AE1D3531B00050814B /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
 		A0AF3D2517A802F300D2E836 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -543,6 +656,86 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		52FE63B11D3531B00050814B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"RMStore/Optional/openssl-1.0.1e/include",
+				);
+				INFOPLIST_FILE = RMStoreDemo_OSX/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/RMStore/Optional/openssl-1.0.1e/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "net.robotmedia.RMStoreDemo-OSX";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				VALID_ARCHS = "i386 x86_64";
+			};
+			name = Debug;
+		};
+		52FE63B21D3531B00050814B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"RMStore/Optional/openssl-1.0.1e/include",
+				);
+				INFOPLIST_FILE = RMStoreDemo_OSX/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/RMStore/Optional/openssl-1.0.1e/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "net.robotmedia.RMStoreDemo-OSX";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				VALID_ARCHS = "i386 x86_64";
+			};
+			name = Release;
+		};
 		A0AF3D2B17A802F300D2E836 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -756,6 +949,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		52FE63B31D3531B00050814B /* Build configuration list for PBXNativeTarget "RMStoreDemo_OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				52FE63B11D3531B00050814B /* Debug */,
+				52FE63B21D3531B00050814B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A0AF3D0317A802F300D2E836 /* Build configuration list for PBXProject "RMStore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -76,7 +76,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 - (void)addPayment:(NSString*)productIdentifier
               user:(NSString*)userIdentifier
            success:(void (^)(SKPaymentTransaction *transaction))successBlock
-           failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock __attribute__((availability(ios,introduced=7.0)));
+           failure:(void (^)(SKPaymentTransaction *transaction, NSError *error))failureBlock;
 
 /** Request localized information about a set of products from the Apple App Store.
  @param identifiers The set of product identifiers for the products you wish to retrieve information of.
@@ -111,7 +111,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  */
 - (void)restoreTransactionsOfUser:(NSString*)userIdentifier
                         onSuccess:(void (^)(NSArray *transactions))successBlock
-                          failure:(void (^)(NSError *error))failureBlock __attribute__((availability(ios,introduced=7.0)));
+                          failure:(void (^)(NSError *error))failureBlock;
 
 #pragma mark Receipt
 ///---------------------------------------------
@@ -122,18 +122,18 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  If this method returns `nil` you should refresh the receipt by calling `refreshReceipt`.
  @see refreshReceipt
  */
-+ (NSURL*)receiptURL __attribute__((availability(ios,introduced=7.0)));
++ (NSURL*)receiptURL;
 
 /** Request to refresh the App Store receipt in case the receipt is invalid or missing.
  */
-- (void)refreshReceipt __attribute__((availability(ios,introduced=7.0)));
+- (void)refreshReceipt;
 
 /** Request to refresh the App Store receipt in case the receipt is invalid or missing. `successBlock` will be called if the refresh receipt request is successful, `failureBlock` if it isn't.
  @param successBlock The block to be called if the refresh receipt request is sucessful. Can be `nil`.
  @param failureBlock The block to be called if the refresh receipt request fails. Can be `nil`.
  */
-- (void)refreshReceiptOnSuccess:(void (^)())successBlock
-                        failure:(void (^)(NSError *error))failureBlock __attribute__((availability(ios,introduced=7.0)));
+- (void)refreshReceiptOnSuccess:(void (^)(void))successBlock
+                        failure:(void (^)(NSError *error))failureBlock;
 
 ///---------------------------------------------
 /// @name Setting Delegates
@@ -197,7 +197,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  @discussion Hosted content from Apple’s server (@c SKDownload) is handled automatically by RMStore.
  */
 - (void)downloadContentForTransaction:(SKPaymentTransaction*)transaction
-                              success:(void (^)())successBlock
+                              success:(void (^)(void))successBlock
                              progress:(void (^)(float progress))progressBlock
                               failure:(void (^)(NSError *error))failureBlock;
 
@@ -217,7 +217,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  @param failureBlock Called if the transaction failed verification. If verification could not be completed (e.g., due to connection issues), then error must be of code RMStoreErrorCodeUnableToCompleteVerification to prevent RMStore to finish the transaction. Must be called in the main queu.
  */
 - (void)verifyTransaction:(SKPaymentTransaction*)transaction
-                  success:(void (^)())successBlock
+                  success:(void (^)(void))successBlock
                   failure:(void (^)(NSError *error))failureBlock;
 
 @end
@@ -229,36 +229,36 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
  Tells the observer that a download has been canceled.
  @discussion Only for Apple-hosted downloads.
  */
-- (void)storeDownloadCanceled:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+- (void)storeDownloadCanceled:(NSNotification*)notification;
 
 /**
  Tells the observer that a download has failed. Use @c storeError to get the cause.
  */
-- (void)storeDownloadFailed:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+- (void)storeDownloadFailed:(NSNotification*)notification;
 
 /**
  Tells the observer that a download has finished.
  */
-- (void)storeDownloadFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+- (void)storeDownloadFinished:(NSNotification*)notification;
 
 /**
  Tells the observer that a download has been paused.
  @discussion Only for Apple-hosted downloads.
  */
-- (void)storeDownloadPaused:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+- (void)storeDownloadPaused:(NSNotification*)notification;
 
 /**
  Tells the observer that a download has been updated. Use @c downloadProgress to get the progress.
  */
-- (void)storeDownloadUpdated:(NSNotification*)notification __attribute__((availability(ios,introduced=6.0)));
+- (void)storeDownloadUpdated:(NSNotification*)notification;
 
 - (void)storePaymentTransactionDeferred:(NSNotification*)notification __attribute__((availability(ios,introduced=8.0)));
 - (void)storePaymentTransactionFailed:(NSNotification*)notification;
 - (void)storePaymentTransactionFinished:(NSNotification*)notification;
 - (void)storeProductsRequestFailed:(NSNotification*)notification;
 - (void)storeProductsRequestFinished:(NSNotification*)notification;
-- (void)storeRefreshReceiptFailed:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
-- (void)storeRefreshReceiptFinished:(NSNotification*)notification __attribute__((availability(ios,introduced=7.0)));
+- (void)storeRefreshReceiptFailed:(NSNotification*)notification;
+- (void)storeRefreshReceiptFinished:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFailed:(NSNotification*)notification;
 - (void)storeRestoreTransactionsFinished:(NSNotification*)notification;
 
@@ -291,7 +291,7 @@ extern NSInteger const RMStoreErrorCodeUnableToCompleteVerification;
 
 /** Used in @c storeDownload*:.
  */
-@property (nonatomic, readonly) SKDownload *rm_storeDownload __attribute__((availability(ios,introduced=6.0)));
+@property (nonatomic, readonly) SKDownload *rm_storeDownload NS_AVAILABLE(10_8, 6_0);
 
 /** Used in @c storeDownloadFailed:, @c storePaymentTransactionFailed:, @c storeProductsRequestFailed:, @c storeRefreshReceiptFailed: and @c storeRestoreTransactionsFailed:.
  */

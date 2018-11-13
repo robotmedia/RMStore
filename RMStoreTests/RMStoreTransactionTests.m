@@ -33,9 +33,7 @@
     XCTAssertEqualObjects(transaction.productIdentifier, payment.productIdentifier, @"");
     XCTAssertEqualObjects(transaction.transactionDate, paymentTransaction.transactionDate, @"");
     XCTAssertEqualObjects(transaction.transactionIdentifier, paymentTransaction.transactionIdentifier, @"");
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-    XCTAssertEqualObjects(transaction.transactionReceipt, paymentTransaction.transactionReceipt, @"");
-#endif
+    
     XCTAssertFalse(transaction.consumed, @"");
 }
 
@@ -47,9 +45,7 @@
     transaction.productIdentifier = @"test";
     transaction.transactionDate = [NSDate date];
     transaction.transactionIdentifier = @"transaction";
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-    transaction.transactionReceipt = [NSData data];
-#endif
+    
     transaction.consumed = YES;
 
     NSMutableData *data = [[NSMutableData alloc] init];
@@ -65,9 +61,7 @@
     XCTAssertEqualObjects(decodedTransaction.productIdentifier, transaction.productIdentifier, @"");
     XCTAssertEqualObjects(decodedTransaction.transactionDate, transaction.transactionDate, @"");
     XCTAssertEqualObjects(decodedTransaction.transactionIdentifier, transaction.transactionIdentifier, @"");
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-    XCTAssertEqualObjects(decodedTransaction.transactionReceipt, transaction.transactionReceipt, @"");
-#endif
+    
     XCTAssertEqual(decodedTransaction.consumed, transaction.consumed, @"");
 }
 
@@ -78,9 +72,7 @@
     id transaction = [OCMockObject mockForClass:[SKPaymentTransaction class]];
     [[[transaction stub] andReturn:[NSDate date]] transactionDate];
     [[[transaction stub] andReturn:@"transaction"] transactionIdentifier];
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 70000
-    [[[transaction stub] andReturn:[NSData data]] transactionReceipt];
-#endif
+
     id payment = [OCMockObject mockForClass:[SKPayment class]];
     [[[payment stub] andReturn:productIdentifier] productIdentifier];
     [[[transaction stub] andReturn:payment] payment];
